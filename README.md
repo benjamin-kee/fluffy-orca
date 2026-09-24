@@ -1,104 +1,74 @@
 # Phoenix
 
-Phoenix is a lightweight business news intelligence platform inspired.
+Phoenix is a lightweight business-news dashboard. MVP0 collects business headlines from Malaysian news sources into one feed, newest first. Each headline links to the original article on the publisher's site.
 
-The initial goal is simple: build a clean news dashboard where users can browse and search business news.
+The approved scope is in [`docs/specs/MVP0.md`](docs/specs/MVP0.md). Out-of-scope ideas and known improvements are tracked in [`docs/roadmap.md`](docs/roadmap.md).
 
-## MVP Scope
+> **Status:** MVP0 is being built milestone by milestone. Sections marked _pending_ are completed when that part is built.
 
-### MVP0 — Browse News
+## What MVP0 does
 
-Users can:
+- Collects headline metadata (title, source, links, publication time) from RSS feeds. It does not copy article text, summaries or images.
+- Stores each article once, with duplicates blocked by the database.
+- Shows one feed of headlines with source and publication time, 50 or 100 per page, with numbered pagination.
+- Opens the publisher's article in a new tab when a headline is clicked.
 
-* Browse a continuously updated business news feed
-* View article headlines
-* View publication date and source
-* View a short article snippet
-* Open the original article
+## Prerequisites
 
-### MVP1 — Search News
+- Node.js 20.9 or later
+- A [Supabase](https://supabase.com) project (the free plan is enough)
+- A [Vercel](https://vercel.com) account, for deployment
 
-Users can:
+## Installation
 
-* Search the news archive
-* Search across article titles, summaries, and article content
-* Filter results by date and source
-* Sort results by relevance or recency
-
-Search will initially use PostgreSQL Full-Text Search.
-
-Optional typo tolerance may be added using PostgreSQL `pg_trgm`.
-
-LLM-based or vector search is not required for MVP0 or MVP1.
-
-## Initial Architecture
-
-```text
-USER
- │
- ├─ browses NEWS — MVP0
- │
- └─ searches NEWS — MVP1
-        │
-        └─ PostgreSQL Full-Text Search
-             └─ optional pg_trgm fuzzy matching
+```bash
+npm install
 ```
 
-## Proposed Stack
+## Environment configuration
 
-* Frontend: Next.js
-* Database: PostgreSQL / Supabase
-* Backend: Supabase
-* Search: PostgreSQL Full-Text Search
-* Fuzzy Search: pg_trgm
-* Deployment: Vercel
-* Development: Claude Code + coding agents
+Copy the example file and fill in the values:
 
-## Core Data Flow
-
-```text
-News Sources
-     │
-     ▼
-News Ingestion
-     │
-     ▼
-PostgreSQL / Supabase
-     │
-     ├─ News Feed
-     │
-     └─ Full-Text Search
-             │
-             ▼
-          Next.js
-             │
-             ▼
-            User
+```bash
+cp .env.example .env.local
 ```
 
-## Out of Scope for MVP0 / MVP1
+| Variable | Where to find it |
+| --- | --- |
+| `SUPABASE_URL` | Supabase dashboard → Project Settings → API → Project URL |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase dashboard → Project Settings → API → `service_role` key |
 
-The following features may be added later but are intentionally excluded from the first release:
+The service-role key gives full database access. It is used only on the server. Never commit it, and never give it a `NEXT_PUBLIC_` prefix.
 
-* Company database
-* Company profiles
-* Company tagging
-* Topic classification
-* Entity resolution
-* Vector search
-* Semantic search
-* RAG / AI chat
-* Alerts
-* Saved searches
-* User accounts
-* Email digests
+## Database setup
 
-## Development Principle
+In the Supabase dashboard, open **SQL Editor** and run the contents of [`supabase/migrations/0001_create_articles.sql`](supabase/migrations/0001_create_articles.sql) once. This creates the `articles` table, the rule that blocks duplicates, and an index for newest-first ordering. It also enables row-level security, so the public API key cannot read or write the table.
 
-Keep the first version simple.
+## Running locally
 
-The primary objective is to prove that Phoenix can reliably:
+```bash
+npm run dev
+```
 
-**ingest news → display news → search news**
+Then open <http://localhost:3000>.
 
-Additional intelligence features will be layered on top after this foundation is working.
+Other scripts:
+
+- `npm run build`: production build
+- `npm run typecheck`: TypeScript check
+
+## Manually triggering ingestion
+
+_Pending (milestone 5)._
+
+## How scheduled ingestion works
+
+_Pending (milestone 12)._
+
+## Running tests
+
+_Pending (milestone 13)._
+
+## Deploying to Vercel
+
+_Pending (milestone 14)._
