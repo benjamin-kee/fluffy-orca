@@ -1,4 +1,5 @@
+import { malayMail } from "./malayMail";
 import type { NewsSource } from "./newsSource";
 
-// Active sources. Adapters are added here as they are built.
-export const sources: NewsSource[] = [];
+// Active sources. Replacing a publisher means changing its adapter and this list only.
+export const sources: NewsSource[] = [malayMail];
