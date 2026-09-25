@@ -562,4 +562,4 @@ The following changes were approved by the product owner after the original spec
    - Headlines published 24 hours ago or more show the release date and time in the user's own system time zone.
 3. **Article URLs.**
    - `source_url` is the link to the specific article exactly as the RSS feed provides it.
-   - `article_url` is the cleaned version of that link, with tracking parameters (e.g. `utm_*`) and any `#` fragment removed. Phoenix opens this link and uses it for duplicate detection.
+   - `article_url` is the cleaned version of that link, with tracking parameters (e.g. `utm_*`) and any `#` fragment removed. Phoenix opens this link when a headline is clicked.
