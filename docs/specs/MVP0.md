@@ -560,4 +560,6 @@ The following changes were approved by the product owner after the original spec
    - The stored publication time is the fixed release moment, interpreted as Malaysia time (UTC+08:00) when the feed gives no time zone.
    - Headlines published less than 24 hours ago show time elapsed since release, e.g. "30 mins ago".
    - Headlines published 24 hours ago or more show the release date and time in the user's own system time zone.
-3. **`source_url`** is the URL of the specific article the headline refers to.
+3. **Article URLs.**
+   - `source_url` is the link to the specific article exactly as the RSS feed provides it.
+   - `article_url` is the cleaned version of that link, with tracking parameters (e.g. `utm_*`) and any `#` fragment removed. Phoenix opens this link and uses it for duplicate detection.
