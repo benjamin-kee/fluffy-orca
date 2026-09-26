@@ -1,4 +1,5 @@
 import { XMLParser } from "fast-xml-parser";
+import type { NewArticle } from "@/lib/article";
 
 // Shared RSS 2.0 helpers. Publisher-specific decisions stay in the adapters.
 
@@ -96,4 +97,35 @@ export function parsePublishedAt(value: string): string | undefined {
   const withZone = hasZone ? trimmed : `${trimmed}${isIso ? "+08:00" : " +0800"}`;
   const time = Date.parse(withZone);
   return Number.isNaN(time) ? undefined : new Date(time).toISOString();
+}
+
+// Standard RSS 2.0 normalization: <guid> as external_id (falling back to the cleaned link).
+// Items without a title, link or valid publication date are skipped and counted in the log.
+export function normalizeRssItems(xml: string, source: string): NewArticle[] {
+  const articles: NewArticle[] = [];
+  let skipped = 0;
+
+  for (const item of parseRssItems(xml)) {
+    const title = item.title ? cleanTitle(item.title) : "";
+    const sourceUrl = item.link?.trim();
+    const articleUrl = sourceUrl ? cleanArticleUrl(sourceUrl) : undefined;
+    const publishedAt = item.pubDate ? parsePublishedAt(item.pubDate) : undefined;
+    const externalId = item.guid?.trim() || articleUrl;
+
+    if (!title || !sourceUrl || !articleUrl || !publishedAt || !externalId) {
+      skipped++;
+      continue;
+    }
+    articles.push({
+      title,
+      source,
+      source_url: sourceUrl,
+      article_url: articleUrl,
+      published_at: publishedAt,
+      external_id: externalId,
+    });
+  }
+
+  if (skipped > 0) console.warn(`[ingest] source=${source} skipped_invalid=${skipped}`);
+  return articles;
 }

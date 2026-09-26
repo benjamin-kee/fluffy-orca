@@ -1,6 +1,10 @@
 -- Phoenix MVP0: article metadata index.
 -- Run once in the Supabase SQL editor (see README).
 
+-- Show and log timestamps in Malaysia time (UTC+08:00). timestamptz stores the exact
+-- moment, so this changes how times are displayed, not which moment is stored.
+alter database postgres set timezone to 'Asia/Kuala_Lumpur';
+
 create table public.articles (
   id            bigint generated always as identity primary key,
   title         text        not null,
