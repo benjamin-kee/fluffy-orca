@@ -563,3 +563,7 @@ The following changes were approved by the product owner after the original spec
 3. **Article URLs.**
    - `source_url` is the link to the specific article exactly as the RSS feed provides it.
    - `article_url` is the cleaned version of that link, with tracking parameters (e.g. `utm_*`) and any `#` fragment removed. Phoenix opens this link when a headline is clicked.
+4. **News sources.** The two sandbox sources named above are replaced as follows:
+   - BERNAMA Business RSS is replaced by **Malay Mail Money**: `https://www.malaymail.com/feed/rss/money`.
+   - The Star Business RSS is replaced by **Free Malaysia Today (FMT) Business**: `https://cms.freemalaysiatoday.com/category/business/feed`. The Star's feeds returned "Page Not Found" when tested on 25–26 Sep 2026; The Star may be re-added if its feeds work again.
+   - **The Edge Malaysia** and **New Straits Times (NST) Business** are approved as additional sources, to be added once a working RSS feed is confirmed for each.
