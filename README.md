@@ -89,7 +89,11 @@ To check recent runs, query `cron.job_run_details` (did the job run) and `net._h
 
 ## Running tests
 
-_Pending (milestone 13)._
+```bash
+npm test
+```
+
+The tests cover source normalization and article deduplication. They use Node's built-in test runner, with no extra test dependencies, and need Node.js 22.18 or later. They do not call GNews or the database.
 
 ## Deploying to Vercel
 
