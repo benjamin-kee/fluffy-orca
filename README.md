@@ -62,11 +62,30 @@ Other scripts:
 
 ## Manually triggering ingestion
 
-_Pending (milestone 5)._
+With the app running, call the ingest endpoint with your `CRON_SECRET`:
+
+```bash
+curl -H "Authorization: Bearer $CRON_SECRET" http://localhost:3000/api/ingest
+```
+
+The response lists, for each source, how many articles were fetched and how many were new. Requests without the correct secret get `401 Unauthorized`. Each call uses one GNews request (the free plan allows 100 per day).
 
 ## How scheduled ingestion works
 
-_Pending (milestone 12)._
+Supabase calls the deployed `/api/ingest` endpoint every 3 hours, starting at 12am Malaysia time (12am, 3am, 6am, …, 9pm). The schedule uses the Supabase `pg_cron` and `pg_net` extensions, which are available on the free plan. The app URL and `CRON_SECRET` are kept in Supabase Vault, not in the repository.
+
+Set it up once, after deploying:
+
+1. In the Supabase **SQL Editor**, store the deployed endpoint and the same `CRON_SECRET` the app uses:
+
+   ```sql
+   select vault.create_secret('https://<your-app>.vercel.app/api/ingest', 'phoenix_ingest_url');
+   select vault.create_secret('<CRON_SECRET>', 'phoenix_cron_secret');
+   ```
+
+2. Run the contents of [`supabase/migrations/0002_schedule_ingestion.sql`](supabase/migrations/0002_schedule_ingestion.sql).
+
+To check recent runs, query `cron.job_run_details` (did the job run) and `net._http_response` (what the endpoint returned; kept for 6 hours). To stop the schedule, run `select cron.unschedule('phoenix-ingest');`.
 
 ## Running tests
 
