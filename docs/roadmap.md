@@ -6,13 +6,15 @@ Items recorded during MVP0 that are **not** being implemented now. Nothing here 
 
 | Item | Current MVP0 behaviour | Possible improvement |
 | --- | --- | --- |
-| RSS items with a missing or unreadable publication date | Skipped during ingestion and logged as a warning. They do not appear in the feed. | Decide how to include them, e.g. fall back to the Phoenix ingestion time, with a clear display rule. |
+| Articles with a missing or unreadable publication date | Skipped during ingestion and logged as a warning. They do not appear in the feed. | Decide how to include them, e.g. fall back to the Phoenix ingestion time, with a clear display rule. |
 
 ## Future fix
 
 Things in MVP0 that work but not optimally.
 
-_None recorded yet._
+| Item | Current MVP0 behaviour | Possible improvement |
+| --- | --- | --- |
+| GNews free plan limits | Headlines appear at least 12 hours after publication, and each 3-hourly run fetches at most 10 articles, so busy periods can be missed. Free plan is non-commercial only. | Move to a paid GNews plan (real-time, more articles per request) before any commercial use. |
 
 ## Future consideration
 

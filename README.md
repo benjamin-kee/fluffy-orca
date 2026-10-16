@@ -8,7 +8,7 @@ The approved scope is in [`docs/specs/MVP0.md`](docs/specs/MVP0.md). Out-of-scop
 
 ## What MVP0 does
 
-- Collects headline metadata (title, source, links, publication time) from RSS feeds. It does not copy article text, summaries or images.
+- Collects headline metadata (title, publisher, links, publication time) for Malaysian business news from the [GNews API](https://gnews.io). It does not store article text, summaries or images.
 - Stores each article once, with duplicates blocked by the database.
 - Shows one feed of headlines with source and publication time, 50 or 100 per page, with numbered pagination.
 - Opens the publisher's article in a new tab when a headline is clicked.
@@ -18,6 +18,7 @@ The approved scope is in [`docs/specs/MVP0.md`](docs/specs/MVP0.md). Out-of-scop
 - Node.js 20.9 or later
 - A [Supabase](https://supabase.com) project (the free plan is enough)
 - A [Vercel](https://vercel.com) account, for deployment
+- A [GNews](https://gnews.io) API key (the free plan is enough)
 
 ## Installation
 
@@ -37,6 +38,8 @@ cp .env.example .env.local
 | --- | --- |
 | `SUPABASE_URL` | Supabase dashboard → Project Settings → API → Project URL |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase dashboard → Project Settings → API → `service_role` key |
+| `CRON_SECRET` | Any long random value, e.g. `openssl rand -hex 32`. Required to call `/api/ingest` |
+| `GNEWS_API_KEY` | GNews dashboard |
 
 The service-role key gives full database access. It is used only on the server. Never commit it, and never give it a `NEXT_PUBLIC_` prefix.
 
