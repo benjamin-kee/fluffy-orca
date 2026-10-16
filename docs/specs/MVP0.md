@@ -567,3 +567,8 @@ The following changes were approved by the product owner after the original spec
    - BERNAMA Business RSS is replaced by **Malay Mail Money**: `https://www.malaymail.com/feed/rss/money`.
    - The Star Business RSS is replaced by **Free Malaysia Today (FMT) Business**: `https://cms.freemalaysiatoday.com/category/business/feed`. The Star's feeds returned "Page Not Found" when tested on 25–26 Sep 2026; The Star may be re-added if its feeds work again.
    - **The Edge Malaysia** and **New Straits Times (NST) Business** are approved as additional sources, to be added once a working RSS feed is confirmed for each.
+5. **GNews API replaces RSS ingestion.** All headlines come from the GNews API (free plan) instead of RSS feeds. This supersedes the source list in approved change 4.
+   - Request: GNews top headlines, category `business`, country `my` (Malaysia), language `en`, up to 10 articles per request.
+   - Each article's `source` is the original publisher named by GNews (for example "The Star").
+   - Free-plan limits apply: 100 requests per day, at most 10 articles per request, a 12-hour delay before articles become available, and non-commercial use only.
+   - The API key is configured through the `GNEWS_API_KEY` environment variable.
