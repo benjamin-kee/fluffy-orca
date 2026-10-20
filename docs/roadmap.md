@@ -21,11 +21,11 @@ Things in MVP0 that work but not optimally.
 Useful ideas outside MVP0 scope, recorded per the MVP0 spec.
 
 - An opt-in integration test that checks deduplication against a real test database.
-- An ingestion-run log table, or a health alert when a feed returns no items for several runs.
-- Automatic retries with backoff for feed fetches.
+- An ingestion-run log table, or a health alert when GNews returns no articles for several runs.
+- Automatic retries with backoff for GNews requests.
 - More thorough URL cleaning, and updating stored headlines when publishers edit them.
 - Caching of feed pages.
 - A "new headlines available" notice.
 - A data retention or archiving policy.
-- Additional sources, e.g. BERNAMA Malay-language feeds.
+- Additional sources, e.g. Malay-language headlines.
 - Accessibility and visual polish (MVP0.1).
