@@ -1,8 +1,8 @@
 // Backfills GNews headlines from the last 30 days (the free plan's history limit), oldest day first,
 // so days about to expire are fetched before newer ones.
 //
-// Usage: npm run backfill -- [max_requests]   (default 80, leaving 20 of the 100 daily requests
-// for regular ingestion). Days already fully stored cost one request to check.
+// Usage: npm run backfill -- [max_requests]   (default 90, leaving 10 of the 100 daily requests,
+// about 100 headlines, for regular ingestion). Days already fully stored cost one request to check.
 import { countArticlesPublishedBetween, insertNewArticles } from "@/lib/articleRepository";
 import { fetchGNewsHeadlines, GNewsRequestError } from "@/lib/sources/gnews";
 
@@ -13,7 +13,7 @@ const PAGE_SIZE = 10;
 // GNews sometimes lists one article twice, so a fully fetched day can store slightly fewer than it reports.
 const MISSING_TOLERANCE = 2;
 
-const maxRequests = Number(process.argv[2] ?? 80);
+const maxRequests = Number(process.argv[2] ?? 90);
 if (!Number.isInteger(maxRequests) || maxRequests < 1) throw new Error("max_requests must be a positive integer");
 
 let used = 0;
