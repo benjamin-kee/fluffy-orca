@@ -1,104 +1,112 @@
 # Phoenix
 
-Phoenix is a lightweight business news intelligence platform inspired.
+Phoenix is a lightweight business-news dashboard. MVP0 collects business headlines from Malaysian news sources into one feed, newest first. Each headline links to the original article on the publisher's site.
 
-The initial goal is simple: build a clean news dashboard where users can browse and search business news.
+The approved scope is in [`docs/specs/MVP0.md`](docs/specs/MVP0.md). Out-of-scope ideas and known improvements are tracked in [`docs/roadmap.md`](docs/roadmap.md).
 
-## MVP Scope
+> **Status:** MVP0 is being built milestone by milestone. Sections marked _pending_ are completed when that part is built.
 
-### MVP0 — Browse News
+## What MVP0 does
 
-Users can:
+- Collects headline metadata (title, publisher, links, publication time) for Malaysian business news from the [GNews API](https://gnews.io). It does not store article text, summaries or images.
+- Stores each article once, with duplicates blocked by the database.
+- Shows one feed of headlines with source and publication time, 50 or 100 per page, with numbered pagination.
+- Opens the publisher's article in a new tab when a headline is clicked.
 
-* Browse a continuously updated business news feed
-* View article headlines
-* View publication date and source
-* View a short article snippet
-* Open the original article
+## Prerequisites
 
-### MVP1 — Search News
+- Node.js 20.9 or later
+- A [Supabase](https://supabase.com) project (the free plan is enough)
+- A [Vercel](https://vercel.com) account, for deployment
+- A [GNews](https://gnews.io) API key (the free plan is enough)
 
-Users can:
+## Installation
 
-* Search the news archive
-* Search across article titles, summaries, and article content
-* Filter results by date and source
-* Sort results by relevance or recency
-
-Search will initially use PostgreSQL Full-Text Search.
-
-Optional typo tolerance may be added using PostgreSQL `pg_trgm`.
-
-LLM-based or vector search is not required for MVP0 or MVP1.
-
-## Initial Architecture
-
-```text
-USER
- │
- ├─ browses NEWS — MVP0
- │
- └─ searches NEWS — MVP1
-        │
-        └─ PostgreSQL Full-Text Search
-             └─ optional pg_trgm fuzzy matching
+```bash
+npm install
 ```
 
-## Proposed Stack
+## Environment configuration
 
-* Frontend: Next.js
-* Database: PostgreSQL / Supabase
-* Backend: Supabase
-* Search: PostgreSQL Full-Text Search
-* Fuzzy Search: pg_trgm
-* Deployment: Vercel
-* Development: Claude Code + coding agents
+Copy the example file and fill in the values:
 
-## Core Data Flow
-
-```text
-News Sources
-     │
-     ▼
-News Ingestion
-     │
-     ▼
-PostgreSQL / Supabase
-     │
-     ├─ News Feed
-     │
-     └─ Full-Text Search
-             │
-             ▼
-          Next.js
-             │
-             ▼
-            User
+```bash
+cp .env.example .env.local
 ```
 
-## Out of Scope for MVP0 / MVP1
+| Variable | Where to find it |
+| --- | --- |
+| `SUPABASE_URL` | Supabase dashboard → Project Settings → API → Project URL |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase dashboard → Project Settings → API → `service_role` key |
+| `CRON_SECRET` | Any long random value, e.g. `openssl rand -hex 32`. Required to call `/api/ingest` |
+| `GNEWS_API_KEY` | GNews dashboard |
 
-The following features may be added later but are intentionally excluded from the first release:
+The service-role key gives full database access. It is used only on the server. Never commit it, and never give it a `NEXT_PUBLIC_` prefix.
 
-* Company database
-* Company profiles
-* Company tagging
-* Topic classification
-* Entity resolution
-* Vector search
-* Semantic search
-* RAG / AI chat
-* Alerts
-* Saved searches
-* User accounts
-* Email digests
+## Database setup
 
-## Development Principle
+In the Supabase dashboard, open **SQL Editor** and run the contents of [`supabase/migrations/0001_create_articles.sql`](supabase/migrations/0001_create_articles.sql) once. This creates the `articles` table, the rule that blocks duplicates, and an index for newest-first ordering. It also enables row-level security, so the public API key cannot read or write the table.
 
-Keep the first version simple.
+Then run [`supabase/migrations/0003_grant_service_role.sql`](supabase/migrations/0003_grant_service_role.sql). Newer Supabase projects give API keys no table access by default; this lets the server-side secret key read and add articles. (`0002` sets up the schedule and is run after deployment; see below.)
 
-The primary objective is to prove that Phoenix can reliably:
+## Running locally
 
-**ingest news → display news → search news**
+```bash
+npm run dev
+```
 
-Additional intelligence features will be layered on top after this foundation is working.
+Then open <http://localhost:3000>.
+
+Other scripts:
+
+- `npm run build`: production build
+- `npm run typecheck`: TypeScript check
+
+## Manually triggering ingestion
+
+With the app running, call the ingest endpoint with your `CRON_SECRET`:
+
+```bash
+curl -H "Authorization: Bearer $CRON_SECRET" http://localhost:3000/api/ingest
+```
+
+The response lists, for each source, how many articles were fetched and how many were new. Requests without the correct secret get `401 Unauthorized`. Each call uses one GNews request (the free plan allows 100 per day).
+
+## Backfilling past headlines
+
+The GNews free plan keeps 30 days of history. To fill the feed with that history:
+
+```bash
+npm run backfill -- 80
+```
+
+The number is the most GNews requests this run may use (default 80), leaving 20 of the 100 daily requests for regular ingestion. It works through the last 30 days oldest first, so days about to expire are fetched first, and stops when the limit is reached. Run it again on a later day to continue. Days already stored cost one request each to check, and duplicates are skipped as usual. It needs `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` and `GNEWS_API_KEY`, and Node.js 22.18 or later.
+
+## How scheduled ingestion works
+
+Supabase calls the deployed `/api/ingest` endpoint every 3 hours, starting at 12am Malaysia time (12am, 3am, 6am, …, 9pm). The schedule uses the Supabase `pg_cron` and `pg_net` extensions, which are available on the free plan. The app URL and `CRON_SECRET` are kept in Supabase Vault, not in the repository.
+
+Set it up once, after deploying:
+
+1. In the Supabase **SQL Editor**, store the deployed endpoint and the same `CRON_SECRET` the app uses:
+
+   ```sql
+   select vault.create_secret('https://<your-app>.vercel.app/api/ingest', 'phoenix_ingest_url');
+   select vault.create_secret('<CRON_SECRET>', 'phoenix_cron_secret');
+   ```
+
+2. Run the contents of [`supabase/migrations/0002_schedule_ingestion.sql`](supabase/migrations/0002_schedule_ingestion.sql).
+
+To check recent runs, query `cron.job_run_details` (did the job run) and `net._http_response` (what the endpoint returned; kept for 6 hours). To stop the schedule, run `select cron.unschedule('phoenix-ingest');`.
+
+## Running tests
+
+```bash
+npm test
+```
+
+The tests cover source normalization and article deduplication. They use Node's built-in test runner, with no extra test dependencies, and need Node.js 22.18 or later. They do not call GNews or the database.
+
+## Deploying to Vercel
+
+_Pending (milestone 14)._
