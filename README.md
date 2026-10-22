@@ -77,10 +77,10 @@ The response lists, for each source, how many articles were fetched and how many
 The GNews free plan keeps 30 days of history. To fill the feed with that history:
 
 ```bash
-npm run backfill -- 80
+npm run backfill -- 90
 ```
 
-The number is the most GNews requests this run may use (default 80), leaving 20 of the 100 daily requests for regular ingestion. It works through the last 30 days oldest first, so days about to expire are fetched first, and stops when the limit is reached. Run it again on a later day to continue. Days already stored cost one request each to check, and duplicates are skipped as usual. It needs `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` and `GNEWS_API_KEY`, and Node.js 22.18 or later.
+The number is the most GNews requests this run may use (default 90), leaving 10 of the 100 daily requests (about 100 headlines) for regular ingestion. It works through the last 30 days oldest first, so days about to expire are fetched first, and stops when the limit is reached. Run it again on a later day to continue. Days already stored cost one request each to check, and duplicates are skipped as usual. It needs `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` and `GNEWS_API_KEY`, and Node.js 22.18 or later.
 
 ## How scheduled ingestion works
 
@@ -109,4 +109,9 @@ The tests cover source normalization and article deduplication. They use Node's 
 
 ## Deploying to Vercel
 
-_Pending (milestone 14)._
+1. In Vercel, choose **Add New → Project** and import this GitHub repository. Vercel detects Next.js; keep the default build settings. Production deploys come from `main`.
+2. Under **Environment Variables**, add `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GNEWS_API_KEY` and `CRON_SECRET` (a new long random value, e.g. `openssl rand -hex 32`). Keep a copy of `CRON_SECRET` for the next step.
+3. Select **Deploy**. When it finishes, open the production URL; the feed should show the stored headlines.
+4. Turn on scheduled ingestion as described in [How scheduled ingestion works](#how-scheduled-ingestion-works), using the production URL and the same `CRON_SECRET`.
+
+Every push to `main` deploys again. If you change `CRON_SECRET` in Vercel, update `phoenix_cron_secret` in Supabase Vault too (`select vault.update_secret(id, '<new value>') from vault.secrets where name = 'phoenix_cron_secret';`), then redeploy.

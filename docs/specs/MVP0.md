@@ -572,3 +572,7 @@ The following changes were approved by the product owner after the original spec
    - Each article's `source` is the original publisher named by GNews (for example "The Star").
    - Free-plan limits apply: 100 requests per day, at most 10 articles per request, a 12-hour delay before articles become available, and non-commercial use only.
    - The API key is configured through the `GNEWS_API_KEY` environment variable.
+6. **30-day backfill.** Phoenix fills the feed with the GNews free plan's 30 days of history, in addition to regular ingestion.
+   - A manual command, `npm run backfill -- [max_requests]`, fetches past headlines oldest day first, so days about to leave the 30-day window are fetched first. It uses the same GNews request settings, Article model and duplicate prevention as regular ingestion.
+   - Each day it may use up to 90 GNews requests. The remaining 10 requests (about 100 headlines) are kept for regular ingestion of new headlines.
+   - It runs once a day, after the GNews quota resets at 00:00 UTC (8am Malaysia time), from 23 Oct to 21 Nov 2026. After that period the rule is to be reviewed.
