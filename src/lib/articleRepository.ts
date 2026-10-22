@@ -38,6 +38,18 @@ export async function countArticles(): Promise<number> {
   return count ?? 0;
 }
 
+// Number of stored articles published in [from, to).
+export async function countArticlesPublishedBetween(from: string, to: string): Promise<number> {
+  const { count, error } = await getDb()
+    .from(TABLE)
+    .select("id", { count: "exact", head: true })
+    .gte("published_at", from)
+    .lt("published_at", to);
+
+  if (error) throw new Error(`Failed to count articles: ${error.message}`);
+  return count ?? 0;
+}
+
 // Newest first by publication time; id breaks ties so pages are stable.
 export async function listArticles(offset: number, limit: number): Promise<Article[]> {
   const { data, error } = await getDb()

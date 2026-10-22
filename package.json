@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "test": "node --import ./tests/resolve.mjs --test tests/*.test.ts"
+    "test": "node --import ./tests/resolve.mjs --test tests/*.test.ts",
+    "backfill": "node --import ./tests/resolve.mjs scripts/backfill.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.1",

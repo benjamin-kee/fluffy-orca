@@ -72,6 +72,16 @@ curl -H "Authorization: Bearer $CRON_SECRET" http://localhost:3000/api/ingest
 
 The response lists, for each source, how many articles were fetched and how many were new. Requests without the correct secret get `401 Unauthorized`. Each call uses one GNews request (the free plan allows 100 per day).
 
+## Backfilling past headlines
+
+The GNews free plan keeps 30 days of history. To fill the feed with that history:
+
+```bash
+npm run backfill -- 80
+```
+
+The number is the most GNews requests this run may use (default 80), leaving 20 of the 100 daily requests for regular ingestion. It works through the last 30 days oldest first, so days about to expire are fetched first, and stops when the limit is reached. Run it again on a later day to continue. Days already stored cost one request each to check, and duplicates are skipped as usual. It needs `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` and `GNEWS_API_KEY`, and Node.js 22.18 or later.
+
 ## How scheduled ingestion works
 
 Supabase calls the deployed `/api/ingest` endpoint every 3 hours, starting at 12am Malaysia time (12am, 3am, 6am, …, 9pm). The schedule uses the Supabase `pg_cron` and `pg_net` extensions, which are available on the free plan. The app URL and `CRON_SECRET` are kept in Supabase Vault, not in the repository.

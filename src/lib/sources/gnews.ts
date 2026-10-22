@@ -53,21 +53,40 @@ export function normalizeGNews(body: unknown): NewArticle[] {
   return articles;
 }
 
+export class GNewsRequestError extends Error {
+  readonly status: number;
+  constructor(message: string, status: number) {
+    super(message);
+    this.status = status;
+  }
+}
+
+// One GNews request. `range` limits it to articles published in [from, to); `page` selects a page of 10.
+export async function fetchGNewsHeadlines(range?: { from: string; to: string; page: number }) {
+  const apiKey = process.env.GNEWS_API_KEY;
+  if (!apiKey) throw new Error("GNEWS_API_KEY must be set");
+
+  const params = new URLSearchParams({ ...QUERY, apikey: apiKey });
+  if (range) {
+    params.set("from", range.from);
+    params.set("to", range.to);
+    params.set("page", String(range.page));
+  }
+  const response = await fetch(`${ENDPOINT}?${params}`, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS), cache: "no-store" });
+  const body: unknown = await response.json().catch(() => undefined);
+
+  if (!response.ok) {
+    const errors = (body as { errors?: unknown })?.errors;
+    const detail = Array.isArray(errors) ? errors.filter((e) => typeof e === "string").join("; ") : "";
+    throw new GNewsRequestError(`GNews request failed: HTTP ${response.status}${detail ? ` (${detail})` : ""}`, response.status);
+  }
+  const total = (body as { totalArticles?: unknown })?.totalArticles;
+  return { articles: normalizeGNews(body), total: typeof total === "number" ? total : 0 };
+}
+
 export const gnews: NewsSource = {
   name: NAME,
   async fetchArticles() {
-    const apiKey = process.env.GNEWS_API_KEY;
-    if (!apiKey) throw new Error("GNEWS_API_KEY must be set");
-
-    const url = `${ENDPOINT}?${new URLSearchParams({ ...QUERY, apikey: apiKey })}`;
-    const response = await fetch(url, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS), cache: "no-store" });
-    const body: unknown = await response.json().catch(() => undefined);
-
-    if (!response.ok) {
-      const errors = (body as { errors?: unknown })?.errors;
-      const detail = Array.isArray(errors) ? errors.filter((e) => typeof e === "string").join("; ") : "";
-      throw new Error(`GNews request failed: HTTP ${response.status}${detail ? ` (${detail})` : ""}`);
-    }
-    return normalizeGNews(body);
+    return (await fetchGNewsHeadlines()).articles;
   },
 };
