@@ -109,4 +109,9 @@ The tests cover source normalization and article deduplication. They use Node's 
 
 ## Deploying to Vercel
 
-_Pending (milestone 14)._
+1. In Vercel, choose **Add New → Project** and import this GitHub repository. Vercel detects Next.js; keep the default build settings. Production deploys come from `main`.
+2. Under **Environment Variables**, add `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GNEWS_API_KEY` and `CRON_SECRET` (a new long random value, e.g. `openssl rand -hex 32`). Keep a copy of `CRON_SECRET` for the next step.
+3. Select **Deploy**. When it finishes, open the production URL; the feed should show the stored headlines.
+4. Turn on scheduled ingestion as described in [How scheduled ingestion works](#how-scheduled-ingestion-works), using the production URL and the same `CRON_SECRET`.
+
+Every push to `main` deploys again. If you change `CRON_SECRET` in Vercel, update `phoenix_cron_secret` in Supabase Vault too (`select vault.update_secret(id, '<new value>') from vault.secrets where name = 'phoenix_cron_secret';`), then redeploy.
