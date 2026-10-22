@@ -47,6 +47,8 @@ The service-role key gives full database access. It is used only on the server. 
 
 In the Supabase dashboard, open **SQL Editor** and run the contents of [`supabase/migrations/0001_create_articles.sql`](supabase/migrations/0001_create_articles.sql) once. This creates the `articles` table, the rule that blocks duplicates, and an index for newest-first ordering. It also enables row-level security, so the public API key cannot read or write the table.
 
+Then run [`supabase/migrations/0003_grant_service_role.sql`](supabase/migrations/0003_grant_service_role.sql). Newer Supabase projects give API keys no table access by default; this lets the server-side secret key read and add articles. (`0002` sets up the schedule and is run after deployment; see below.)
+
 ## Running locally
 
 ```bash
