@@ -1,4 +1,4 @@
--- Phoenix MVP0: article metadata index.
+-- Watchtower MVP0: article metadata index.
 -- Run once in the Supabase SQL editor (see README).
 
 -- Show and log timestamps in Malaysia time (UTC+08:00). timestamptz stores the exact

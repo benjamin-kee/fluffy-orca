@@ -1,26 +1,25 @@
-# Phoenix MVP0 — Hand-off Summary
+# Watchtower MVP0 — Hand-off Summary
 
-_Version 2, as of 22 Oct 2026 (late). Use this to continue the work in a new chat. Replaces version 1, which was written before PR #1 was merged._
+_As of 22 Oct 2026. Use this to continue the work in a new chat._
 
-_Covers the original session (session_01CvoFQYaxJMtVgAddYSfv2H) and the second session (session_01KtXKscty5bAZEPF3S6TpJe)._
+_Covers the original session (session_01CvoFQYaxJMtVgAddYSfv2H) and, from the branch history and live database, the work a second session (session_01KtXKscty5bAZEPF3S6TpJe) has since pushed._
 
-## 1. What Phoenix is
+## 1. What Watchtower is
 
-A lightweight business-news dashboard. MVP0 shows Malaysian business headlines in one feed, newest first. Each headline opens the publisher's original article in a new tab. Phoenix stores only headline metadata, never article text, summaries or images.
+A lightweight business-news dashboard. MVP0 shows Malaysian business headlines in one feed, newest first. Each headline opens the publisher's original article in a new tab. Watchtower stores only headline metadata, never article text, summaries or images.
 
 ## 2. Where everything lives
 
 | Thing | Location |
 | --- | --- |
 | Code repository | GitHub `benjamin-kee/fluffy-orca` |
-| Main branch | `main` holds all MVP0 work so far. Vercel deploys from it. |
-| Working branch | `claude/inspiring-galileo-33vjef`. Restarted from `main` after each merge; each round of work gets a new pull request. |
-| Pull requests | #1 (MVP0 build) merged 22 Oct. #2 (backfill quota, Vercel steps, this hand-off) merged 22 Oct. No automated checks are set up. |
+| Working branch | `claude/inspiring-galileo-33vjef` (latest code commit `d01b814`, plus this hand-off file) |
+| Pull request | https://github.com/benjamin-kee/fluffy-orca/pull/1, open into `main`, no conflicts, no automated checks set up. **Don't merge until MVP0 is finished.** |
 | Rules for Claude | `CLAUDE.md` (repository root) |
 | Approved spec | `docs/specs/MVP0.md`. The original spec plus an **"Approved changes"** section; the approved changes win where they conflict. |
 | Backlog / future fixes | `docs/roadmap.md` |
 | Database | Supabase project **"Phoenix MVP"**, ref `khruuuifeziuljbdpwbr`, URL `https://khruuuifeziuljbdpwbr.supabase.co` |
-| Cloud environment | The **"Default"** environment with **no description**. Not the other "Default" ("trusted network access"). Consider renaming it "Phoenix". |
+| Cloud environment | The **"Default"** environment with **no description**. Not the other "Default" ("trusted network access"). Consider renaming it "Watchtower". |
 
 ## 3. Working rules (from `CLAUDE.md`)
 
@@ -41,11 +40,11 @@ A lightweight business-news dashboard. MVP0 shows Malaysian business headlines i
    - 24 hours or older: date and time in the **viewer's own device time zone**, e.g. "22 Sept 2026, 3:05 pm".
 3. **URLs.**
    - `source_url` is the link exactly as received.
-   - `article_url` is the cleaned link, with `utm_*` tags and `#fragment` removed. It's the link Phoenix opens.
+   - `article_url` is the cleaned link, with `utm_*` tags and `#fragment` removed. It's the link Watchtower opens.
 4. **Sources (history).**
    - BERNAMA was replaced by Malay Mail, and The Star by FMT, because The Star's feeds return 404.
    - The Edge has no RSS feed. NST was never confirmed.
-   - All of this is superseded by decision 5. (`docs/specs/MVP0.md` still mentions RSS in its original text; the approved changes override it.)
+   - All of this is superseded by decision 5.
 5. **GNews API replaces all RSS**, on the free plan.
    - Query: top headlines, `category=business`, `country=my`, `lang=en`, `max=10`. (The query was Claude's choice, flagged to the owner.)
    - `source` is the publisher name GNews provides, e.g. "The Star".
@@ -60,11 +59,6 @@ A lightweight business-news dashboard. MVP0 shows Malaysian business headlines i
    - The app URL and `CRON_SECRET` go in Supabase Vault.
 9. **Hosting:** Vercel (from the spec). Replit was discussed; we stay on Vercel unless the owner approves a change.
 10. **No web scraping.** Collecting headlines from publisher web pages was discussed and not pursued.
-11. **30-day backfill (approved change 6).**
-    - `npm run backfill -- [max_requests]` loads the free plan's 30 days of history, oldest day first.
-    - It may use up to **90** of the 100 daily GNews requests. **10 requests (about 100 headlines)** stay reserved for regular ingestion.
-    - It runs daily from 23 Oct to 21 Nov 2026, then the rule is reviewed.
-12. **Database permissions.** Newer Supabase projects give API keys no table access by default. `service_role` is granted `select, insert` on `articles` only (`0003`). The public key has no access.
 
 ## 5. Architecture
 
@@ -109,14 +103,14 @@ GNews API ──► sources/gnews.ts (normalize) ──► ingest.ts ──► a
 | 4, 9 | News source | ✅ GNews adapter |
 | 5 | Ingestion and `/api/ingest` | ✅ Done |
 | 6–8 | Feed page, pagination, 50/100 selector, time display | ✅ Done |
-| 10 | Real headlines in the feed | ✅ First run: 10 fetched, 10 inserted. Database now holds **664 articles from 75 publishers**, published 23 Sep–22 Oct 2026, including the first backfill run. |
-| 11 | Check duplicates are blocked | ✅ Second run: 10 fetched, **0 inserted** |
+| 10 | Real headlines in the feed | ✅ Database holds **664 articles from 75 publishers**, published 23 Sep–22 Oct 2026 (checked 22 Oct). Loaded by the second session, including a 30-day backfill. |
+| 11 | Check duplicates are blocked | ⚠️ The unique rule is in place; confirm with the second session whether a repeat run was checked |
 | 12 | Every-3-hours `pg_cron` schedule | 🟡 Written (`0002_schedule_ingestion.sql`), **not yet applied**. It needs the deployed URL, so it runs after milestone 14. |
 | 13 | Tests: normalization and deduplication | ✅ Added (`npm test`, Node's built-in runner) |
-| 14 | Deploy to Vercel | 🟡 **In progress.** The owner created Vercel project **"watchtower_01"** (team "Watchtower01") from `main`. The Supabase integration offered by Vercel was skipped (Phoenix already has its database). Next: deploy, send Claude the production URL, store `CRON_SECRET` in Vault. |
-| 15 | Final README | 🟡 All sections written, including "Deploying to Vercel"; a final check is due once deployment is confirmed |
+| 14 | Deploy to Vercel: import repo, add 4 env vars, deploy | 🔜 **Next.** Then store the URL and `CRON_SECRET` in Vault and apply `0002` |
+| 15 | Final README | 🟡 Manual ingestion, backfill, scheduling and tests sections are written; "Deploying to Vercel" is still pending |
 
-**Added beyond the original plan:** the 30-day backfill, now approved change 6 in the spec.
+**Added beyond the original plan:** a 30-day backfill command (`scripts/backfill.ts`, commit `d01b814`). The original MVP0 spec doesn't include it; check that the owner approved it in the second session.
 
 ## 7. Setup already done by the owner
 
@@ -125,9 +119,7 @@ GNews API ──► sources/gnews.ts (normalize) ──► ingest.ts ──► a
   - **Environment variables:** `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GNEWS_API_KEY`.
   - **Allowed domains:** `khruuuifeziuljbdpwbr.supabase.co`, `gnews.io` (also earlier: `www.malaymail.com`, `www.thestar.com.my`, `cms.freemalaysiatoday.com`).
 - Environment variables only load when a session starts. Sessions started before they were added can't see them.
-- `SUPABASE_SERVICE_ROLE_KEY` now holds the **secret** key (`sb_secret_…`). An earlier value was the publishable key, which the database refuses.
 - Generate a temporary `CRON_SECRET` for local testing. Never print or commit secrets, and never ask for keys in chat.
-- **Daily backfill scheduled task** "Phoenix daily GNews backfill": every day at 00:22 UTC (8:22am Malaysia time), runs `npm run backfill -- 90` from `main` in session_01KtXKscty5bAZEPF3S6TpJe. It disables itself after 21 Nov 2026.
 
 ## 8. Open items and caveats
 
@@ -137,21 +129,19 @@ GNews API ──► sources/gnews.ts (normalize) ──► ingest.ts ──► a
   - "RLS enabled, no policy" is expected.
   - The warning about `public.rls_auto_enable()` is harmless. It's an event-trigger function that auto-enables RLS on new tables and can't be called through the API. **Leave it.**
 - **GNews query** (business, Malaysia, English) was Claude's default. The owner may want to adjust it.
-- **GNews data quality:** some titles arrive already truncated (e.g. "day for Zetrix AI to fix RM2b sukuk covenant breach"), and "business" includes some motoring and aviation news. Phoenix stores titles as received.
-- **`next dev` edits `CLAUDE.md`:** Next.js 16 appends an "agent rules" block to `CLAUDE.md` whenever `npm run dev` starts. Revert it (`git checkout CLAUDE.md`) and never commit it. Adding `agentRules: false` to `next.config.ts` would stop it; awaiting owner approval.
-- **Tests' test runner:** Node built-in runner plus `tests/resolve.mjs` (no dependencies). The owner may instead approve one dev dependency (`tsx` or `vitest`).
 - The other Supabase project, "benjamin-kee's Project", is paused and unrelated. Don't touch it.
 
 ## 9. Starter prompt for the new session
 
-> Continue Phoenix MVP0. Work on branch `claude/inspiring-galileo-33vjef`, restarted from `main`. Read `CLAUDE.md`, `docs/specs/MVP0.md` (including "Approved changes" 1–6), `docs/roadmap.md`, `README.md` and the latest hand-off summary in `handoff/` first.
+> Continue Watchtower MVP0 on branch `claude/inspiring-galileo-33vjef` (PR benjamin-kee/fluffy-orca#1). Read `CLAUDE.md`, `docs/specs/MVP0.md` (including "Approved changes"), `docs/roadmap.md`, `README.md` and this hand-off summary in `handoff/` first.
 >
-> `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (secret key) and `GNEWS_API_KEY` are set as environment variables. The database holds real headlines, and the daily backfill scheduled task is running.
+> `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` and `GNEWS_API_KEY` are set as environment variables. The database already holds real headlines.
 >
 > Next:
 > 1. Confirm the variables are visible without printing their values, and that `npm test` and `npm run build` pass.
-> 2. Help me finish deploying Vercel project "watchtower_01" (milestone 14). I'll give you the production URL.
-> 3. Store the URL in Supabase Vault (I store `CRON_SECRET` myself), apply `0002_schedule_ingestion.sql`, and confirm the first scheduled call works (milestone 12).
-> 4. Do a final README check (milestone 15).
+> 2. Confirm duplicate blocking (milestone 11) by running ingestion again; report fetched vs. inserted.
+> 3. Guide me step by step through deploying to Vercel (milestone 14), including the four environment variables and a new `CRON_SECRET`.
+> 4. Then store the deployed URL and `CRON_SECRET` in Supabase Vault, apply `0002_schedule_ingestion.sql`, and confirm the first scheduled run (milestone 12).
+> 5. Finish the README's deployment section (milestone 15).
 >
 > Follow the scope rules in `CLAUDE.md`: ask before anything outside the spec.

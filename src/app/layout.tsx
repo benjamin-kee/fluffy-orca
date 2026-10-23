@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Phoenix",
+  title: "Watchtower",
   description: "Malaysian business news headlines in one feed.",
 };
 

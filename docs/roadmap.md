@@ -1,4 +1,4 @@
-# Phoenix Product Roadmap: Backlog
+# Watchtower Product Roadmap: Backlog
 
 Items recorded during MVP0 that are **not** being implemented now. Nothing here is approved for implementation without explicit sign-off.
 
@@ -6,7 +6,7 @@ Items recorded during MVP0 that are **not** being implemented now. Nothing here 
 
 | Item | Current MVP0 behaviour | Possible improvement |
 | --- | --- | --- |
-| Articles with a missing or unreadable publication date | Skipped during ingestion and logged as a warning. They do not appear in the feed. | Decide how to include them, e.g. fall back to the Phoenix ingestion time, with a clear display rule. |
+| Articles with a missing or unreadable publication date | Skipped during ingestion and logged as a warning. They do not appear in the feed. | Decide how to include them, e.g. fall back to the Watchtower ingestion time, with a clear display rule. |
 
 ## Future fix
 
