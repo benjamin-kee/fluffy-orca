@@ -4,18 +4,21 @@ Watchtower is a lightweight business-news dashboard. MVP0 collects business head
 
 The approved scope is in [`docs/specs/MVP0.md`](docs/specs/MVP0.md). Out-of-scope ideas and known improvements are tracked in [`docs/roadmap.md`](docs/roadmap.md).
 
-> **Status:** MVP0 is being built milestone by milestone. Sections marked _pending_ are completed when that part is built.
+Live at <https://watchtower01.vercel.app>.
 
 ## What MVP0 does
 
 - Collects headline metadata (title, publisher, links, publication time) for Malaysian business news from the [GNews API](https://gnews.io). It does not store article text, summaries or images.
 - Stores each article once, with duplicates blocked by the database.
-- Shows one feed of headlines with source and publication time, 50 or 100 per page, with numbered pagination.
+- Refreshes automatically every 3 hours, and can load up to 30 days of past headlines.
+- Shows one feed of headlines with source and publication time, 50 or 100 per page, with numbered pagination. Times under 24 hours old show as "30 mins ago"; older ones show the date and time in the viewer's time zone.
 - Opens the publisher's article in a new tab when a headline is clicked.
+
+On the GNews free plan, headlines become available 12 hours after publication, and use is limited to non-commercial purposes.
 
 ## Prerequisites
 
-- Node.js 20.9 or later
+- Node.js 22.18 or later
 - A [Supabase](https://supabase.com) project (the free plan is enough)
 - A [Vercel](https://vercel.com) account, for deployment
 - A [GNews](https://gnews.io) API key (the free plan is enough)
@@ -36,12 +39,12 @@ cp .env.example .env.local
 
 | Variable | Where to find it |
 | --- | --- |
-| `SUPABASE_URL` | Supabase dashboard → Project Settings → API → Project URL |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase dashboard → Project Settings → API → `service_role` key |
+| `SUPABASE_URL` | Supabase dashboard → Project Settings → Data API → Project URL, e.g. `https://<project-ref>.supabase.co` |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase dashboard → Project Settings → API Keys → the **secret** key (`sb_secret_…`), or the legacy `service_role` key. Not the publishable key. |
 | `CRON_SECRET` | Any long random value, e.g. `openssl rand -hex 32`. Required to call `/api/ingest` |
 | `GNEWS_API_KEY` | GNews dashboard |
 
-The service-role key gives full database access. It is used only on the server. Never commit it, and never give it a `NEXT_PUBLIC_` prefix.
+The secret key gives full database access. It is used only on the server. Never commit it, and never give it a `NEXT_PUBLIC_` prefix.
 
 ## Database setup
 
@@ -61,6 +64,8 @@ Other scripts:
 
 - `npm run build`: production build
 - `npm run typecheck`: TypeScript check
+- `npm test`: tests (see [Running tests](#running-tests))
+- `npm run backfill`: load past headlines (see [Backfilling past headlines](#backfilling-past-headlines))
 
 ## Manually triggering ingestion
 
@@ -69,6 +74,8 @@ With the app running, call the ingest endpoint with your `CRON_SECRET`:
 ```bash
 curl -H "Authorization: Bearer $CRON_SECRET" http://localhost:3000/api/ingest
 ```
+
+For the deployed app, use its address instead, e.g. `https://watchtower01.vercel.app/api/ingest`, with the `CRON_SECRET` set in Vercel.
 
 The response lists, for each source, how many articles were fetched and how many were new. Requests without the correct secret get `401 Unauthorized`. Each call uses one GNews request (the free plan allows 100 per day).
 
@@ -80,7 +87,9 @@ The GNews free plan keeps 30 days of history. To fill the feed with that history
 npm run backfill -- 90
 ```
 
-The number is the most GNews requests this run may use (default 90), leaving 10 of the 100 daily requests (about 100 headlines) for regular ingestion. It works through the last 30 days oldest first, so days about to expire are fetched first, and stops when the limit is reached. Run it again on a later day to continue. Days already stored cost one request each to check, and duplicates are skipped as usual. It needs `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` and `GNEWS_API_KEY`, and Node.js 22.18 or later.
+The number is the most GNews requests this run may use (default 90), leaving 10 of the 100 daily requests (about 100 headlines) for regular ingestion. It works through the last 30 days oldest first, so days about to expire are fetched first, and stops when the limit is reached. Run it again on a later day to continue. Days already stored cost one request each to check, and duplicates are skipped as usual. It runs on your own machine (not on Vercel) and needs `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` and `GNEWS_API_KEY`.
+
+From 23 Oct to 21 Nov 2026 the backfill runs once a day after the GNews quota resets at 00:00 UTC (8am Malaysia time), as set out in approved change 6 of the spec.
 
 ## How scheduled ingestion works
 
@@ -105,13 +114,13 @@ To check recent runs, query `cron.job_run_details` (did the job run) and `net._h
 npm test
 ```
 
-The tests cover source normalization and article deduplication. They use Node's built-in test runner, with no extra test dependencies, and need Node.js 22.18 or later. They do not call GNews or the database.
+The tests cover source normalization and article deduplication. They use Node's built-in test runner, with no extra test dependencies. They do not call GNews or the database.
 
 ## Deploying to Vercel
 
-1. In Vercel, choose **Add New → Project** and import this GitHub repository. Vercel detects Next.js; keep the default build settings. Production deploys come from `main`.
-2. Under **Environment Variables**, add `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GNEWS_API_KEY` and `CRON_SECRET` (a new long random value, e.g. `openssl rand -hex 32`). Keep a copy of `CRON_SECRET` for the next step.
-3. Select **Deploy**. When it finishes, open the production URL; the feed should show the stored headlines.
+1. In Vercel, choose **Add New → Project** and import this GitHub repository. Vercel detects Next.js; keep the default build settings. Production deploys come from `main`. Skip the optional Supabase integration Vercel offers; the app uses the variables below.
+2. Under **Environment Variables** (in the project's sidebar once it exists), add `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GNEWS_API_KEY` and `CRON_SECRET` (a new long random value, e.g. `openssl rand -hex 32`). Keep a copy of `CRON_SECRET` for the next step.
+3. Select **Deploy**. When it finishes, open the production address shown under **Domains** on the project's Overview page (e.g. `https://watchtower01.vercel.app`); the feed should show the stored headlines. Use this permanent address, not a deployment address containing random characters.
 4. Turn on scheduled ingestion as described in [How scheduled ingestion works](#how-scheduled-ingestion-works), using the production URL and the same `CRON_SECRET`.
 
-Every push to `main` deploys again. If you change `CRON_SECRET` in Vercel, update `watchtower_cron_secret` in Supabase Vault too (`select vault.update_secret(id, '<new value>') from vault.secrets where name = 'watchtower_cron_secret';`), then redeploy.
+Every push to `main` deploys again. If you change `CRON_SECRET` in Vercel, update `watchtower_cron_secret` in Supabase Vault too (`select vault.update_secret(id, '<new value>') from vault.secrets where name = 'watchtower_cron_secret';`), then redeploy. Changes to any environment variable take effect only after a redeploy (**Deployments → ⋯ → Redeploy**).
