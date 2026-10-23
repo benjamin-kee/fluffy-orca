@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Watchtower",
-  description: "Malaysian business news headlines in one feed.",
+  description: "Business news headline in just one feed",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
