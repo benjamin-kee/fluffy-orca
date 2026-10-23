@@ -20,7 +20,7 @@ export default async function HomePage({ searchParams }: Props) {
     console.error(`[feed] failed to load headlines: ${err instanceof Error ? err.message : String(err)}`);
     return (
       <main>
-        <h1>Phoenix</h1>
+        <h1>Watchtower</h1>
         <p>Headlines could not be loaded. Please try again later.</p>
       </main>
     );
@@ -30,7 +30,7 @@ export default async function HomePage({ searchParams }: Props) {
 
   return (
     <main>
-      <h1>Phoenix</h1>
+      <h1>Watchtower</h1>
       <PageSizeSelect size={size} />
       {articles.length > 0 ? (
         <ol className="feed">

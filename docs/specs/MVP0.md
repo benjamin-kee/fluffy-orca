@@ -1,6 +1,6 @@
-# Phoenix — MVP0 News Dashboard
+# Watchtower — MVP0 News Dashboard
 
-I am building Phoenix, a lightweight business-news intelligence platform.
+I am building Watchtower, a lightweight business-news intelligence platform.
 
 For this task, build ONLY MVP0 according to the specification below.
 
@@ -44,9 +44,9 @@ As a user, I want a central dashboard that aggregates business news from selecte
 
 ## MVP0 content model
 
-Phoenix MVP0 is a news index and aggregation dashboard.
+Watchtower MVP0 is a news index and aggregation dashboard.
 
-Phoenix does NOT ingest or host the full publisher article.
+Watchtower does NOT ingest or host the full publisher article.
 
 For each RSS article, ingest only the metadata needed for the news dashboard:
 
@@ -56,7 +56,7 @@ For each RSS article, ingest only the metadata needed for the news dashboard:
 - original publisher article URL;
 - publication date/time;
 - publisher-provided GUID or external identifier;
-- Phoenix ingestion timestamp.
+- Watchtower ingestion timestamp.
 
 Do NOT ingest:
 
@@ -138,17 +138,17 @@ If there is a significant technical reason why progressive batches would make th
 
 In MVP0:
 
-Phoenix headline  
+Watchtower headline  
 → user clicks  
 → original publisher article opens in a new browser tab.
 
-Do NOT create a Phoenix article-detail page in MVP0.
+Do NOT create a Watchtower article-detail page in MVP0.
 
 ### Future context only
 
-A later Phoenix version may introduce a dedicated Phoenix article page.
+A later Watchtower version may introduce a dedicated Watchtower article page.
 
-Where a publisher API, licence, or explicit content permission allows Phoenix to access and display full article content, the full article may eventually be displayed on that Phoenix article page.
+Where a publisher API, licence, or explicit content permission allows Watchtower to access and display full article content, the full article may eventually be displayed on that Watchtower article page.
 
 This is NOT part of MVP0.
 
@@ -280,7 +280,7 @@ The MVP0 data model must NOT contain fields for:
 
 Use a common `NewsSource` interface so that BERNAMA and The Star are isolated from the rest of the application.
 
-`NewsSource` means a standard interface used by Phoenix to retrieve and normalize article metadata from different publishers.
+`NewsSource` means a standard interface used by Watchtower to retrieve and normalize article metadata from different publishers.
 
 For MVP0 there will be two source implementations:
 
@@ -296,7 +296,7 @@ BERNAMA RSS / The Star RSS
 → deduplicate  
 → save through ArticleRepository  
 → PostgreSQL  
-→ Phoenix news feed
+→ Watchtower news feed
 
 The rest of the application should not contain BERNAMA-specific or The-Star-specific business logic.
 
@@ -306,7 +306,7 @@ Do not create a generalized plugin framework or complex ingestion architecture b
 
 ## Deduplication
 
-Deduplication is the process of preventing an article already stored in Phoenix from being stored again during a later RSS refresh.
+Deduplication is the process of preventing an article already stored in Watchtower from being stored again during a later RSS refresh.
 
 For example:
 
@@ -323,7 +323,7 @@ Later RSS retrieval:
 - Article C
 - Article D
 
-Phoenix should recognize that Articles A, B and C already exist and store only Article D.
+Watchtower should recognize that Articles A, B and C already exist and store only Article D.
 
 Prefer the simplest reliable deduplication strategy using:
 
@@ -336,7 +336,7 @@ Do not implement semantic or AI-based deduplication.
 
 ## Frontend
 
-Create one main Phoenix news-feed page.
+Create one main Watchtower news-feed page.
 
 The feed should be visually simple, clean and functional.
 
@@ -562,7 +562,7 @@ The following changes were approved by the product owner after the original spec
    - Headlines published 24 hours ago or more show the release date and time in the user's own system time zone.
 3. **Article URLs.**
    - `source_url` is the link to the specific article exactly as the RSS feed provides it.
-   - `article_url` is the cleaned version of that link, with tracking parameters (e.g. `utm_*`) and any `#` fragment removed. Phoenix opens this link when a headline is clicked.
+   - `article_url` is the cleaned version of that link, with tracking parameters (e.g. `utm_*`) and any `#` fragment removed. Watchtower opens this link when a headline is clicked.
 4. **News sources.** The two sandbox sources named above are replaced as follows:
    - BERNAMA Business RSS is replaced by **Malay Mail Money**: `https://www.malaymail.com/feed/rss/money`.
    - The Star Business RSS is replaced by **Free Malaysia Today (FMT) Business**: `https://cms.freemalaysiatoday.com/category/business/feed`. The Star's feeds returned "Page Not Found" when tested on 25–26 Sep 2026; The Star may be re-added if its feeds work again.
@@ -572,7 +572,7 @@ The following changes were approved by the product owner after the original spec
    - Each article's `source` is the original publisher named by GNews (for example "The Star").
    - Free-plan limits apply: 100 requests per day, at most 10 articles per request, a 12-hour delay before articles become available, and non-commercial use only.
    - The API key is configured through the `GNEWS_API_KEY` environment variable.
-6. **30-day backfill.** Phoenix fills the feed with the GNews free plan's 30 days of history, in addition to regular ingestion.
+6. **30-day backfill.** Watchtower fills the feed with the GNews free plan's 30 days of history, in addition to regular ingestion.
    - A manual command, `npm run backfill -- [max_requests]`, fetches past headlines oldest day first, so days about to leave the 30-day window are fetched first. It uses the same GNews request settings, Article model and duplicate prevention as regular ingestion.
    - Each day it may use up to 90 GNews requests. The remaining 10 requests (about 100 headlines) are kept for regular ingestion of new headlines.
    - It runs once a day, after the GNews quota resets at 00:00 UTC (8am Malaysia time), from 23 Oct to 21 Nov 2026. After that period the rule is to be reviewed.

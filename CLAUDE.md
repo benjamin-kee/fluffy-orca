@@ -1,4 +1,4 @@
-# Phoenix Claude Code Instructions
+# Watchtower Claude Code Instructions
 
 - Product specifications under `docs/specs/` are authoritative.
 - Implement only the currently approved MVP specification.

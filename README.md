@@ -1,6 +1,6 @@
-# Phoenix
+# Watchtower
 
-Phoenix is a lightweight business-news dashboard. MVP0 collects business headlines from Malaysian news sources into one feed, newest first. Each headline links to the original article on the publisher's site.
+Watchtower is a lightweight business-news dashboard. MVP0 collects business headlines from Malaysian news sources into one feed, newest first. Each headline links to the original article on the publisher's site.
 
 The approved scope is in [`docs/specs/MVP0.md`](docs/specs/MVP0.md). Out-of-scope ideas and known improvements are tracked in [`docs/roadmap.md`](docs/roadmap.md).
 
@@ -91,13 +91,13 @@ Set it up once, after deploying:
 1. In the Supabase **SQL Editor**, store the deployed endpoint and the same `CRON_SECRET` the app uses:
 
    ```sql
-   select vault.create_secret('https://<your-app>.vercel.app/api/ingest', 'phoenix_ingest_url');
-   select vault.create_secret('<CRON_SECRET>', 'phoenix_cron_secret');
+   select vault.create_secret('https://<your-app>.vercel.app/api/ingest', 'watchtower_ingest_url');
+   select vault.create_secret('<CRON_SECRET>', 'watchtower_cron_secret');
    ```
 
 2. Run the contents of [`supabase/migrations/0002_schedule_ingestion.sql`](supabase/migrations/0002_schedule_ingestion.sql).
 
-To check recent runs, query `cron.job_run_details` (did the job run) and `net._http_response` (what the endpoint returned; kept for 6 hours). To stop the schedule, run `select cron.unschedule('phoenix-ingest');`.
+To check recent runs, query `cron.job_run_details` (did the job run) and `net._http_response` (what the endpoint returned; kept for 6 hours). To stop the schedule, run `select cron.unschedule('watchtower-ingest');`.
 
 ## Running tests
 
@@ -114,4 +114,4 @@ The tests cover source normalization and article deduplication. They use Node's 
 3. Select **Deploy**. When it finishes, open the production URL; the feed should show the stored headlines.
 4. Turn on scheduled ingestion as described in [How scheduled ingestion works](#how-scheduled-ingestion-works), using the production URL and the same `CRON_SECRET`.
 
-Every push to `main` deploys again. If you change `CRON_SECRET` in Vercel, update `phoenix_cron_secret` in Supabase Vault too (`select vault.update_secret(id, '<new value>') from vault.secrets where name = 'phoenix_cron_secret';`), then redeploy.
+Every push to `main` deploys again. If you change `CRON_SECRET` in Vercel, update `watchtower_cron_secret` in Supabase Vault too (`select vault.update_secret(id, '<new value>') from vault.secrets where name = 'watchtower_cron_secret';`), then redeploy.
