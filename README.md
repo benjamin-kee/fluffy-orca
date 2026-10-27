@@ -13,7 +13,7 @@ Live at <https://watchtower01.vercel.app>.
 - Refreshes automatically every 3 hours, and can load up to 30 days of past headlines.
 - Shows one feed of headlines with source and publication time, 50 or 100 per page, with numbered pagination. Times under 24 hours old show as "30 mins ago"; older ones show the date and time in the viewer's time zone.
 - Opens the publisher's article in a new tab when a headline is clicked.
-- Filters the feed to one day, picked from 1 January 2026 to today. A day runs midnight to midnight in the viewer's own time zone, which the date picker adds to the link (`?date=2026-10-21&tz=America%2FToronto`). A link without `tz` uses Malaysia time.
+- Filters the feed by a From and To date, both included (`?from=2026-10-19&to=2026-10-21`). Either can be left empty. Dates can be picked from the day of the oldest stored headline to today. Every day runs midnight to midnight Malaysia time, for every viewer. Older `?date=2026-10-21` links still work as a one-day range.
 
 On the GNews free plan, headlines become available 12 hours after publication, and use is limited to non-commercial purposes.
 

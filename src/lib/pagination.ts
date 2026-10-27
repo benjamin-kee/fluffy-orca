@@ -1,4 +1,4 @@
-import type { DayParam } from "@/lib/dateFilter";
+import type { RangeParam } from "@/lib/dateFilter";
 
 export const PAGE_SIZES = [50, 100] as const;
 export const DEFAULT_PAGE_SIZE = 50;
@@ -20,13 +20,11 @@ export function parsePageParams(params: SearchParams): PageParams {
   };
 }
 
-// Links keep the chosen day, if any.
-export function pageHref(page: number, size: number, day: DayParam | null = null): string {
+// Links keep the chosen dates, if any.
+export function pageHref(page: number, size: number, range: RangeParam | null = null): string {
   const params = new URLSearchParams();
-  if (day) {
-    params.set("date", day.date);
-    params.set("tz", day.timeZone);
-  }
+  if (range?.from) params.set("from", range.from);
+  if (range?.to) params.set("to", range.to);
   params.set("page", String(page));
   params.set("size", String(size));
   return `/?${params}`;

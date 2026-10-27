@@ -1,42 +1,39 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { EARLIEST_DATE, isValidDate, localDate, type DayParam } from "@/lib/dateFilter";
+import { isValidDate, type RangeParam } from "@/lib/dateFilter";
 import { pageHref } from "@/lib/pagination";
 
-// Picks one day in the viewer's own time zone. Picking a date goes to page 1; clearing it shows all dates.
-export function DateFilter({ day, size }: { day: DayParam | null; size: number }) {
+type Props = { range: RangeParam | null; size: number; earliest: string | null; today: string };
+
+// From and To dates, each from the oldest headline's day to today in Malaysia. Changing either
+// goes to page 1; clearing both shows all dates.
+export function DateFilter({ range, size, earliest, today }: Props) {
   const router = useRouter();
-  // Today on the viewer's clock, set in the browser so it uses their time zone.
-  const [today, setToday] = useState<string>();
+  const from = range?.from ?? "";
+  const to = range?.to ?? "";
 
-  useEffect(() => {
-    setToday(localDate(new Date()));
-  }, []);
-
-  function onChange(value: string) {
-    if (value === "") {
-      router.push(pageHref(1, size));
-      return;
-    }
-    // Skips partial values some browsers report while the year is being typed.
-    if (!isValidDate(value) || (today && value > today)) return;
-    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    router.push(pageHref(1, size, { date: value, timeZone }));
+  function onChange(end: "from" | "to", value: string) {
+    // Skips partial values some browsers report while the year is being typed, and out-of-range days.
+    if (value !== "" && (!isValidDate(value) || (earliest && value < earliest) || value > today)) return;
+    const next = { from: from || null, to: to || null, [end]: value || null };
+    router.push(pageHref(1, size, next.from || next.to ? next : null));
   }
 
+  const input = (end: "from" | "to", value: string) => (
+    <input
+      key={value}
+      type="date"
+      min={earliest ?? undefined}
+      max={today}
+      defaultValue={value}
+      onChange={(e) => onChange(end, e.target.value)}
+    />
+  );
+
   return (
-    <label className="date-filter">
-      Date{" "}
-      <input
-        key={day?.date ?? ""}
-        type="date"
-        min={EARLIEST_DATE}
-        max={today}
-        defaultValue={day?.date ?? ""}
-        onChange={(e) => onChange(e.target.value)}
-      />
-    </label>
+    <span className="date-filter">
+      <label>From {input("from", from)}</label> <label>To {input("to", to)}</label>
+    </span>
   );
 }

@@ -1,4 +1,4 @@
-// Shown when the chosen day has no headlines.
+// Shown when the chosen dates have no headlines.
 export function EmptyDay() {
   return (
     <div className="empty-day">
@@ -20,7 +20,7 @@ export function EmptyDay() {
         <path d="M47 51 L62 44" stroke="#2f6db5" strokeWidth="6" strokeLinecap="round" />
         <circle cx="63" cy="44" r="3" fill="#e9b98f" />
       </svg>
-      <p>Our keyboard warriors are working hard to get your news.</p>
+      <p>Our keyboard warriors are working hard to add more news for you.</p>
     </div>
   );
 }

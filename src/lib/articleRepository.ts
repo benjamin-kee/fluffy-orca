@@ -29,36 +29,39 @@ export async function insertNewArticles(articles: NewArticle[]): Promise<number>
   return data.length;
 }
 
-export async function countArticles(): Promise<number> {
-  const { count, error } = await getDb()
-    .from(TABLE)
-    .select("id", { count: "exact", head: true });
+// Optional publication window: start <= published_at < end (ISO instants). A null bound is open.
+export type PublishedWindow = { start: string | null; end: string | null };
 
+// Number of stored articles, within the window if one is given.
+export async function countArticles(window: PublishedWindow | null = null): Promise<number> {
+  let query = getDb().from(TABLE).select("id", { count: "exact", head: true });
+  if (window?.start) query = query.gte("published_at", window.start);
+  if (window?.end) query = query.lt("published_at", window.end);
+
+  const { count, error } = await query;
   if (error) throw new Error(`Failed to count articles: ${error.message}`);
   return count ?? 0;
 }
 
-// Number of stored articles published in [from, to).
-export async function countArticlesPublishedBetween(from: string, to: string): Promise<number> {
-  const { count, error } = await getDb()
+// Publication time of the oldest stored article, or null when there are none.
+export async function oldestPublishedAt(): Promise<Date | null> {
+  const { data, error } = await getDb()
     .from(TABLE)
-    .select("id", { count: "exact", head: true })
-    .gte("published_at", from)
-    .lt("published_at", to);
+    .select("published_at")
+    .order("published_at", { ascending: true })
+    .limit(1);
 
-  if (error) throw new Error(`Failed to count articles: ${error.message}`);
-  return count ?? 0;
+  if (error) throw new Error(`Failed to read oldest article: ${error.message}`);
+  return data.length > 0 ? new Date(data[0].published_at) : null;
 }
-
-// Optional publication window: start <= published_at < end (ISO instants).
-export type PublishedWindow = { start: string; end: string };
 
 // Newest first by publication time; id breaks ties so pages are stable.
 export async function listArticles(offset: number, limit: number, window: PublishedWindow | null = null): Promise<Article[]> {
   let query = getDb()
     .from(TABLE)
     .select("id, title, source, source_url, article_url, published_at, ingested_at, external_id");
-  if (window) query = query.gte("published_at", window.start).lt("published_at", window.end);
+  if (window?.start) query = query.gte("published_at", window.start);
+  if (window?.end) query = query.lt("published_at", window.end);
 
   const { data, error } = await query
     .order("published_at", { ascending: false })

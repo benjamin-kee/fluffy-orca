@@ -1,15 +1,15 @@
 import Link from "next/link";
-import type { DayParam } from "@/lib/dateFilter";
+import type { RangeParam } from "@/lib/dateFilter";
 import { pageHref, pageNumbers } from "@/lib/pagination";
 
-type Props = { page: number; size: number; totalPages: number; day: DayParam | null };
+type Props = { page: number; size: number; totalPages: number; range: RangeParam | null };
 
-export function Pagination({ page, size, totalPages, day }: Props) {
+export function Pagination({ page, size, totalPages, range }: Props) {
   if (totalPages <= 1) return null;
 
   return (
     <nav className="pagination" aria-label="Pages">
-      {page > 1 ? <Link href={pageHref(page - 1, size, day)}>Previous</Link> : <span className="disabled">Previous</span>}
+      {page > 1 ? <Link href={pageHref(page - 1, size, range)}>Previous</Link> : <span className="disabled">Previous</span>}
       {pageNumbers(page, totalPages).map((n, i) =>
         n === null ? (
           <span key={`gap-${i}`}>…</span>
@@ -18,12 +18,12 @@ export function Pagination({ page, size, totalPages, day }: Props) {
             {n}
           </span>
         ) : (
-          <Link key={n} href={pageHref(n, size, day)}>
+          <Link key={n} href={pageHref(n, size, range)}>
             {n}
           </Link>
         ),
       )}
-      {page < totalPages ? <Link href={pageHref(page + 1, size, day)}>Next</Link> : <span className="disabled">Next</span>}
+      {page < totalPages ? <Link href={pageHref(page + 1, size, range)}>Next</Link> : <span className="disabled">Next</span>}
     </nav>
   );
 }
