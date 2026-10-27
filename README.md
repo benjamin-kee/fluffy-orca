@@ -124,3 +124,21 @@ The tests cover source normalization and article deduplication. They use Node's 
 4. Turn on scheduled ingestion as described in [How scheduled ingestion works](#how-scheduled-ingestion-works), using the production URL and the same `CRON_SECRET`.
 
 Every push to `main` deploys again. If you change `CRON_SECRET` in Vercel, update `watchtower_cron_secret` in Supabase Vault too (`select vault.update_secret(id, '<new value>') from vault.secrets where name = 'watchtower_cron_secret';`), then redeploy. Changes to any environment variable take effect only after a redeploy (**Deployments → ⋯ → Redeploy**).
+
+## Syncing docs to Google Drive
+
+Product documents live in [`docs/`](docs/README.md), which is the source of truth. A GitHub Action ([`.github/workflows/sync-docs-to-drive.yml`](.github/workflows/sync-docs-to-drive.yml)) copies them to the Watchtower folder in Google Drive whenever `docs/` changes on `main`. For each `.md` file, Drive gets the file itself plus a Google Doc copy, side by side in the matching folder. Docs are read-only mirrors: comment there, but edit in GitHub, because each sync overwrites them. A file removed from `docs/` moves to its section's `Retired` folder in Drive. Nothing is deleted.
+
+One-time setup, signed in to Google as the owner of the Drive folder:
+
+1. In the [Google Cloud console](https://console.cloud.google.com), create a project (e.g. "Watchtower Docs Sync").
+2. **APIs & Services → Library**: enable the **Google Drive API**.
+3. **Google Auth Platform** (OAuth consent screen): choose **Get started**, enter an app name and your email, and pick **External**. Then under **Audience**, select **Publish app**. Without this step, the sign-in stops working after 7 days.
+4. **Clients → Create client**: choose **Web application** and add `https://developers.google.com/oauthplayground` as an authorized redirect URI. Keep the client ID and client secret.
+5. Open the [OAuth Playground](https://developers.google.com/oauthplayground). Under the gear icon, tick **Use your own OAuth credentials** and enter the client ID and secret. In step 1, type `https://www.googleapis.com/auth/drive`, select **Authorize APIs** and sign in. Google warns that the app is unverified; choose **Advanced → Go to … (unsafe)**, which is expected for your own app. In step 2, select **Exchange authorization code for tokens** and copy the **refresh token**.
+6. In GitHub, **Settings → Secrets and variables → Actions**:
+   - under **Secrets**, add `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` and `GOOGLE_REFRESH_TOKEN`;
+   - under **Variables**, add `DRIVE_FOLDER_ID`: the last part of the Watchtower folder's Drive address (`drive.google.com/drive/folders/<id>`).
+7. **Actions → Sync docs to Google Drive → Run workflow**, with **dry run** ticked, to see what would change. Run it again without dry run to sync.
+
+Google expires a refresh token that goes unused for 6 months. If the sync then fails to sign in, repeat step 5 and update `GOOGLE_REFRESH_TOKEN`.
