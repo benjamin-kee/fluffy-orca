@@ -1,5 +1,6 @@
 import type { Article, NewArticle } from "@/lib/article";
 import { getDb } from "@/lib/db";
+import type { Sort } from "@/lib/sort";
 
 const TABLE = "articles";
 
@@ -53,16 +54,22 @@ export async function countArticlesPublishedBetween(from: string, to: string): P
 // Optional publication window: start <= published_at < end (ISO instants).
 export type PublishedWindow = { start: string; end: string };
 
-// Newest first by publication time; id breaks ties so pages are stable.
-export async function listArticles(offset: number, limit: number, window: PublishedWindow | null = null): Promise<Article[]> {
+// Ordered by publication time, newest first unless sort is "oldest"; id breaks ties in the
+// same direction so pages are stable.
+export async function listArticles(
+  offset: number,
+  limit: number,
+  window: PublishedWindow | null = null,
+  sort: Sort = "newest",
+): Promise<Article[]> {
   let query = getDb()
     .from(TABLE)
     .select("id, title, source, source_url, article_url, published_at, ingested_at, external_id");
   if (window) query = query.gte("published_at", window.start).lt("published_at", window.end);
 
   const { data, error } = await query
-    .order("published_at", { ascending: false })
-    .order("id", { ascending: false })
+    .order("published_at", { ascending: sort === "oldest" })
+    .order("id", { ascending: sort === "oldest" })
     .range(offset, offset + limit - 1);
 
   if (error) throw new Error(`Failed to list articles: ${error.message}`);

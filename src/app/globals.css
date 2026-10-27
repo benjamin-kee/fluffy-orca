@@ -24,6 +24,15 @@ a {
   margin-bottom: 1rem;
 }
 
+.clear-all {
+  margin: 0;
+}
+
+.result-count {
+  margin: 0 0 0.5rem;
+  color: #555;
+}
+
 .empty-day {
   text-align: center;
   padding: 2rem 0;

@@ -56,7 +56,7 @@ test("invalid dates and dates before 1 January 2026 mean no filter", () => {
 test("page links keep the chosen day", () => {
   assert.equal(pageHref(2, 50), "/?page=2&size=50");
   assert.equal(
-    pageHref(1, 100, { date: "2026-10-21", timeZone: "America/Toronto" }),
+    pageHref(1, 100, { day: { date: "2026-10-21", timeZone: "America/Toronto" } }),
     "/?date=2026-10-21&tz=America%2FToronto&page=1&size=100",
   );
 });
