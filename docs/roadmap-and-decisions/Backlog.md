@@ -42,7 +42,7 @@ Useful ideas outside MVP0 scope, recorded per the MVP0 spec.
 - A "new headlines available" notice.
 - A data retention or archiving policy.
 - Additional sources, e.g. Malay-language headlines.
-- Accessibility and visual polish (MVP0.1).
+- Accessibility and visual polish (MVP2).
 
 ### From the retired SPEC-MVP0 v2.1 draft
 

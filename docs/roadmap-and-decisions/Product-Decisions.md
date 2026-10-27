@@ -1,6 +1,6 @@
 # Product Decisions Log
 
-Chronological log of approved decisions only. Sources: D-001 to D-016 from review_2026-09-24_version_1. D-017 to D-030 from Ben's replies on 2026-10-02.
+Chronological log of approved decisions only. Sources: D-001 to D-016 from review_2026-09-24_version_1. D-017 to D-030 from Ben's replies on 2026-10-02. D-038 to D-040 from Ben's instructions on 2026-10-27.
 
 Imported into the repo on 27 October 2026 from the Google Doc of the same name, unchanged. Where a decision mentions SPEC-MVP0 or its requirement numbers (R20, R22 and so on), it means the v2.1 draft, which is now retired in `docs/specs/Retired/`. The built spec is `docs/specs/MVP0.md`.
 
@@ -11,8 +11,8 @@ Several decisions below no longer match what was built. Proposed amendments and 
 | ID | Date | Decision | Rationale | Implications | Deferred alternatives |
 | --- | --- | --- | --- | --- | --- |
 | D-001 | 2026-09-24 | MVP0 scope as defined in the Watchtower workspace instructions is approved | Establishes an authoritative baseline | Now carried by SPEC-MVP0 (see D-021) | |
-| D-002 | 2026-09-24 | MVP1 approved scope is "keyword search across collected news" | Only defined element so far | Other search behaviour stays open | |
-| D-003 | 2026-09-24 | Milestone order: MVP0, MVP0.1, MVP1, later releases | Dashboard delivers value before search | Recorded in the Roadmap | Search first (earlier notes) |
+| D-002 | 2026-09-24 | MVP1 approved scope is "keyword search across collected news". Amended 2026-10-27: MVP1 is filtering and keyword search (D-039) | Only defined element so far | Other search behaviour stays open | |
+| D-003 | 2026-09-24 | Milestone order: MVP0, MVP0.1, MVP1, later releases. Amended 2026-10-27: MVP0, MVP1, MVP2 (formerly MVP0.1), later releases (D-038) | Dashboard delivers value before search | Recorded in the Roadmap | Search first (earlier notes) |
 | D-004 | 2026-09-24 | The Roadmap doc is the roadmap; Google Sheet optional for task tracking | One roadmap location | Backlog item B-006 | Google Sheet as roadmap |
 | D-005 | 2026-09-24 | MVP1 search covers headline text only | MVP0 stores headline metadata only | Body-text search in backlog (B-002) | Ingest article text for MVP1 |
 | D-006 | 2026-09-24 | Build the dashboard (MVP0) before search (MVP1) | Resolves conflict with earlier notes | Same as D-003 | Search first |
@@ -40,6 +40,9 @@ Several decisions below no longer match what was built. Proposed amendments and 
 | D-028 | 2026-10-02 | SPEC-MVP0 v2.0 is approved as the replacement for docs/specs/MVP0.md. Edits from Ben's PRD review are in v2.1 and wait for confirmation | PM gate at the spec | Review items 47 and 48. Confirmation is review item 66 | |
 | D-029 | 2026-10-02 | All research is done by a dedicated Research agent, in its own chat in this project. The main Watchtower chat plans, drafts and decides, and reads the reports from the Research folder | Keeps research separate from product work | Brief: Research-Agent. Review item 50 (Ben's research request) | Research in the main chat |
 | D-030 | 2026-10-02 | PRD conventions: the heading is "Out of scope" (replaces "Must not contain"). Success metrics measure how the product performs for users. Delivery checks such as the README live in the spec | Plain wording; metrics stay about the product | Review item 47. PRD-Template | |
+| D-038 | 2026-10-27 | MVP0.1 (UI/UX) is renamed MVP2 and comes after MVP1. Milestone order: MVP0, MVP1, MVP2, later releases. MVP2 is built on its own `mvp2` branch | Ben's instruction on 27 October | Files renamed to PRD-MVP2 and SPEC-MVP2. Amends D-003 | |
+| D-039 | 2026-10-27 | MVP1 is filtering and keyword search, delivered as sub-sprints MVP1.0, MVP1.1 and onward, all on the `mvp1` branch, each approved by Ben before it starts. MVP1.0 (single-day date filter) is approved | Ben's sprint breakdown of 26 October and instruction of 27 October | SPEC-MVP1 v0.3 and PRD-MVP1 v0.3. Amends D-002 | Keyword search only |
+| D-040 | 2026-10-27 | A filter day runs midnight to midnight in the viewer's own time zone. The date picker puts the time zone in the link (`tz`); a link without it uses Malaysia time | A viewer reads publication times in their own time zone (D-024), so days should match | Shared links show the sender's day | Malaysia day for everyone |
 
 ## Awaiting sign-off
 
