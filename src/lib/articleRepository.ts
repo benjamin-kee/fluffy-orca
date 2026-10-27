@@ -50,11 +50,17 @@ export async function countArticlesPublishedBetween(from: string, to: string): P
   return count ?? 0;
 }
 
+// Optional publication window: start <= published_at < end (ISO instants).
+export type PublishedWindow = { start: string; end: string };
+
 // Newest first by publication time; id breaks ties so pages are stable.
-export async function listArticles(offset: number, limit: number): Promise<Article[]> {
-  const { data, error } = await getDb()
+export async function listArticles(offset: number, limit: number, window: PublishedWindow | null = null): Promise<Article[]> {
+  let query = getDb()
     .from(TABLE)
-    .select("id, title, source, source_url, article_url, published_at, ingested_at, external_id")
+    .select("id, title, source, source_url, article_url, published_at, ingested_at, external_id");
+  if (window) query = query.gte("published_at", window.start).lt("published_at", window.end);
+
+  const { data, error } = await query
     .order("published_at", { ascending: false })
     .order("id", { ascending: false })
     .range(offset, offset + limit - 1);

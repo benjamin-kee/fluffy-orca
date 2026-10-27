@@ -1,3 +1,5 @@
+import type { DayParam } from "@/lib/dateFilter";
+
 export const PAGE_SIZES = [50, 100] as const;
 export const DEFAULT_PAGE_SIZE = 50;
 
@@ -18,8 +20,16 @@ export function parsePageParams(params: SearchParams): PageParams {
   };
 }
 
-export function pageHref(page: number, size: number): string {
-  return `/?page=${page}&size=${size}`;
+// Links keep the chosen day, if any.
+export function pageHref(page: number, size: number, day: DayParam | null = null): string {
+  const params = new URLSearchParams();
+  if (day) {
+    params.set("date", day.date);
+    params.set("tz", day.timeZone);
+  }
+  params.set("page", String(page));
+  params.set("size", String(size));
+  return `/?${params}`;
 }
 
 // Page numbers to show: first, last, and the neighbours of the current page. null marks a gap.
