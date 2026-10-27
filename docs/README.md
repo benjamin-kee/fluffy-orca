@@ -8,10 +8,10 @@ Each section keeps only current files. A retired file moves to that section's `R
 | --- | --- |
 | [start-here](start-here/) | [Current-Status](start-here/Current-Status.md) and this guide |
 | [product](product/) | PRDs (MVP0, MVP0.1, MVP1, Later), PRD-Template, Product-Vision |
-| [specs](specs/) | [MVP0.md](specs/MVP0.md), the approved and built spec. Draft specs for MVP0.1 and MVP1, not approved for implementation. `Retired/` holds the SPEC-MVP0 v2.1 draft |
+| [specs](specs/) | [MVP0.md](specs/MVP0.md), the approved and built spec. Draft specs for MVP0.1 and MVP1 (filtering and keyword search), not approved for implementation. `Retired/` holds the SPEC-MVP0 v2.1 draft and the keyword-only MVP1 v0.1 draft |
 | [roadmap-and-decisions](roadmap-and-decisions/) | [Roadmap](roadmap-and-decisions/Roadmap.md), [Backlog](roadmap-and-decisions/Backlog.md), [Product-Decisions](roadmap-and-decisions/Product-Decisions.md) |
 | [research](research/) | News-Sources (GNews), Licensing, User-Behaviour-Tracking |
-| [execution-and-agents](execution-and-agents/) | Research-Agent brief, Specwright auditor prompt. `Retired/` holds Execution-Plan-GNews |
+| [execution-and-agents](execution-and-agents/) | [Execution-Plan-MVP1](execution-and-agents/Execution-Plan-MVP1.md) (draft), Research-Agent brief, Specwright auditor prompt. `Retired/` holds Execution-Plan-GNews |
 | [reviews](reviews/) | The latest review round and the fs-review of the v2.1 draft. `Retired/` holds earlier rounds |
 
 Reading order: Current-Status, then Product-Decisions (items awaiting sign-off), then PRD-MVP0 and `specs/MVP0.md`.
