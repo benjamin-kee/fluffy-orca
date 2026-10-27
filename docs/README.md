@@ -1,6 +1,6 @@
 # Watchtower documents: folder guide
 
-`docs/` in this repo is the source of truth for every Watchtower product document (proposed decision D-031). Google Drive has one Watchtower folder with the same sections. Each Markdown file there sits beside a Google Doc copy of it. Drive is a read-only mirror: comment there, but make edits here through a pull request.
+`docs/` in this repo is the source of truth for every Watchtower product document (proposed decision D-031). Google Drive has one [Watchtower folder](https://drive.google.com/drive/folders/1pgZVieFXYntkB7TkUazIsM9NVMpbD3e9) with the same sections. Each Markdown file there sits beside a Google Doc copy of it. Drive is a read-only mirror: comment there, but make edits here through a pull request.
 
 Each section keeps only current files. A retired file moves to that section's `Retired/` folder, so there is a trail (proposed decision D-032). Nothing in a `Retired/` folder is a requirement.
 
