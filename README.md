@@ -2,7 +2,7 @@
 
 Watchtower is a lightweight business-news dashboard. MVP0 collects business headlines from Malaysian news sources into one feed, newest first. Each headline links to the original article on the publisher's site.
 
-The approved scope is in [`docs/specs/MVP0.md`](docs/specs/MVP0.md). Out-of-scope ideas and known improvements are tracked in [`docs/roadmap.md`](docs/roadmap.md).
+The approved scope is in [`docs/specs/MVP0.md`](docs/specs/MVP0.md). Out-of-scope ideas and known improvements are tracked in [`docs/roadmap-and-decisions/Backlog.md`](docs/roadmap-and-decisions/Backlog.md).
 
 Live at <https://watchtower01.vercel.app>.
 

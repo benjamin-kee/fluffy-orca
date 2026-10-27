@@ -1,0 +1,182 @@
+# PRD MVP0: Central Business-News Dashboard
+
+| Field | Value |
+| --- | --- |
+| PRD ID | PRD-MVP0 |
+| Milestone | MVP0, first of the Watchtower roadmap |
+| Status | Built and live at <https://watchtower01.vercel.app>. v0.4 awaits Ben's sign-off |
+| Version | 0.4, 27 October 2026 |
+| Owner | Ben (product manager and approver) |
+| Spec | `docs/specs/MVP0.md` (original spec plus approved changes 1 to 6) |
+| Decisions | `docs/roadmap-and-decisions/Product-Decisions.md` |
+| News input | GNews API only |
+
+> v0.4 rewrites this PRD to describe what was built. Where v0.3 and the built spec differed, v0.4 follows the spec. Each difference is listed in section 13 and in the proposed decision amendments in the decision log, which wait for Ben's sign-off.
+
+## 1. Summary
+
+Watchtower MVP0 is one page that lists the newest Malaysian business headlines from many publishers in a single feed. The headlines come from the GNews API, are stored in Supabase Postgres, and each one links out to the original publisher. Watchtower never stores or shows article text, summaries or images.
+
+## 2. Problem and outcome
+
+Business readers and analysts who follow Malaysia move between outlets to see what broke today. MVP0 gives them one chronological list. For Ben, MVP0 is also the proof piece for recruiters: a working demo plus a repository where the PRD, spec, tests and code trace to each other.
+
+**Outcome:** a working private demo with headlines refreshed every 3 hours and up to 30 days of history.
+
+## 3. Users and jobs
+
+- **Recruiter or hiring manager.** Opens the demo for two minutes. Wants to see that it works, is fresh, and was built with a disciplined process.
+- **Malaysian business reader.** Wants to scan today's headlines in one place and click through.
+
+## 4. Success metrics
+
+| Metric | Target | How it is checked |
+| --- | --- | --- |
+| Freshness | Newest stored headline under 15 hours old: the GNews free plan holds articles back 12 hours, and runs are 3 hours apart | Compare the latest published time with now |
+| Duplicates | No repeated (source, external_id) rows | Database constraint and a test |
+| Ingestion reliability | 95% of scheduled runs succeed | `cron.job_run_details` and `net._http_response` in Supabase |
+| Feed speed | First page of 50 under 2 seconds at the 75th percentile | Lighthouse |
+| History | Up to 30 days of headlines, loaded by the backfill between 23 October and 21 November 2026 | Earliest `published_at` in the database |
+
+## 5. Scope
+
+### In scope
+
+- A GNews source adapter feeding one stream of Malaysian business headlines
+- Normalization to the eight-field Article record, with duplicates blocked by the database
+- Supabase Postgres storage
+- Scheduled ingestion every 3 hours from 12am Malaysia time, one GNews request per run
+- A manual backfill command that loads up to 30 days of history, using at most 90 requests a day
+- Newest-first feed with numbered pagination, 50 or 100 per page, default 50, each page loaded in full
+- Elapsed-time display for recent items, local date and time for older ones
+- Headline links that open the cleaned publisher link in a new tab
+- Logging, a manual ingest endpoint protected by a secret, basic tests, README
+
+### Request budget
+
+The GNews free plan allows 100 requests a day and resets at 00:00 UTC (8am Malaysia time). Scheduled ingestion uses 8 a day. During the backfill period the backfill uses up to 90, which leaves 2 for manual runs. Each request returns up to 10 articles. Watchtower stores only the ones it does not already hold.
+
+### Out of scope
+
+- Article body, description, summary, image, author, topic, company or keyword data
+- An article-detail page, search, filters or sort controls
+- AI or LLM features, embeddings, accounts, login or billing
+- User behaviour tracking
+- Any news source other than GNews
+- Calls to GNews from the browser
+- Progressive loading, Load more, or infinite scroll
+- The GNews Search endpoint
+
+## 6. Release stages
+
+| Stage | Private demo (now) | Public |
+| --- | --- | --- |
+| Audience | Ben and invited reviewers | Anyone with the link |
+| Access | No login. The link is shared only with invited reviewers | Login required before launch (D-027) |
+| GNews plan | Free, €0. Non-commercial use only | A paid plan before any commercial use |
+| Cadence | Every 3 hours, 8 requests a day | Set when the plan changes |
+| Data freshness | 12 hour delay | Real time on paid plans |
+| History | 30 days, loaded by the backfill | From 2020 on paid plans |
+| Hosting | Vercel Hobby, Supabase free | Revisit at launch |
+
+## 7. GNews integration
+
+Facts below were checked on 2 October 2026 against the GNews documentation, pricing page, FAQ and Terms of Service.
+
+### Endpoint
+
+Top Headlines, with `category=business`, `country=my`, `lang=en`, `max=10`. This is the only endpoint MVP0 calls.
+
+### Field mapping
+
+| Article field | GNews field | Rule |
+| --- | --- | --- |
+| `id` | none | Generated by Watchtower |
+| `title` | `title` | As returned |
+| `source` | `source.name` | Publisher name as returned |
+| `source_url` | `url` | Exactly as returned |
+| `article_url` | `url` | Tracking parameters and `#` fragment removed. Watchtower opens this link |
+| `published_at` | `publishedAt` | UTC |
+| `ingested_at` | none | Watchtower timestamp |
+| `external_id` | none | The cleaned article link (`article_url`), because GNews documents no stable article id |
+| Discarded | description, content, image, lang, other source fields | Never stored |
+
+### Plans
+
+| Plan | Price | Requests per day | Articles per request | Delay | History |
+| --- | --- | --- | --- | --- | --- |
+| Free | €0 | 100 | 10 | 12 hours | 30 days |
+| Essential | €49.99 per month, €479.99 per year | 1,000 | 25 | Real time | From 2020 |
+| Business | €99.99 per month | 5,000 | 50 | Real time | From 2020 |
+
+Going over the daily limit returns an error. The limit resets at 00:00 UTC.
+
+### Behaviours that shape the build
+
+- The country filter means the publisher's country, not the subject of the story.
+- There is no source filter. Watchtower shows whichever publishers GNews returns and keeps no publisher list (D-026).
+- Top Headlines is a ranked subset of the news, not every article.
+- Each run fetches at most 10 articles, so a busy 3-hour period can be partly missed (roadmap: future fix).
+
+## 8. Functional requirements
+
+| ID | Requirement |
+| --- | --- |
+| MVP0-F1 | Watchtower retrieves Malaysian English-language business headlines from GNews through one adapter. |
+| MVP0-F2 | Each result is normalized to the eight-field Article record using the mapping above. |
+| MVP0-F3 | Articles are stored in Postgres and never stored twice. Duplicates are blocked on (`source`, `external_id`). |
+| MVP0-F4 | A manual backfill loads up to 30 days of history, oldest day first, using at most 90 requests a day. |
+| MVP0-F5 | The feed lists stored articles newest first by publication time. |
+| MVP0-F6 | Each item shows headline, source and publication time only. |
+| MVP0-F7 | Under 24 hours old shows elapsed time such as "30 mins ago". Older shows date and time in the viewer's time zone. |
+| MVP0-F8 | Clicking a headline opens the cleaned publisher link in a new tab. |
+| MVP0-F9 | Numbered pagination with a 50 or 100 selector, default 50, kept across pages. Each page loads in full. |
+| MVP0-F10 | Ingestion runs every 3 hours from 12am Malaysia time, one GNews request per run, and can be triggered manually through the protected ingest endpoint. |
+| MVP0-F11 | Ingestion failures are logged, never corrupt stored data, and never crash the feed. Articles without a readable publication time are skipped and logged. |
+| MVP0-F12 | The feed works at a basic level on desktop and mobile. |
+| MVP0-F13 | The GNews key and database secret live only in server environment variables. |
+
+## 9. Non-functional requirements
+
+- Lightweight: Next.js on Vercel, Supabase Postgres, and Supabase `pg_cron` for the schedule. Nothing else.
+- Stay inside the GNews free plan's 100 requests a day.
+- Call GNews with plain `fetch`. No new runtime dependency without approval.
+
+## 10. Assumptions, risks and dependencies
+
+| # | Item | How it is handled |
+| --- | --- | --- |
+| R1 | Coverage of Malaysian business news through Top Headlines is limited to 10 articles per run | Accepted for MVP0. A paid plan raises it to 25 or 50 (roadmap: future fix) |
+| R2 | The free plan is for non-commercial use only | MVP0 stays a private demo. Paid plan before any commercial use |
+| R3 | GNews terms do not state outright that storing headline metadata is allowed | Revisit before going public |
+| R4 | Free plan history is 30 days and 12 hours late | Backfill loads the 30 days. Older history needs a paid plan (D-013, proposed amendment) |
+| R5 | The same story from different outlets appears as separate rows | Accepted for MVP0. Backlog B-001 |
+| R6 | One vendor is a single point of failure | The `NewsSource` interface keeps replacement cheap |
+| R7 | Publishers still own their headlines and text | Headline and link only |
+| R8 | If a publisher changes an article link, the same article can be stored twice | Accepted for MVP0, because the cleaned link is the duplicate key |
+
+## 11. Open questions
+
+1. Retention: how long stored articles are kept. Recommendation: keep everything for now.
+2. What the backfill rule becomes after 21 November 2026 (approved change 6).
+3. Login placement on the roadmap. MVP0 has none.
+
+## 12. Agent guardrails
+
+Claude Code builds only what the approved spec says and never edits a spec unless Ben instructs. It stops and asks before it:
+
+- adds a dependency, table, column or paid service
+- stores description, content or an image
+- calls GNews from the browser
+- adds a second news source or a Search request
+
+Ideas outside scope go under Future consideration and are not built.
+
+## 13. Change log
+
+| Version | Date | Change |
+| --- | --- | --- |
+| 0.4 | 27 October 2026 | Rewritten to match the built spec (`docs/specs/MVP0.md`). Cadence 15 minutes on GitHub Actions → 3 hours on Supabase `pg_cron`. Backfill to 1 January 2026 on a paid trial → 30 days on the free plan. Duplicate key GNews id → cleaned link. Dropped requirements that were not built: `nullable`, 24-hour lookback, `X-Api-Key` header, retries, error-code tests, coverage test. Volume metric removed because it depended on the coverage test. Moved from Word to Markdown in the repo |
+| 0.3 | 2 October 2026 | Out of scope heading. Request cadence added. Reproducibility metric removed. Title stored as returned. Search endpoint explained and not used by default. Login moved to the roadmap. Freshness target adjusted for the Free plan |
+| 0.2 | 2 October 2026 | GNews is the only news input. Release stages added. Moved to Word format |
+| 0.1 | 2 October 2026 | First GNews-based draft |
