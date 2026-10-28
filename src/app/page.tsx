@@ -7,7 +7,7 @@ import { Pagination } from "@/components/Pagination";
 import { WrongOrder } from "@/components/WrongOrder";
 import type { Article } from "@/lib/article";
 import { countArticles, listArticles, oldestPublishedAt } from "@/lib/articleRepository";
-import { malaysiaDate, parseDateRange } from "@/lib/dateFilter";
+import { parseDateRange } from "@/lib/dateFilter";
 import { pageHref, parsePageParams } from "@/lib/pagination";
 
 export const dynamic = "force-dynamic";
@@ -18,7 +18,7 @@ export default async function HomePage({ searchParams }: Props) {
   const params = await searchParams;
   const { page, size } = parsePageParams(params);
   const range = parseDateRange(params);
-  const rangeParam = range && { from: range.from, to: range.to };
+  const rangeParam = range && { from: range.from, to: range.to, timeZone: range.timeZone };
 
   let total = 0;
   let articles: Article[] = [];
@@ -49,8 +49,7 @@ export default async function HomePage({ searchParams }: Props) {
         <DateFilter
           range={rangeParam}
           size={size}
-          earliest={oldest && malaysiaDate(oldest)}
-          today={malaysiaDate(new Date())}
+          oldest={oldest && oldest.toISOString()}
         />
         <PageSizeSelect size={size} range={rangeParam} />
         {range && <Link href={pageHref(1, size)}>Show all dates</Link>}

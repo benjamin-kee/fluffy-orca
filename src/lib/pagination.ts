@@ -23,8 +23,11 @@ export function parsePageParams(params: SearchParams): PageParams {
 // Links keep the chosen dates, if any.
 export function pageHref(page: number, size: number, range: RangeParam | null = null): string {
   const params = new URLSearchParams();
-  if (range?.from) params.set("from", range.from);
-  if (range?.to) params.set("to", range.to);
+  if (range) {
+    if (range.from) params.set("from", range.from);
+    if (range.to) params.set("to", range.to);
+    params.set("tz", range.timeZone);
+  }
   params.set("page", String(page));
   params.set("size", String(size));
   return `/?${params}`;
