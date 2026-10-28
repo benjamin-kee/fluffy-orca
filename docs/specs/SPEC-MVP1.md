@@ -84,7 +84,7 @@ MVP1.2 and MVP1.3 can run in either order. MVP1.6 can start once MVP1.1 is stabl
 
 | ID | Requirement |
 | --- | --- |
-| MVP1.1-R1 | A line above the results reads "Showing X of Y headlines", where X is the number on the current page and Y the total matching the active filters. See Q6. |
+| MVP1.1-R1 | A line above the results shows the range listed on the current page and the total matching the active filters, for example "Showing 51–100 of 340 headlines". A single result reads "Showing 1 of 1 headline". The line is hidden when nothing is listed. Q6, answered: option B. |
 | MVP1.1-R2 | A "Clear all" button removes every filter, the sort and the search, and returns to page 1 of the full feed with the same page size. It appears only when something is set. |
 | MVP1.1-R3 | A sort control offers "Newest first" (default) and "Oldest first" by `published_at`. `id` breaks ties in the same direction, so pages stay stable. |
 | MVP1.1-R4 | Every filter, the sort and the search are stored in the URL: `date`, `from`, `to`, `source`, `country`, `sort`, `q`, plus `page` and `size`. Default values are left out. `sort=oldest` means oldest first. |
@@ -176,7 +176,7 @@ Reply by number, for example "Q1 yes".
 3. **Getting back to all dates in MVP1.0.** Proposal: a "Show all dates" link, because "Clear all" only arrives in MVP1.1. Approve, or leave it out until MVP1.1?
 4. **Range and single day.** Proposal: in MVP1.2 the From and To pair replaces the single-day picker. Or keep both?
 5. **Source counts.** Proposal: counts within the other active filters. Or counts over all stored headlines?
-6. **Count wording.** "Showing X of Y headlines" with X as this page's count, as written. Or "Showing 51–100 of 340 headlines"?
+6. **Count wording.** Answered 2026-10-28: option B, "Showing 51–100 of 340 headlines" (MVP1.1-R1).
 7. **Country filter value.** With Malaysia only, MVP1.4 has no effect on results. Build it now as a placeholder, or hold it until a second country is ingested?
 8. **Earliest date.** The picker allows 1 January 2026 (D-013), but stored history only reaches back about 30 days (late September 2026). Earlier days will show "No news for this date." Keep 1 January 2026?
 9. **PRD.** PRD-MVP1 still describes keyword search only. Update it to match this spec (workflow A-22 has the PRD approved first)?
