@@ -8,7 +8,7 @@ import { SortSelect } from "@/components/SortSelect";
 import type { Article } from "@/lib/article";
 import { countArticles, countArticlesPublishedBetween, listArticles } from "@/lib/articleRepository";
 import { parseDayFilter } from "@/lib/dateFilter";
-import { pageHref, parsePageParams, type FeedQuery } from "@/lib/pagination";
+import { pageHref, parsePageParams, resultCountText, type FeedQuery } from "@/lib/pagination";
 import { DEFAULT_SORT, parseSort } from "@/lib/sort";
 
 export const dynamic = "force-dynamic";
@@ -59,11 +59,7 @@ export default async function HomePage({ searchParams }: Props) {
           </form>
         )}
       </div>
-      {total > 0 && (
-        <p className="result-count">
-          Showing {articles.length} of {total} headlines
-        </p>
-      )}
+      {articles.length > 0 && <p className="result-count">{resultCountText(page, size, articles.length, total)}</p>}
       {articles.length > 0 ? (
         <ol className="feed">
           {articles.map((article) => (

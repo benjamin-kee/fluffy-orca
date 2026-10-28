@@ -37,6 +37,14 @@ export function pageHref(page: number, size: number, { day, sort }: FeedQuery = 
   return `/?${params}`;
 }
 
+// The line above the results, e.g. "Showing 51–100 of 340 headlines". Empty when nothing is listed.
+export function resultCountText(page: number, size: number, shown: number, total: number): string {
+  if (shown === 0) return "";
+  if (total === 1) return "Showing 1 of 1 headline";
+  const first = (page - 1) * size + 1;
+  return `Showing ${first}–${first + shown - 1} of ${total} headlines`;
+}
+
 // Page numbers to show: first, last, and the neighbours of the current page. null marks a gap.
 export function pageNumbers(current: number, totalPages: number): (number | null)[] {
   const pages: (number | null)[] = [];
