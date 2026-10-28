@@ -87,7 +87,7 @@ MVP1.2 and MVP1.3 can run in either order. MVP1.6 can start once MVP1.1 is stabl
 | MVP1.1-R1 | A line above the results shows the range listed on the current page and the total matching the active filters, for example "Showing 51–100 of 340 headlines". A single result reads "Showing 1 of 1 headline". The line is hidden when nothing is listed. Q6, answered: option B. |
 | MVP1.1-R2 | A "Clear all" button removes every filter, the sort and the search, and returns to page 1 of the full feed with the same page size. It appears only when something is set. |
 | MVP1.1-R3 | A sort control offers "Newest first" (default) and "Oldest first" by `published_at`. `id` breaks ties in the same direction, so pages stay stable. |
-| MVP1.1-R4 | Every filter, the sort and the search are stored in the URL: `date`, `from`, `to`, `source`, `country`, `sort`, `q`, plus `page` and `size`. Default values are left out. `sort=oldest` means oldest first. |
+| MVP1.1-R4 | Every filter, the sort and the search are stored in the URL: `date`, `from`, `to`, `source`, `country`, `sort`, `q`, plus `page` and `size`. Default values are left out. `sort=oldest` means oldest first. Each later filter adds its own address value in its sprint (MVP1.2 `from`/`to`, MVP1.3 `source`, MVP1.4 `country`, MVP1.6 `q`). |
 
 Acceptance: X and Y match the database for a filtered day; "Clear all" from any filtered URL lands on `/?page=1&size=<size>`; oldest first on a day lists its earliest headline first; any filtered URL reloads to the same results.
 
