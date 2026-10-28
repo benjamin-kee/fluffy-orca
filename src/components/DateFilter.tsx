@@ -2,43 +2,57 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { EARLIEST_DATE, isValidDate, localDate } from "@/lib/dateFilter";
+import { isValidDate, localDate } from "@/lib/dateFilter";
 import { pageHref, type FeedQuery } from "@/lib/pagination";
 
-// Picks one day in the viewer's own time zone. Picking a date goes to page 1; clearing it shows all dates.
-// Either way the sort is kept.
-export function DateFilter({ query, size }: { query: FeedQuery; size: number }) {
-  const { day, sort } = query;
+type Props = { query: FeedQuery; size: number; oldest: string | null };
+
+// From and To dates in the viewer's own time zone, each from the oldest headline's day to today.
+// Changing either goes to page 1 and keeps the sort; clearing both shows all dates. On touch screens the date applies
+// when the calendar closes: phones such as iPhones fill in today as soon as an empty box is
+// opened, and applying that at once reloads the list and closes the calendar.
+export function DateFilter({ query, size, oldest }: Props) {
+  const { range, sort } = query;
   const router = useRouter();
-  // Today on the viewer's clock, set in the browser so it uses their time zone.
-  const [today, setToday] = useState<string>();
+  const from = range?.from ?? "";
+  const to = range?.to ?? "";
+  // Set in the browser so both limits use the viewer's clock.
+  const [limits, setLimits] = useState<{ earliest?: string; today?: string }>({});
+  const [touch, setTouch] = useState(false);
 
   useEffect(() => {
-    setToday(localDate(new Date()));
+    setLimits({ earliest: oldest ? localDate(new Date(oldest)) : undefined, today: localDate(new Date()) });
+  }, [oldest]);
+
+  useEffect(() => {
+    setTouch(window.matchMedia("(pointer: coarse)").matches);
   }, []);
 
-  function onChange(value: string) {
-    if (value === "") {
-      router.push(pageHref(1, size, { sort }));
-      return;
-    }
-    // Skips partial values some browsers report while the year is being typed.
-    if (!isValidDate(value) || (today && value > today)) return;
+  function apply(end: "from" | "to", value: string) {
+    if (value === (end === "from" ? from : to)) return;
+    const { earliest, today } = limits;
+    // Skips partial values some browsers report while the year is being typed, and out-of-range days.
+    if (value !== "" && (!isValidDate(value) || (earliest && value < earliest) || (today && value > today))) return;
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    router.push(pageHref(1, size, { day: { date: value, timeZone }, sort }));
+    const next = { from: from || null, to: to || null, timeZone, [end]: value || null };
+    router.push(pageHref(1, size, { range: next.from || next.to ? next : null, sort }));
   }
 
+  const input = (end: "from" | "to", value: string) => (
+    <input
+      key={value}
+      type="date"
+      min={limits.earliest}
+      max={limits.today}
+      defaultValue={value}
+      onChange={(e) => !touch && apply(end, e.target.value)}
+      onBlur={(e) => apply(end, e.target.value)}
+    />
+  );
+
   return (
-    <label className="date-filter">
-      Date{" "}
-      <input
-        key={day?.date ?? ""}
-        type="date"
-        min={EARLIEST_DATE}
-        max={today}
-        defaultValue={day?.date ?? ""}
-        onChange={(e) => onChange(e.target.value)}
-      />
-    </label>
+    <span className="date-filter">
+      <label>From {input("from", from)}</label> <label>To {input("to", to)}</label>
+    </span>
   );
 }

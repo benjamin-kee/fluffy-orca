@@ -1,29 +1,25 @@
 # Execution Plan: MVP1 Filtering and Keyword Search
 
-**Status:** Draft, for Ben's approval.
+**Status:** Approved for MVP1.0 on 27 October 2026. MVP1.0 built and merged ([pull request 5](https://github.com/benjamin-kee/fluffy-orca/pull/5)).
 **Date:** 2026-10-27
-**Spec:** [SPEC-MVP1 v0.2-draft](../specs/SPEC-MVP1.md)
+**Spec:** [SPEC-MVP1 v0.3](../specs/SPEC-MVP1.md)
 
 ## 1. How each sprint runs
 
 1. Ben approves the sprint in SPEC-MVP1 (and any data change it needs, spec section 5).
-2. Claude Code builds the sprint on its own branch, off `main`.
+2. Claude Code builds the sprint on the `mvp1` branch, brought up to date with `main` first.
 3. Before pushing: typecheck, unit tests and a production build pass.
 4. Claude Code opens a pull request. Vercel builds a preview of the branch for Ben to try.
 5. Ben approves and merges. Vercel deploys `main` to <https://watchtower01.vercel.app>.
 6. Claude Code checks the live site and updates Current-Status.
 
-Branch names: `mvp1.0-date-filter`, `mvp1.1-results-controls`, and so on. See Q-B below.
+All MVP1 sub-sprints share the `mvp1` branch (Ben, 27 October 2026). MVP2 is built on its own `mvp2` branch.
 
-## 2. Before MVP1.0 starts
+## 2. MVP1.0 result
 
-| # | Need | Owner |
-| --- | --- | --- |
-| 1 | Approve SPEC-MVP1 sprint MVP1.0, and answer Q1 to Q3 (day boundary, latest date, "Show all dates") | Ben |
-| 2 | Merge the open docs work on `claude/inspiring-galileo-33vjef` into `main`, so the sprint branch starts from it | Ben |
-| 3 | Confirm Vercel builds previews for branches (on by default when the repo is linked) | Ben |
+Built, tested against the live data in a browser set to Toronto time, merged to `main` and deployed by Vercel on 27 October 2026. Vercel builds a preview for each pull request.
 
-## 3. MVP1.0: single-day date filter in 2 hours
+## 3. MVP1.0 plan as approved: single-day date filter in 2 hours
 
 The target is achievable because MVP1.0 needs no database change and no new dependency, and reuses the existing feed, pagination and page-size code.
 
@@ -39,7 +35,7 @@ The target is achievable because MVP1.0 needs no database change and no new depe
 
 **Risks to the 2 hours**
 
-- **Off-by-one day.** Vercel servers run in UTC. The window is built with an explicit `+08:00` offset, never the server's local time, and the tests pin the midnight edges.
+- **Off-by-one day.** Vercel servers run in UTC. The window is built from the viewer's `tz` in the URL, never the server's local time, and the tests pin the midnight edges and a daylight-saving day.
 - **Testing against real data.** This build environment has no Supabase keys, so real-data checks happen on the Vercel preview. Unit tests cover the date logic before that.
 - **Browser date picker looks differ.** Chrome, Safari and Firefox each draw their own calendar. All of them respect the earliest and latest dates. No styling work is planned.
 - **Approval wait.** The clock starts once Ben approves MVP1.0 and the docs branch is merged.
@@ -63,7 +59,7 @@ Each migration is a new numbered file in `supabase/migrations/`, run in the Supa
 
 For every sprint: the acceptance criteria in SPEC-MVP1 pass, typecheck, tests and build are clean, Ben has approved the pull request, it is live, and Current-Status is updated. Optionally, Specwright audits the sprint against the spec.
 
-## 6. Questions on the plan
+## 6. Answered questions
 
-- **Q-A.** Is the 2-hour target from your approval to a preview you can click, or to live on watchtower01.vercel.app? The plan above assumes a preview at 1:50 and live after your merge.
-- **Q-B.** May Claude Code create a new branch per sprint (recommended), or should all MVP1 work stay on `claude/inspiring-galileo-33vjef`?
+- **Q-A.** Develop MVP1.0 and deploy it as soon as possible. Done.
+- **Q-B.** New branches approved: `mvp1` for every MVP1 sub-sprint, `mvp2` for MVP2.

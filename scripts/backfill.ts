@@ -3,7 +3,7 @@
 //
 // Usage: npm run backfill -- [max_requests]   (default 90, leaving 10 of the 100 daily requests,
 // about 100 headlines, for regular ingestion). Days already fully stored cost one request to check.
-import { countArticlesPublishedBetween, insertNewArticles } from "@/lib/articleRepository";
+import { countArticles, insertNewArticles } from "@/lib/articleRepository";
 import { fetchGNewsHeadlines, GNewsRequestError } from "@/lib/sources/gnews";
 
 const DAY = 86_400_000;
@@ -39,7 +39,7 @@ async function fetchPage(from: string, to: string, page: number) {
 async function backfillWindow(from: string, to: string) {
   const first = await fetchPage(from, to, 1);
   let inserted = await insertNewArticles(first.articles);
-  const stored = await countArticlesPublishedBetween(from, to);
+  const stored = await countArticles({ start: from, end: to });
   const pages = Math.ceil(first.total / PAGE_SIZE);
 
   if (stored < first.total - MISSING_TOLERANCE) {

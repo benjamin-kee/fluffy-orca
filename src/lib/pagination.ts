@@ -1,4 +1,4 @@
-import type { DayParam } from "@/lib/dateFilter";
+import type { RangeParam } from "@/lib/dateFilter";
 import { DEFAULT_SORT, type Sort } from "@/lib/sort";
 
 export const PAGE_SIZES = [50, 100] as const;
@@ -22,14 +22,15 @@ export function parsePageParams(params: SearchParams): PageParams {
 }
 
 // The filters and sort that page links carry.
-export type FeedQuery = { day?: DayParam | null; sort?: Sort };
+export type FeedQuery = { range?: RangeParam | null; sort?: Sort };
 
-// Links keep the chosen day and sort, if any. The default sort is left out.
-export function pageHref(page: number, size: number, { day, sort }: FeedQuery = {}): string {
+// Links keep the chosen dates and sort, if any. The default sort is left out.
+export function pageHref(page: number, size: number, { range, sort }: FeedQuery = {}): string {
   const params = new URLSearchParams();
-  if (day) {
-    params.set("date", day.date);
-    params.set("tz", day.timeZone);
+  if (range) {
+    if (range.from) params.set("from", range.from);
+    if (range.to) params.set("to", range.to);
+    params.set("tz", range.timeZone);
   }
   if (sort && sort !== DEFAULT_SORT) params.set("sort", sort);
   params.set("page", String(page));
