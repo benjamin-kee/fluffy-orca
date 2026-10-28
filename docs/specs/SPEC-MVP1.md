@@ -2,15 +2,15 @@
 id: SPEC-MVP1
 prd: PRD-MVP1
 prd_version: 0.3
-status: MVP1.0 approved and built; MVP1.1 to MVP1.6 draft
-version: 0.3
+status: MVP1.0 built; MVP1.2 approved and built; MVP1.1 and MVP1.3 to MVP1.6 draft
+version: 0.4
 ---
 
 # MVP1 Specification: Filtering and Keyword Search
 
-**Status:** MVP1.0 approved by Ben on 27 October 2026, built and merged ([pull request 5](https://github.com/benjamin-kee/fluffy-orca/pull/5)). MVP1.1 to MVP1.6 are drafts: each starts only after Ben approves it.
-**Branch:** all MVP1 sub-sprints are built on the `mvp1` branch, one pull request into `main` per sub-sprint.
-**Last updated:** 2026-10-27
+**Status:** MVP1.0 approved by Ben on 27 October 2026, built and merged ([pull request 5](https://github.com/benjamin-kee/fluffy-orca/pull/5)). MVP1.2 approved by Ben on 27–28 October 2026 and built ([pull request 7](https://github.com/benjamin-kee/fluffy-orca/pull/7)). MVP1.1 and MVP1.3 to MVP1.6 are drafts: each starts only after Ben approves it.
+**Branch:** one branch and one pull request into `main` per sub-sprint. MVP1.0 was built on `mvp1`, MVP1.2 on `mvp1.2`.
+**Last updated:** 2026-10-28
 **Replaces:** the v0.1 keyword-search-only draft, now in `docs/specs/Retired/`. Its approved items (D-002 keyword search, D-005 headline text only) carry forward into MVP1.6.
 **Source:** MVP1 sprint breakdown, draft of 26 October 2026.
 
@@ -30,7 +30,7 @@ Each sub-sprint ships a working increment on top of the one before it, and is me
 | --- | --- | --- | --- | --- |
 | MVP1.0 | Single-day date filter | Pick one day; feed shows that day's headlines | MVP0 feed | Approved 2026-10-27. Built |
 | MVP1.1 | Results controls | Result count, clear all, newest or oldest sort, URL state for all filters | MVP1.0 | Ben approves MVP1.1 |
-| MVP1.2 | Date range | From and To dates | MVP1.0 | Ben approves MVP1.2 |
+| MVP1.2 | Date range | From and To dates | MVP1.0 | Approved 2026-10-28. Built |
 | MVP1.3 | Source filter | Multi-select of publishers with headline counts | MVP1.1 | Ben approves MVP1.3 and approval item A2 |
 | MVP1.4 | Country filter | Malaysia active, Singapore greyed out "Coming soon" | Approval item A1 | Held until A1 is approved |
 | MVP1.5 | Mobile filter sheet | Filters behind one button and a bottom sheet on phones | MVP1.1 to MVP1.4 | Ben approves MVP1.5 |
@@ -45,14 +45,16 @@ MVP1.2 and MVP1.3 can run in either order. MVP1.6 can start once MVP1.1 is stabl
 | MVP1-S1 | Results use the MVP0 feed item layout (headline, source, publication time) and open `article_url` in a new tab. |
 | MVP1-S2 | Results use the MVP0 numbered pagination and the 50 or 100 page-size selector. The page count reflects only the matching headlines. |
 | MVP1-S3 | Changing any filter, the sort or the search returns to page 1 and keeps the page size. Changing the page or page size keeps every filter. |
-| MVP1-S4 | **A day is the viewer's own day, midnight to midnight in their time zone** (Ben, 27 October 2026). A headline belongs to day D when `published_at` is at or after D 00:00 and before D+1 00:00 in that time zone. Example: a Malaysian headline released at 9pm Malaysia time reads 9am in Toronto, and a Toronto viewer finds it under that same Toronto day. Daylight-saving days are 23 or 25 hours long. This matches how publication times are shown (D-024). |
-| MVP1-S5 | Dates are written `YYYY-MM-DD` in the URL. The date picker adds the viewer's time zone as `tz` (an IANA name such as `America/Toronto`), so a reloaded or shared link shows the same list. A link without a valid `tz` uses Malaysia time (`Asia/Kuala_Lumpur`). |
+| MVP1-S4 | **A day is a Malaysia day, midnight to midnight Malaysia time (UTC+08:00), for every viewer** (Ben, 27 October 2026, from MVP1.2; replaces the viewer's-own-day rule MVP1.0 was built with). A headline belongs to day D when `published_at` is at or after D 00:00 and before D+1 00:00 Malaysia time. "Today" is today in Malaysia. Publication times are still shown in the viewer's own time zone (D-024), so a viewer outside Malaysia can see a headline listed under one day whose time reads the day before or after. |
+| MVP1-S5 | Dates are written `YYYY-MM-DD` in the URL. From MVP1.2 there is no `tz` parameter; one left in an older link is ignored. |
 | MVP1-S6 | Filters and search make no GNews requests and use only parameterized queries through the existing Supabase client. |
 | MVP1-S7 | An invalid filter value in the URL is ignored, and the feed behaves as if that filter were not set. No error page. |
 
 ## 4. Requirements by sprint
 
 ### MVP1.0 Single-day date filter
+
+As built on 27 October 2026. MVP1.2 replaces the single-day picker, the time zone rule, the earliest date and the empty message; see MVP1.2.
 
 | ID | Requirement |
 | --- | --- |
@@ -97,12 +99,16 @@ Acceptance: X and Y match the database for a filtered day; "Clear all" from any 
 
 | ID | Requirement |
 | --- | --- |
-| MVP1.2-R1 | "From" and "To" date inputs, each with the MVP1.0 limits, select whole days in the viewer's time zone (MVP1-S4), inclusive at both ends. Stored in the URL as `from` and `to`, with `tz`. |
-| MVP1.2-R2 | Either can be set alone: From alone means from that day onward; To alone means up to and including that day. |
-| MVP1.2-R3 | If From is after To, the page shows "From date must be on or before To date." and no results, until it is corrected. |
-| MVP1.2-R4 | The range replaces the single-day picker. A single day is From and To on the same date. Existing `?date=` links keep working and are read as `from=to=date`. See Q4. If there is no headline in the range, the MVP1.0-R5 message shows. |
+| MVP1.2-R1 | "From" and "To" date inputs (the browser's built-in date input) select whole Malaysia days (MVP1-S4), inclusive at both ends. Stored in the URL as `from` and `to`. |
+| MVP1.2-R2 | Either can be set alone: From alone means from that day onward; To alone means up to and including that day. Clearing both shows all dates. |
+| MVP1.2-R3 | The earliest date that can be picked is the Malaysia day of the oldest stored headline, read from the database on each page load, so it moves back as older headlines are added. Days after today in Malaysia are greyed out. A date in the URL outside these limits is still read, and shows the R5 message. |
+| MVP1.2-R4 | If From is after To, the page shows a small drawing of the MVP1.0 miner, puzzled, beside a signpost whose "To" and "From" arrows are the wrong way round, with "From date must be on or before To date." It shows no results and no pagination until the dates are corrected. The drawing is inline SVG. |
+| MVP1.2-R5 | When the range has no headlines, the page shows the MVP1.0 miner drawing and "Our keyboard warriors are working hard to add more news for you." and no pagination. |
+| MVP1.2-R6 | The range replaces the single-day picker. A single day is From and To on the same date. Existing `?date=` links keep working and are read as `from=to=date`. A "Show all dates" link clears the range (page 1, same page size). |
+| MVP1.2-R7 | A `from`, `to` or `date` value that is not a real date in `YYYY-MM-DD` form is ignored (MVP1-S7). |
+| MVP1.2-R8 | No database change. Unit tests cover the range edges at midnight Malaysia time, From alone, To alone, From after To, `?date=` links and invalid values. |
 
-Acceptance: 19–21 Oct returns the three days' headlines and nothing from 18 or 22 Oct; From 22 Oct and To 21 Oct shows the message and no list; `/?date=2026-10-21` still works.
+Acceptance: 19–21 Oct returns the three days' headlines and nothing from 18 or 22 Oct, by Malaysia time; From 22 Oct and To 21 Oct shows the signpost drawing and message and no list; a range with no headlines shows the keyboard-warriors message; `/?date=2026-10-21` still works; the pickers do not allow days before the oldest headline's day or after today in Malaysia.
 
 ### MVP1.3 Source filter
 
@@ -173,19 +179,22 @@ MVP1.0, MVP1.1, MVP1.2 and MVP1.5 need no database change.
 
 Reply by number, for example "Q1 yes".
 
-Answered on 27 October 2026: Q1 day boundary is the viewer's own time zone (MVP1-S4); Q2 latest date is today; Q3 "Show all dates" link approved.
+Answered on 27 October 2026: Q1 day boundary is the viewer's own time zone (changed for MVP1.2: Malaysia time, MVP1-S4); Q2 latest date is today; Q3 "Show all dates" link approved.
 
-4. **Range and single day.** Proposal: in MVP1.2 the From and To pair replaces the single-day picker. Or keep both?
+Answered on 27 October 2026 for MVP1.2: Q4 the From and To pair replaces the single-day picker; Q8 the earliest date is the oldest stored headline's day, not 1 January 2026.
+
+4. ~~Range and single day.~~ Answered: replace (MVP1.2-R6).
 5. **Source counts.** Proposal: counts within the other active filters. Or counts over all stored headlines?
 6. **Count wording.** "Showing X of Y headlines" with X as this page's count, as written. Or "Showing 51–100 of 340 headlines"?
 7. **Country filter value.** With Malaysia only, MVP1.4 has no effect on results. Build it now as a placeholder, or hold it until a second country is ingested?
-8. **Earliest date.** The picker allows 1 January 2026 (D-013), but stored history only reaches back about 30 days (late September 2026). Earlier days will show the keyboard-warriors message. Keep 1 January 2026?
+8. ~~Earliest date.~~ Answered: the oldest stored headline's day (MVP1.2-R3).
 9. ~~PRD.~~ Answered: PRD-MVP1 updated to v0.3 to match this spec.
 
 ## 8. Change log
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 0.4 | 2026-10-28 | Ben approved MVP1.2 with changes: every day is a Malaysia day for all viewers and `tz` is dropped (MVP1-S4, S5; replaces D-040); earliest date is the oldest stored headline's day (Q8); From and To replace the single-day picker (Q4); empty message is now "Our keyboard warriors are working hard to add more news for you."; From after To shows a puzzled miner by a wrong-way signpost. One branch per sub-sprint. MVP1.2 built ([pull request 7](https://github.com/benjamin-kee/fluffy-orca/pull/7)). |
 | 0.3 | 2026-10-27 | Ben approved MVP1.0 with answers to Q1 to Q3: days follow the viewer's time zone (`tz` in the URL), latest date is today, "Show all dates" link. Empty day shows the miner drawing and the keyboard-warriors message. All sub-sprints on the `mvp1` branch. MVP1.0 built and merged. |
 | 0.2-draft | 2026-10-27 | MVP1 widened to filtering and keyword search, split into sprints MVP1.0 to MVP1.6 from the 26 October sprint breakdown. Keyword search proposals from v0.1 moved into MVP1.6. |
 | 0.1-draft | 2026-10-02 | Keyword search only. Retired. |
