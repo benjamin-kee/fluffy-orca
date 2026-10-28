@@ -19,7 +19,7 @@ A lightweight business-news dashboard. MVP0 shows Malaysian business headlines i
 | Rules for Claude | `CLAUDE.md` (repository root) |
 | Approved spec | `docs/specs/MVP0.md`. The original spec plus an **"Approved changes"** section; the approved changes win where they conflict. |
 | Backlog / future fixes | `docs/roadmap.md` |
-| Database | Supabase project **"Phoenix MVP"**, ref `khruuuifeziuljbdpwbr`, URL `https://khruuuifeziuljbdpwbr.supabase.co` |
+| Database | Supabase project **"Watchtower MVP"**, ref `khruuuifeziuljbdpwbr`, URL `https://khruuuifeziuljbdpwbr.supabase.co` |
 | Cloud environment | The **"Default"** environment with **no description**. Not the other "Default" ("trusted network access"). Consider renaming it "Watchtower". |
 
 ## 3. Working rules (from `CLAUDE.md`)
@@ -105,7 +105,7 @@ GNews API ──► sources/gnews.ts (normalize) ──► ingest.ts ──► a
 
 | # | Milestone | Status |
 | --- | --- | --- |
-| 1–3 | App setup, DB table, Article model | ✅ Done. Migrations `0001` and `0003` applied to "Phoenix MVP" |
+| 1–3 | App setup, DB table, Article model | ✅ Done. Migrations `0001` and `0003` applied to "Watchtower MVP" |
 | 4, 9 | News source | ✅ GNews adapter |
 | 5 | Ingestion and `/api/ingest` | ✅ Done |
 | 6–8 | Feed page, pagination, 50/100 selector, time display | ✅ Done |
@@ -120,7 +120,7 @@ GNews API ──► sources/gnews.ts (normalize) ──► ingest.ts ──► a
 
 ## 7. Setup already done by the owner
 
-- Supabase project "Phoenix MVP" created; migrations `0001` and `0003` applied.
+- Supabase project "Watchtower MVP" created; migrations `0001` and `0003` applied.
 - In the cloud environment ("Default", no description):
   - **Environment variables:** `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GNEWS_API_KEY`.
   - **Allowed domains:** `khruuuifeziuljbdpwbr.supabase.co`, `gnews.io` (also earlier: `www.malaymail.com`, `www.thestar.com.my`, `cms.freemalaysiatoday.com`).

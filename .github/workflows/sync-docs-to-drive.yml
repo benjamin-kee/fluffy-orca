@@ -1,0 +1,43 @@
+# Mirrors docs/ to the Watchtower folder in Google Drive whenever docs/ changes on main (D-031).
+# Setup: README.md, "Syncing docs to Google Drive".
+name: Sync docs to Google Drive
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "scripts/sync-docs-to-drive.ts"
+      - ".github/workflows/sync-docs-to-drive.yml"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Only list what would change"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sync-docs-to-drive
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install pandoc
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq pandoc
+      - name: Sync
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+          DRIVE_FOLDER_ID: ${{ vars.DRIVE_FOLDER_ID }}
+        run: node scripts/sync-docs-to-drive.ts ${{ inputs.dry_run && '--dry-run' || '' }}
