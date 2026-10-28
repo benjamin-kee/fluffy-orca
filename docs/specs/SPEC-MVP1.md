@@ -1,9 +1,9 @@
 ---
 id: SPEC-MVP1
 prd: PRD-MVP1
-prd_version: 0.3
+prd_version: 0.4
 status: MVP1.0 built; MVP1.2 approved and built; MVP1.1 and MVP1.3 to MVP1.6 draft
-version: 0.4
+version: 0.4.1
 ---
 
 # MVP1 Specification: Filtering and Keyword Search
@@ -32,7 +32,7 @@ Each sub-sprint ships a working increment on top of the one before it, and is me
 | MVP1.1 | Results controls | Result count, clear all, newest or oldest sort, URL state for all filters | MVP1.0 | Ben approves MVP1.1 |
 | MVP1.2 | Date range | From and To dates | MVP1.0 | Approved 2026-10-28. Built |
 | MVP1.3 | Source filter | Multi-select of publishers with headline counts | MVP1.1 | Ben approves MVP1.3 and approval item A2 |
-| MVP1.4 | Country filter | Malaysia active, Singapore greyed out "Coming soon" | Approval item A1 | Held until A1 is approved |
+| MVP1.4 | Country filter | Malaysia active, Singapore greyed out "Coming soon" | A second ingested country and approval item A1 | Held until a second country is ingested (Q7) and A1 is approved |
 | MVP1.5 | Mobile filter sheet | Filters behind one button and a bottom sheet on phones | MVP1.1 to MVP1.4 | Ben approves MVP1.5 |
 | MVP1.6 | Keyword search | Search headline titles, combined with active filters | MVP1.1 and approval item A3 | Ben approves MVP1.6 and A3 |
 
@@ -115,7 +115,7 @@ Acceptance: 19–21 Oct returns the three days' headlines and nothing from 18 or
 | ID | Requirement |
 | --- | --- |
 | MVP1.3-R1 | A list of checkboxes, one per publisher name found in the stored `source` values, alphabetical. Watchtower keeps no publisher list of its own (D-026). |
-| MVP1.3-R2 | Each name shows its headline count within the other active filters (for example, the chosen dates). See Q5. |
+| MVP1.3-R2 | Each name shows its headline count within the other active filters (for example, the chosen dates), so it shows how many headlines ticking it would add (Q5, Ben, 28 October 2026). |
 | MVP1.3-R3 | Selecting several names shows headlines from any of them. Selecting none means all sources. Stored in the URL as repeated `source=` values. |
 | MVP1.3-R4 | Counting by source needs one read-only database function (approval item A2). |
 
@@ -129,7 +129,7 @@ Acceptance: ticking two sources lists only their headlines; each count equals th
 | MVP1.4-R2 | Needs a new `country` field on articles (approval item A1). New headlines get the country code from the GNews request (`my`). Existing headlines are set to `my`, since every request so far used `country=my`. |
 | MVP1.4-R3 | Stored in the URL as `country=my`. |
 
-Note: while Malaysia is the only country ingested, this filter changes no results. Ingesting Singapore headlines is not part of MVP1 (D-007, backlog B-004). See Q7.
+Note: while Malaysia is the only country ingested, this filter changes no results, so it is held until a second country is ingested (Q7, Ben, 28 October 2026). Ingesting Singapore headlines is not part of MVP1 (D-007, backlog B-004).
 
 ### MVP1.5 Mobile filter sheet
 
@@ -184,9 +184,9 @@ Answered on 27 October 2026: Q1 day boundary is the viewer's own time zone (MVP1
 Answered on 27 October 2026 for MVP1.2: Q4 the From and To pair replaces the single-day picker; Q8 the earliest date is the oldest stored headline's day, not 1 January 2026.
 
 4. ~~Range and single day.~~ Answered: replace (MVP1.2-R6).
-5. **Source counts.** Proposal: counts within the other active filters. Or counts over all stored headlines?
+5. ~~Source counts.~~ Answered 28 October 2026: counts within the other active filters (MVP1.3-R2).
 6. **Count wording.** "Showing X of Y headlines" with X as this page's count, as written. Or "Showing 51–100 of 340 headlines"?
-7. **Country filter value.** With Malaysia only, MVP1.4 has no effect on results. Build it now as a placeholder, or hold it until a second country is ingested?
+7. ~~Country filter value.~~ Answered 28 October 2026: hold MVP1.4 until a second country is ingested.
 8. ~~Earliest date.~~ Answered: the oldest stored headline's day (MVP1.2-R3).
 9. ~~PRD.~~ Answered: PRD-MVP1 updated to v0.3 to match this spec.
 
@@ -194,6 +194,7 @@ Answered on 27 October 2026 for MVP1.2: Q4 the From and To pair replaces the sin
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 0.4.1 | 2026-10-28 | Ben answered Q5 (source counts within the other active filters) and Q7 (country filter held until a second country is ingested). Q6 is handled in a separate session. |
 | 0.4 | 2026-10-28 | Ben approved MVP1.2: From and To replace the single-day picker (Q4); earliest date is the oldest stored headline's day (Q8); empty message is now "Our keyboard warriors are working hard to add more news for you."; From after To shows a puzzled miner by a wrong-way signpost. Days and today stay the viewer's own, with `tz` in links (D-040 kept; a brief switch to Malaysia days for all viewers was reversed the same day). One branch per sub-sprint. MVP1.2 built ([pull request 7](https://github.com/benjamin-kee/fluffy-orca/pull/7)). |
 | 0.3 | 2026-10-27 | Ben approved MVP1.0 with answers to Q1 to Q3: days follow the viewer's time zone (`tz` in the URL), latest date is today, "Show all dates" link. Empty day shows the miner drawing and the keyboard-warriors message. All sub-sprints on the `mvp1` branch. MVP1.0 built and merged. |
 | 0.2-draft | 2026-10-27 | MVP1 widened to filtering and keyword search, split into sprints MVP1.0 to MVP1.6 from the 26 October sprint breakdown. Keyword search proposals from v0.1 moved into MVP1.6. |
