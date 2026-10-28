@@ -71,3 +71,20 @@ export async function listArticles(offset: number, limit: number, window: Publis
   if (error) throw new Error(`Failed to list articles: ${error.message}`);
   return data;
 }
+
+export type SourceCount = { source: string; headlines: number };
+
+// Every stored publisher, alphabetical, with its headline count within the window (MVP1.3).
+// Uses the read-only source_counts database function (migration 0004).
+export async function sourceCounts(window: PublishedWindow | null = null): Promise<SourceCount[]> {
+  const { data, error } = await getDb().rpc("source_counts", {
+    p_start: window?.start ?? null,
+    p_end: window?.end ?? null,
+  });
+
+  if (error) throw new Error(`Failed to count sources: ${error.message}`);
+  return (data as { source: string; headlines: number | string }[]).map((row) => ({
+    source: row.source,
+    headlines: Number(row.headlines),
+  }));
+}
