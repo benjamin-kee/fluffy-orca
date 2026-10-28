@@ -8,11 +8,11 @@ import { pageHref, type FeedQuery } from "@/lib/pagination";
 type Props = { query: FeedQuery; size: number; oldest: string | null };
 
 // From and To dates in the viewer's own time zone, each from the oldest headline's day to today.
-// Changing either goes to page 1 and keeps the sort; clearing both shows all dates. On touch screens the date applies
+// Changing either goes to page 1 and keeps the other filters and the sort; clearing both shows all dates. On touch screens the date applies
 // when the calendar closes: phones such as iPhones fill in today as soon as an empty box is
 // opened, and applying that at once reloads the list and closes the calendar.
 export function DateFilter({ query, size, oldest }: Props) {
-  const { range, sort } = query;
+  const { range } = query;
   const router = useRouter();
   const from = range?.from ?? "";
   const to = range?.to ?? "";
@@ -35,7 +35,7 @@ export function DateFilter({ query, size, oldest }: Props) {
     if (value !== "" && (!isValidDate(value) || (earliest && value < earliest) || (today && value > today))) return;
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const next = { from: from || null, to: to || null, timeZone, [end]: value || null };
-    router.push(pageHref(1, size, { range: next.from || next.to ? next : null, sort }));
+    router.push(pageHref(1, size, { ...query, range: next.from || next.to ? next : null }));
   }
 
   const input = (end: "from" | "to", value: string) => (

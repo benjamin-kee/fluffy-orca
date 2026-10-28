@@ -4,12 +4,14 @@ import { EmptyDay } from "@/components/EmptyDay";
 import { PageSizeSelect } from "@/components/PageSizeSelect";
 import { Pagination } from "@/components/Pagination";
 import { SortSelect } from "@/components/SortSelect";
+import { SourceFilter } from "@/components/SourceFilter";
 import { WrongOrder } from "@/components/WrongOrder";
 import type { Article } from "@/lib/article";
-import { countArticles, listArticles, oldestPublishedAt } from "@/lib/articleRepository";
+import { countArticles, listArticles, oldestPublishedAt, sourceCounts, type SourceCount } from "@/lib/articleRepository";
 import { parseDateRange } from "@/lib/dateFilter";
 import { parsePageParams, resultCountText, type FeedQuery } from "@/lib/pagination";
 import { DEFAULT_SORT, parseSort } from "@/lib/sort";
+import { parseSources } from "@/lib/sourceFilter";
 
 export const dynamic = "force-dynamic";
 
@@ -20,19 +22,27 @@ export default async function HomePage({ searchParams }: Props) {
   const { page, size } = parsePageParams(params);
   const range = parseDateRange(params);
   const sort = parseSort(params);
-  const query: FeedQuery = { range: range && { from: range.from, to: range.to, timeZone: range.timeZone }, sort };
-  const anythingSet = range !== null || sort !== DEFAULT_SORT;
 
   let total = 0;
   let articles: Article[] = [];
   let oldest: Date | null;
+  let counts: SourceCount[];
+  let sources: string[] = [];
   try {
-    // From after To lists nothing, so only the oldest date is read.
-    [oldest, total, articles] = await Promise.all([
-      oldestPublishedAt(),
-      range?.reversed ? 0 : countArticles(range),
-      range?.reversed ? [] : listArticles((page - 1) * size, size, range, sort),
-    ]);
+    // Publisher counts follow the other active filters (the dates). They are read first, because a
+    // `source` value in the URL that is not a stored publisher is ignored.
+    [oldest, counts] = await Promise.all([oldestPublishedAt(), sourceCounts(range)]);
+    sources = parseSources(
+      params,
+      counts.map((c) => c.source),
+    );
+    // From after To lists nothing.
+    if (!range?.reversed) {
+      [total, articles] = await Promise.all([
+        countArticles(range, sources),
+        listArticles((page - 1) * size, size, range, sort, sources),
+      ]);
+    }
   } catch (err) {
     console.error(`[feed] failed to load headlines: ${err instanceof Error ? err.message : String(err)}`);
     return (
@@ -43,6 +53,8 @@ export default async function HomePage({ searchParams }: Props) {
     );
   }
 
+  const query: FeedQuery = { range: range && { from: range.from, to: range.to, timeZone: range.timeZone }, sort, sources };
+  const anythingSet = range !== null || sort !== DEFAULT_SORT || sources.length > 0;
   const totalPages = Math.ceil(total / size);
 
   return (
@@ -52,6 +64,7 @@ export default async function HomePage({ searchParams }: Props) {
         <DateFilter query={query} size={size} oldest={oldest && oldest.toISOString()} />
         <SortSelect query={query} size={size} />
         <PageSizeSelect size={size} query={query} />
+        <SourceFilter counts={counts} query={query} size={size} />
         {anythingSet && (
           // Clear all: back to page 1 of the full feed, keeping only the page size.
           <form action="/" className="clear-all">
@@ -70,7 +83,7 @@ export default async function HomePage({ searchParams }: Props) {
             <ArticleItem key={article.id} article={article} />
           ))}
         </ol>
-      ) : range && total === 0 ? (
+      ) : (range || sources.length > 0) && total === 0 ? (
         <EmptyDay />
       ) : (
         <p>{total === 0 ? "No headlines yet." : "No headlines on this page."}</p>
