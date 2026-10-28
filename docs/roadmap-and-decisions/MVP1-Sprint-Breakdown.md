@@ -1,6 +1,6 @@
 # Watchtower MVP1: Sprint Breakdown
 
-> Ben's sprint breakdown of 26 October 2026, kept as the source of [SPEC-MVP1](../specs/SPEC-MVP1.md). Where the two differ, the spec wins. Since this was written: MVP1.0 was approved and built (27 October), days follow the viewer's own time zone rather than Malaysia time (D-040), an empty day shows "Our keyboard warriors are working hard to get your news.", and all sub-sprints share the `mvp1` branch.
+> Ben's sprint breakdown of 26 October 2026, kept as the source of [SPEC-MVP1](../specs/SPEC-MVP1.md). Where the two differ, the spec wins. Since this was written: MVP1.0 was approved and built (27 October), days follow the viewer's own time zone rather than Malaysia time (D-040), an empty day shows "Our keyboard warriors are working hard to get your news." (MVP1.2 changes it to "…to add more news for you."), and each sub-sprint has its own branch. MVP1.2 was approved and built on 28 October.
 
 _Status: draft, pending approval. Date: 26 Oct 2026._
 

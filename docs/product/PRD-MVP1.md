@@ -1,17 +1,17 @@
 ---
 id: PRD-MVP1
 milestone: MVP1, second of the Watchtower roadmap
-status: MVP1.0 approved and built; MVP1.1 onward draft
-version: 0.3, 27 October 2026
+status: MVP1.0 and MVP1.2 approved and built; MVP1.1 and MVP1.3 onward draft
+version: 0.4, 28 October 2026
 owner: Ben (product manager and approver)
-spec: SPEC-MVP1 v0.3
+spec: SPEC-MVP1 v0.4
 decisions: D-002, D-005, D-038 to D-040 in the decision log
 news_input: GNews API only
 ---
 
 # PRD MVP1: Filtering and Keyword Search
 
-Approved: keyword search across collected news (D-002), headline text only (D-005), MVP1 widened to filtering and keyword search in sub-sprints (D-039), days follow the viewer's time zone (D-040), and sub-sprint MVP1.0, the single-day date filter. Everything else is a proposal until Ben approves its sub-sprint.
+Approved: keyword search across collected news (D-002), headline text only (D-005), MVP1 widened to filtering and keyword search in sub-sprints (D-039), days follow the viewer's time zone (D-040), sub-sprint MVP1.0, the single-day date filter, and sub-sprint MVP1.2, the From and To date range. Everything else is a proposal until Ben approves its sub-sprint.
 
 ## 1. Summary
 MVP1 lets readers narrow the Watchtower feed: by day, by date range, by publisher and by country, and finally by keyword in the headline. It works only on the headlines Watchtower has already stored. It never calls GNews to filter or search, never reads article bodies and never calls an AI model. It ships in small sub-sprints, MVP1.0 to MVP1.6, each live on its own.
@@ -79,7 +79,7 @@ Filters and search use parameterized queries only and make no outbound calls. Se
 ## 10. Assumptions, risks and dependencies
 | # | Item | How it is handled |
 |---|---|---|
-| R1 | Stored history reaches back only about 30 days, so most days since 1 January 2026 are empty | The keyboard-warriors message; history before late September needs a paid GNews plan (A-13) |
+| R1 | Stored history reaches back only about 30 days | From MVP1.2 the date picker starts at the oldest stored headline's day, so empty earlier days cannot be picked; history before late September needs a paid GNews plan (A-13) |
 | R2 | A shared link carries the sender's time zone, so the recipient sees the sender's day | Accepted: the link shows the same list for everyone |
 | R3 | The country filter changes nothing while Malaysia is the only country ingested | Spec open question Q7 |
 | R4 | Headline-only search has lower recall than body search | Accepted by D-005. Body search is backlog B-002 |
@@ -94,6 +94,7 @@ Same as PRD-MVP0. Claude Code builds only sub-sprints Ben has approved, adds no 
 ## 13. Change log
 | Version | Date | Change |
 |---|---|---|
+| 0.4 | 28 October 2026 | MVP1.2 approved and built: From and To dates replace the single-day picker, the earliest date is the oldest stored headline's day, and days stay the viewer's own (D-040). |
 | 0.3 | 27 October 2026 | MVP1 widened from keyword search to filtering and keyword search, in sub-sprints MVP1.0 to MVP1.6. MVP1.0 approved and built. Days follow the viewer's time zone. Now second on the roadmap, before MVP2 (formerly MVP0.1) |
 | 0.2.1 | 27 October 2026 | Outcome no longer promises history from 1 January 2026; MVP0 keeps 30 days of backfilled history (spec approved change 6) |
 | 0.2 | 2 October 2026 | Word format. Out of scope heading. Clarified that this is not the GNews Search endpoint |

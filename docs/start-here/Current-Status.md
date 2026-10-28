@@ -1,8 +1,8 @@
 # Current Status
 
-**As of:** 27 October 2026
+**As of:** 28 October 2026
 **Active milestone:** MVP1 (filtering and keyword search). MVP1.0, the single-day date filter, is built and live at <https://watchtower01.vercel.app>
-**Repo:** github.com/benjamin-kee/fluffy-orca. `main` is what Vercel deploys. MVP1 sub-sprints are built on `mvp1`, MVP2 on `mvp2`, and planning documents on `claude/inspiring-galileo-33vjef`.
+**Repo:** github.com/benjamin-kee/fluffy-orca. `main` is what Vercel deploys. MVP1 sub-sprints are built on one branch each (MVP1.0 on `mvp1`, MVP1.2 on `mvp1.2`), MVP2 on `mvp2`, and planning documents on `claude/inspiring-galileo-33vjef`.
 
 ## Completed
 
@@ -12,6 +12,7 @@
 - Former product name retired everywhere it could be edited (D-033, proposed).
 - Planning documents imported into the repo under `docs/`, which is now the source of truth (D-031, proposed).
 - MVP1 widened to filtering and keyword search (D-039). MVP1.0 single-day date filter approved, built and live on 27 October 2026 ([pull request 5](https://github.com/benjamin-kee/fluffy-orca/pull/5)). Days follow the viewer's time zone (D-040).
+- MVP1.2 date range approved and built on 28 October 2026 ([pull request 7](https://github.com/benjamin-kee/fluffy-orca/pull/7)), waiting for Ben to merge. From and To dates replace the single-day picker; the earliest date is the oldest headline's day; days stay the viewer's own (D-040 confirmed). SPEC-MVP1 v0.4 records it.
 - MVP0.1 renamed MVP2 and moved after MVP1 (D-038). Draft PRD and spec written for a separate session on the `mvp2` branch.
 
 ## In progress
@@ -23,7 +24,7 @@
 ## Open
 
 - Review items 68 (login placement) and 69 (behaviour tracking).
-- Ben approves MVP1.1 (results controls) to start the next sub-sprint, and answers SPEC-MVP1 questions Q4 to Q8.
+- Ben approves MVP1.1 (results controls) to start the next sub-sprint, and answers SPEC-MVP1 questions Q5 to Q7.
 - Ben reviews the MVP2 PRD and spec (SPEC-MVP2 questions 1 to 4), and the Later PRD (item 44).
 - Change requests FS-50 to FS-65 in the [fs-review](../reviews/fs-review_2026-10-02_SPEC-MVP0.md) were written against the retired v2.1 draft. They are not applied.
 - What the backfill rule becomes after 21 November 2026.
