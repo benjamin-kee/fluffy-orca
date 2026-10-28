@@ -4,6 +4,7 @@ import { DateFilter } from "@/components/DateFilter";
 import { EmptyDay } from "@/components/EmptyDay";
 import { PageSizeSelect } from "@/components/PageSizeSelect";
 import { Pagination } from "@/components/Pagination";
+import { WrongOrder } from "@/components/WrongOrder";
 import type { Article } from "@/lib/article";
 import { countArticles, listArticles, oldestPublishedAt } from "@/lib/articleRepository";
 import { malaysiaDate, parseDateRange } from "@/lib/dateFilter";
@@ -55,7 +56,7 @@ export default async function HomePage({ searchParams }: Props) {
         {range && <Link href={pageHref(1, size)}>Show all dates</Link>}
       </div>
       {range?.reversed ? (
-        <p role="alert">From date must be on or before To date.</p>
+        <WrongOrder />
       ) : articles.length > 0 ? (
         <ol className="feed">
           {articles.map((article) => (
