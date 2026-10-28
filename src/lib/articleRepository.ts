@@ -33,11 +33,12 @@ export async function insertNewArticles(articles: NewArticle[]): Promise<number>
 // Optional publication window: start <= published_at < end (ISO instants). A null bound is open.
 export type PublishedWindow = { start: string | null; end: string | null };
 
-// Number of stored articles, within the window if one is given.
-export async function countArticles(window: PublishedWindow | null = null): Promise<number> {
+// Number of stored articles, within the window and from the given sources if any are given.
+export async function countArticles(window: PublishedWindow | null = null, sources: string[] = []): Promise<number> {
   let query = getDb().from(TABLE).select("id", { count: "exact", head: true });
   if (window?.start) query = query.gte("published_at", window.start);
   if (window?.end) query = query.lt("published_at", window.end);
+  if (sources.length > 0) query = query.in("source", sources);
 
   const { count, error } = await query;
   if (error) throw new Error(`Failed to count articles: ${error.message}`);
@@ -57,18 +58,20 @@ export async function oldestPublishedAt(): Promise<Date | null> {
 }
 
 // Ordered by publication time, newest first unless sort is "oldest"; id breaks ties in the
-// same direction so pages are stable.
+// same direction so pages are stable. No sources means all sources.
 export async function listArticles(
   offset: number,
   limit: number,
   window: PublishedWindow | null = null,
   sort: Sort = "newest",
+  sources: string[] = [],
 ): Promise<Article[]> {
   let query = getDb()
     .from(TABLE)
     .select("id, title, source, source_url, article_url, published_at, ingested_at, external_id");
   if (window?.start) query = query.gte("published_at", window.start);
   if (window?.end) query = query.lt("published_at", window.end);
+  if (sources.length > 0) query = query.in("source", sources);
 
   const { data, error } = await query
     .order("published_at", { ascending: sort === "oldest" })

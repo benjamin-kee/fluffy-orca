@@ -9,13 +9,7 @@ export function parseSources(params: SearchParams, known: string[]): string[] {
   return [...new Set(values)].filter((value) => knownSet.has(value));
 }
 
-// The feed link after ticking or unticking one publisher: other values stay, page goes back to 1.
-export function toggleSourceHref(search: string, source: string): string {
-  const params = new URLSearchParams(search);
-  const chosen = params.getAll("source");
-  const next = chosen.includes(source) ? chosen.filter((s) => s !== source) : [...chosen, source];
-  params.delete("source");
-  for (const s of next) params.append("source", s);
-  params.set("page", "1");
-  return `/?${params}`;
+// The chosen publishers after ticking or unticking one.
+export function toggleSource(chosen: string[], source: string): string[] {
+  return chosen.includes(source) ? chosen.filter((s) => s !== source) : [...chosen, source];
 }
