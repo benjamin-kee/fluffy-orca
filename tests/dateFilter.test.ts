@@ -81,11 +81,11 @@ test("invalid dates are ignored", () => {
 test("page links keep the chosen dates and time zone", () => {
   assert.equal(pageHref(2, 50), "/?page=2&size=50");
   assert.equal(
-    pageHref(1, 100, { from: "2026-10-19", to: "2026-10-21", timeZone: "Europe/London" }),
+    pageHref(1, 100, { range: { from: "2026-10-19", to: "2026-10-21", timeZone: "Europe/London" } }),
     "/?from=2026-10-19&to=2026-10-21&tz=Europe%2FLondon&page=1&size=100",
   );
   assert.equal(
-    pageHref(1, 50, { from: null, to: "2026-10-21", timeZone: "Asia/Kuala_Lumpur" }),
+    pageHref(1, 50, { range: { from: null, to: "2026-10-21", timeZone: "Asia/Kuala_Lumpur" } }),
     "/?to=2026-10-21&tz=Asia%2FKuala_Lumpur&page=1&size=50",
   );
 });
