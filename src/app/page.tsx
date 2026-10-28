@@ -4,9 +4,10 @@ import { DateFilter } from "@/components/DateFilter";
 import { EmptyDay } from "@/components/EmptyDay";
 import { PageSizeSelect } from "@/components/PageSizeSelect";
 import { Pagination } from "@/components/Pagination";
+import { WrongOrder } from "@/components/WrongOrder";
 import type { Article } from "@/lib/article";
-import { countArticles, countArticlesPublishedBetween, listArticles } from "@/lib/articleRepository";
-import { parseDayFilter } from "@/lib/dateFilter";
+import { countArticles, listArticles, oldestPublishedAt } from "@/lib/articleRepository";
+import { parseDateRange } from "@/lib/dateFilter";
 import { pageHref, parsePageParams } from "@/lib/pagination";
 
 export const dynamic = "force-dynamic";
@@ -16,15 +17,18 @@ type Props = { searchParams: Promise<Record<string, string | string[] | undefine
 export default async function HomePage({ searchParams }: Props) {
   const params = await searchParams;
   const { page, size } = parsePageParams(params);
-  const day = parseDayFilter(params);
-  const dayParam = day && { date: day.date, timeZone: day.timeZone };
+  const range = parseDateRange(params);
+  const rangeParam = range && { from: range.from, to: range.to, timeZone: range.timeZone };
 
-  let total: number;
-  let articles: Article[];
+  let total = 0;
+  let articles: Article[] = [];
+  let oldest: Date | null;
   try {
-    [total, articles] = await Promise.all([
-      day ? countArticlesPublishedBetween(day.start, day.end) : countArticles(),
-      listArticles((page - 1) * size, size, day),
+    // From after To lists nothing, so only the oldest date is read.
+    [oldest, total, articles] = await Promise.all([
+      oldestPublishedAt(),
+      range?.reversed ? 0 : countArticles(range),
+      range?.reversed ? [] : listArticles((page - 1) * size, size, range),
     ]);
   } catch (err) {
     console.error(`[feed] failed to load headlines: ${err instanceof Error ? err.message : String(err)}`);
@@ -42,22 +46,28 @@ export default async function HomePage({ searchParams }: Props) {
     <main>
       <h1>Watchtower</h1>
       <div className="controls">
-        <DateFilter day={dayParam} size={size} />
-        <PageSizeSelect size={size} day={dayParam} />
-        {day && <Link href={pageHref(1, size)}>Show all dates</Link>}
+        <DateFilter
+          range={rangeParam}
+          size={size}
+          oldest={oldest && oldest.toISOString()}
+        />
+        <PageSizeSelect size={size} range={rangeParam} />
+        {range && <Link href={pageHref(1, size)}>Show all dates</Link>}
       </div>
-      {articles.length > 0 ? (
+      {range?.reversed ? (
+        <WrongOrder />
+      ) : articles.length > 0 ? (
         <ol className="feed">
           {articles.map((article) => (
             <ArticleItem key={article.id} article={article} />
           ))}
         </ol>
-      ) : day && total === 0 ? (
+      ) : range && total === 0 ? (
         <EmptyDay />
       ) : (
         <p>{total === 0 ? "No headlines yet." : "No headlines on this page."}</p>
       )}
-      <Pagination page={page} size={size} totalPages={totalPages} day={dayParam} />
+      <Pagination page={page} size={size} totalPages={totalPages} range={rangeParam} />
     </main>
   );
 }

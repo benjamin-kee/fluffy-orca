@@ -1,13 +1,14 @@
-// Single-day date filter (SPEC-MVP1, MVP1.0). A day runs from midnight to midnight
-// in the viewer's own time zone, which the date picker puts in the URL as `tz`.
+// Date range filter (SPEC-MVP1, MVP1.2). A day runs from midnight to midnight in the
+// viewer's own time zone, which the date picker puts in the URL as `tz`.
 
-export const EARLIEST_DATE = "2026-01-01";
 // Used when the URL has no valid `tz`, e.g. a hand-typed link.
 export const DEFAULT_TIME_ZONE = "Asia/Kuala_Lumpur";
 
-export type DayParam = { date: string; timeZone: string };
-// start and end are ISO instants; a headline is on the day when start <= published_at < end.
-export type DayFilter = DayParam & { start: string; end: string };
+// Both ends are optional; at least one is set. Dates are YYYY-MM-DD, inclusive.
+export type RangeParam = { from: string | null; to: string | null; timeZone: string };
+// start and end are ISO instants; a headline is in range when start <= published_at < end.
+// A missing end is open. reversed means From is after To, so nothing is listed.
+export type DateRange = RangeParam & { start: string | null; end: string | null; reversed: boolean };
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -22,14 +23,13 @@ export function isValidTimeZone(timeZone: string): boolean {
   }
 }
 
-// A real calendar date written YYYY-MM-DD, on or after the earliest date.
+// A real calendar date written YYYY-MM-DD.
 export function isValidDate(date: string): boolean {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
   if (!match) return false;
   const [y, m, d] = match.slice(1).map(Number);
   const parsed = new Date(Date.UTC(y, m - 1, d));
-  const real = parsed.getUTCFullYear() === y && parsed.getUTCMonth() === m - 1 && parsed.getUTCDate() === d;
-  return real && date >= EARLIEST_DATE;
+  return parsed.getUTCFullYear() === y && parsed.getUTCMonth() === m - 1 && parsed.getUTCDate() === d;
 }
 
 // How far the time zone's wall clock is ahead of UTC at the given instant, in ms.
@@ -63,24 +63,31 @@ function nextDate(date: string): string {
   return new Date(Date.UTC(y, m - 1, d + 1)).toISOString().slice(0, 10);
 }
 
-// An invalid or missing date means no filter. An invalid or missing time zone falls back to Malaysia.
-export function parseDayFilter(params: SearchParams): DayFilter | null {
-  const date = first(params.date);
-  if (!date || !isValidDate(date)) return null;
+// Reads `from`, `to` and `tz`; an invalid date is ignored and an invalid time zone falls back
+// to Malaysia. A link with neither date reads the MVP1.0 `date` as a one-day range.
+// Returns null when no date is set.
+export function parseDateRange(params: SearchParams): DateRange | null {
+  const valid = (value: string | undefined) => (value && isValidDate(value) ? value : null);
+  let from = valid(first(params.from));
+  let to = valid(first(params.to));
+  if (!from && !to) from = to = valid(first(params.date));
+  if (!from && !to) return null;
 
   const tz = first(params.tz);
   const timeZone = tz && isValidTimeZone(tz) ? tz : DEFAULT_TIME_ZONE;
 
   return {
-    date,
+    from,
+    to,
     timeZone,
-    start: midnightIn(date, timeZone).toISOString(),
-    end: midnightIn(nextDate(date), timeZone).toISOString(),
+    start: from && midnightIn(from, timeZone).toISOString(),
+    end: to && midnightIn(nextDate(to), timeZone).toISOString(),
+    reversed: !!from && !!to && from > to,
   };
 }
 
-// Today's date (YYYY-MM-DD) on the given clock, read in the runtime's local time zone.
-export function localDate(now: Date): string {
+// The date (YYYY-MM-DD) of an instant, read in the runtime's local time zone.
+export function localDate(instant: Date): string {
   const pad = (n: number) => String(n).padStart(2, "0");
-  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+  return `${instant.getFullYear()}-${pad(instant.getMonth() + 1)}-${pad(instant.getDate())}`;
 }
