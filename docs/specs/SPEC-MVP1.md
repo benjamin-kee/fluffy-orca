@@ -2,13 +2,13 @@
 id: SPEC-MVP1
 prd: PRD-MVP1
 prd_version: 0.4
-status: MVP1.0 built; MVP1.2 approved and built; MVP1.1 and MVP1.3 to MVP1.6 draft
-version: 0.4.1
+status: MVP1.0 built; MVP1.1 and MVP1.2 approved and built; MVP1.3 to MVP1.6 draft
+version: 0.4.2
 ---
 
 # MVP1 Specification: Filtering and Keyword Search
 
-**Status:** MVP1.0 approved by Ben on 27 October 2026, built and merged ([pull request 5](https://github.com/benjamin-kee/fluffy-orca/pull/5)). MVP1.2 approved by Ben on 27–28 October 2026 and built ([pull request 7](https://github.com/benjamin-kee/fluffy-orca/pull/7)). MVP1.1 and MVP1.3 to MVP1.6 are drafts: each starts only after Ben approves it.
+**Status:** MVP1.0 approved by Ben on 27 October 2026, built and merged ([pull request 5](https://github.com/benjamin-kee/fluffy-orca/pull/5)). MVP1.2 approved by Ben on 27–28 October 2026 and built ([pull request 7](https://github.com/benjamin-kee/fluffy-orca/pull/7)). MVP1.1 approved by Ben on 28 October 2026 and built on `claude/mvp1.1-results-controls`. MVP1.3 to MVP1.6 are drafts: each starts only after Ben approves it.
 **Branch:** one branch and one pull request into `main` per sub-sprint. MVP1.0 was built on `mvp1`, MVP1.2 on `mvp1.2`.
 **Last updated:** 2026-10-28
 **Replaces:** the v0.1 keyword-search-only draft, now in `docs/specs/Retired/`. Its approved items (D-002 keyword search, D-005 headline text only) carry forward into MVP1.6.
@@ -29,7 +29,7 @@ Each sub-sprint ships a working increment on top of the one before it, and is me
 | Sprint | Name | What ships | Depends on | Gate to start |
 | --- | --- | --- | --- | --- |
 | MVP1.0 | Single-day date filter | Pick one day; feed shows that day's headlines | MVP0 feed | Approved 2026-10-27. Built |
-| MVP1.1 | Results controls | Result count, clear all, newest or oldest sort, URL state for all filters | MVP1.0 | Ben approves MVP1.1 |
+| MVP1.1 | Results controls | Result count, clear all, newest or oldest sort, URL state for all filters | MVP1.0 | Approved 2026-10-28. Built |
 | MVP1.2 | Date range | From and To dates | MVP1.0 | Approved 2026-10-28. Built |
 | MVP1.3 | Source filter | Multi-select of publishers with headline counts | MVP1.1 | Ben approves MVP1.3 and approval item A2 |
 | MVP1.4 | Country filter | Malaysia active, Singapore greyed out "Coming soon" | A second ingested country and approval item A1 | Held until a second country is ingested (Q7) and A1 is approved |
@@ -63,7 +63,7 @@ As built on 27 October 2026. MVP1.2 replaces the single-day picker, the earliest
 | MVP1.0-R3 | Picking a date shows only the headlines published on that day in the viewer's time zone (MVP1-S4), newest first, with the MVP0 pagination. |
 | MVP1.0-R4 | The chosen date and time zone are stored in the URL as `?date=YYYY-MM-DD&tz=<time zone>`, together with `page` and `size`. Opening or reloading that URL shows the same results. |
 | MVP1.0-R5 | When the chosen day has no headlines, the page shows a small drawing of a miner digging and the message "Our keyboard warriors are working hard to get your news." and no pagination. The drawing is inline SVG, not an image file or library. |
-| MVP1.0-R6 | When a date is set, a "Show all dates" link returns to the unfiltered feed (page 1, same page size). Clearing the date input does the same. |
+| MVP1.0-R6 | When a date is set, a "Show all dates" link returns to the unfiltered feed (page 1, same page size). Clearing the date input does the same. The link was removed in MVP1.1, replaced by "Clear all" (MVP1.1-R2). |
 | MVP1.0-R7 | A `date` value that is not a real date in `YYYY-MM-DD` form, or is before 1 January 2026, is ignored (MVP1-S7). An unknown `tz` falls back to Malaysia time. A future date in the URL shows the R5 message. |
 | MVP1.0-R8 | No database change. The existing `published_at` index serves the query. |
 | MVP1.0-R9 | Unit tests cover reading `date` and `tz` from the URL and computing the day window, including the 23:59 and 00:00 edges and a daylight-saving day. |
@@ -88,12 +88,12 @@ As built on 27 October 2026. MVP1.2 replaces the single-day picker, the earliest
 
 | ID | Requirement |
 | --- | --- |
-| MVP1.1-R1 | A line above the results reads "Showing X of Y headlines", where X is the number on the current page and Y the total matching the active filters. See Q6. |
-| MVP1.1-R2 | A "Clear all" button removes every filter, the sort and the search, and returns to page 1 of the full feed with the same page size. It appears only when something is set. |
+| MVP1.1-R1 | A line above the results shows the range listed on the current page and the total matching the active filters, for example "Showing 51–100 of 340 headlines". A single result reads "Showing 1 of 1 headline". The line is hidden when nothing is listed. Q6, answered: option B. |
+| MVP1.1-R2 | A "Clear all" button removes every filter, the sort and the search, and returns to page 1 of the full feed with the same page size. It appears only when something is set. It replaces the "Show all dates" link (MVP1.0-R6, MVP1.2-R6); emptying the date boxes still shows all dates and keeps the sort. |
 | MVP1.1-R3 | A sort control offers "Newest first" (default) and "Oldest first" by `published_at`. `id` breaks ties in the same direction, so pages stay stable. |
-| MVP1.1-R4 | Every filter, the sort and the search are stored in the URL: `date`, `from`, `to`, `source`, `country`, `sort`, `q`, plus `page` and `size`. Default values are left out. `sort=oldest` means oldest first. |
+| MVP1.1-R4 | Every filter, the sort and the search are stored in the URL: `date`, `from`, `to`, `source`, `country`, `sort`, `q`, plus `page` and `size`. Default values are left out. `sort=oldest` means oldest first. Each filter adds its own address value in its sprint: `date`, `from`, `to` (with `tz`) and `sort` are stored now; MVP1.3 adds `source`, MVP1.4 `country` and MVP1.6 `q`. An invalid value is ignored (MVP1-S7). |
 
-Acceptance: X and Y match the database for a filtered day; "Clear all" from any filtered URL lands on `/?page=1&size=<size>`; oldest first on a day lists its earliest headline first; any filtered URL reloads to the same results.
+Acceptance: the range and total match the database for a filtered day; "Clear all" from any filtered URL lands on `/?page=1&size=<size>`; oldest first on a day lists its earliest headline first; any filtered URL reloads to the same results.
 
 ### MVP1.2 Date range
 
@@ -104,7 +104,7 @@ Acceptance: X and Y match the database for a filtered day; "Clear all" from any 
 | MVP1.2-R3 | The earliest date that can be picked is the day, on the viewer's clock, of the oldest stored headline, read from the database on each page load, so it moves back as older headlines are added. Days after today on the viewer's clock are greyed out. A date in the URL outside these limits is still read, and shows the R5 message. |
 | MVP1.2-R4 | If From is after To, the page shows a small drawing of the MVP1.0 miner, puzzled, beside a signpost whose "To" and "From" arrows are the wrong way round, with "From date must be on or before To date." It shows no results and no pagination until the dates are corrected. The drawing is inline SVG. |
 | MVP1.2-R5 | When the range has no headlines, the page shows the MVP1.0 miner drawing and "Our keyboard warriors are working hard to add more news for you." and no pagination. |
-| MVP1.2-R6 | The range replaces the single-day picker. A single day is From and To on the same date. Existing `?date=` links keep working and are read as `from=to=date`. A "Show all dates" link clears the range (page 1, same page size). |
+| MVP1.2-R6 | The range replaces the single-day picker. A single day is From and To on the same date. Existing `?date=` links keep working and are read as `from=to=date`. A "Show all dates" link clears the range (page 1, same page size). The link was removed in MVP1.1, replaced by "Clear all" (MVP1.1-R2). |
 | MVP1.2-R7 | A `from`, `to` or `date` value that is not a real date in `YYYY-MM-DD` form is ignored (MVP1-S7). |
 | MVP1.2-R8 | No database change. Unit tests cover the range edges at midnight, a headline that falls on different days for London and Malaysia viewers, a daylight-saving day, From alone, To alone, From after To, `?date=` links, the Malaysia fallback for `tz` and invalid values. |
 
@@ -179,13 +179,13 @@ MVP1.0, MVP1.1, MVP1.2 and MVP1.5 need no database change.
 
 Reply by number, for example "Q1 yes".
 
-Answered on 27 October 2026: Q1 day boundary is the viewer's own time zone (MVP1-S4, confirmed again for MVP1.2 on 28 October); Q2 latest date is today; Q3 "Show all dates" link approved.
+Answered on 27 October 2026: Q1 day boundary is the viewer's own time zone (MVP1-S4, confirmed again for MVP1.2 on 28 October); Q2 latest date is today; Q3 "Show all dates" link approved (removed in MVP1.1 on 28 October 2026, replaced by "Clear all").
 
 Answered on 27 October 2026 for MVP1.2: Q4 the From and To pair replaces the single-day picker; Q8 the earliest date is the oldest stored headline's day, not 1 January 2026.
 
 4. ~~Range and single day.~~ Answered: replace (MVP1.2-R6).
 5. ~~Source counts.~~ Answered 28 October 2026: counts within the other active filters (MVP1.3-R2).
-6. **Count wording.** "Showing X of Y headlines" with X as this page's count, as written. Or "Showing 51–100 of 340 headlines"?
+6. ~~Count wording.~~ Answered by Ben on 28 October 2026 in the MVP1.1 session: option B, the range, "Showing 51–100 of 340 headlines" (MVP1.1-R1). The draft wording "Showing X of Y headlines", with X as this page's count, was not chosen.
 7. ~~Country filter value.~~ Answered 28 October 2026: hold MVP1.4 until a second country is ingested.
 8. ~~Earliest date.~~ Answered: the oldest stored headline's day (MVP1.2-R3).
 9. ~~PRD.~~ Answered: PRD-MVP1 updated to v0.3 to match this spec.
@@ -194,6 +194,7 @@ Answered on 27 October 2026 for MVP1.2: Q4 the From and To pair replaces the sin
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 0.4.2 | 2026-10-28 | Ben approved MVP1.1. Q6 answered: the count line shows the range, "Showing 51–100 of 340 headlines". The web address stores only the filters that exist; later sprints add theirs. Invalid values stay ignored (MVP1-S7). "Clear all" replaces the "Show all dates" link. MVP1.1 built. |
 | 0.4.1 | 2026-10-28 | Ben answered Q5 (source counts within the other active filters) and Q7 (country filter held until a second country is ingested). Q6 is handled in a separate session. |
 | 0.4 | 2026-10-28 | Ben approved MVP1.2: From and To replace the single-day picker (Q4); earliest date is the oldest stored headline's day (Q8); empty message is now "Our keyboard warriors are working hard to add more news for you."; From after To shows a puzzled miner by a wrong-way signpost. Days and today stay the viewer's own, with `tz` in links (D-040 kept; a brief switch to Malaysia days for all viewers was reversed the same day). One branch per sub-sprint. MVP1.2 built ([pull request 7](https://github.com/benjamin-kee/fluffy-orca/pull/7)). |
 | 0.3 | 2026-10-27 | Ben approved MVP1.0 with answers to Q1 to Q3: days follow the viewer's time zone (`tz` in the URL), latest date is today, "Show all dates" link. Empty day shows the miner drawing and the keyboard-warriors message. All sub-sprints on the `mvp1` branch. MVP1.0 built and merged. |
