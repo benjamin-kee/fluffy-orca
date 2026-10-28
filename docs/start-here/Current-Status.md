@@ -24,7 +24,7 @@
 ## Open
 
 - Review items 68 (login placement) and 69 (behaviour tracking).
-- Ben approves MVP1.1 (results controls) to start the next sub-sprint, and answers SPEC-MVP1 questions Q5 to Q7.
+- Ben approves MVP1.1 (results controls) to start the next sub-sprint, and answers SPEC-MVP1 question Q6 (handled in a separate session). Q5 and Q7 answered on 28 October.
 - Ben reviews the MVP2 PRD and spec (SPEC-MVP2 questions 1 to 4), and the Later PRD (item 44).
 - Change requests FS-50 to FS-65 in the [fs-review](../reviews/fs-review_2026-10-02_SPEC-MVP0.md) were written against the retired v2.1 draft. They are not applied.
 - What the backfill rule becomes after 21 November 2026.

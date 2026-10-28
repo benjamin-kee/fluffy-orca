@@ -81,7 +81,7 @@ Filters and search use parameterized queries only and make no outbound calls. Se
 |---|---|---|
 | R1 | Stored history reaches back only about 30 days | From MVP1.2 the date picker starts at the oldest stored headline's day, so empty earlier days cannot be picked; history before late September needs a paid GNews plan (A-13) |
 | R2 | A shared link carries the sender's time zone, so the recipient sees the sender's day | Accepted: the link shows the same list for everyone |
-| R3 | The country filter changes nothing while Malaysia is the only country ingested | Spec open question Q7 |
+| R3 | The country filter changes nothing while Malaysia is the only country ingested | MVP1.4 is held until a second country is ingested (spec Q7, answered 28 October 2026) |
 | R4 | Headline-only search has lower recall than body search | Accepted by D-005. Body search is backlog B-002 |
 | R5 | English stemming misses Malay terms and some names | English-only scope (D-014) |
 
