@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { ArticleItem } from "@/components/ArticleItem";
 import { DateFilter } from "@/components/DateFilter";
 import { EmptyDay } from "@/components/EmptyDay";
@@ -8,7 +7,7 @@ import { SortSelect } from "@/components/SortSelect";
 import type { Article } from "@/lib/article";
 import { countArticles, countArticlesPublishedBetween, listArticles } from "@/lib/articleRepository";
 import { parseDayFilter } from "@/lib/dateFilter";
-import { pageHref, parsePageParams, resultCountText, type FeedQuery } from "@/lib/pagination";
+import { parsePageParams, resultCountText, type FeedQuery } from "@/lib/pagination";
 import { DEFAULT_SORT, parseSort } from "@/lib/sort";
 
 export const dynamic = "force-dynamic";
@@ -49,7 +48,6 @@ export default async function HomePage({ searchParams }: Props) {
         <DateFilter query={query} size={size} />
         <SortSelect query={query} size={size} />
         <PageSizeSelect size={size} query={query} />
-        {day && <Link href={pageHref(1, size, { sort })}>Show all dates</Link>}
         {anythingSet && (
           // Clear all: back to page 1 of the full feed, keeping only the page size.
           <form action="/" className="clear-all">
