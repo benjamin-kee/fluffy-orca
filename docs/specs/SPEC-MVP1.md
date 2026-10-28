@@ -185,7 +185,7 @@ Answered on 27 October 2026 for MVP1.2: Q4 the From and To pair replaces the sin
 
 4. ~~Range and single day.~~ Answered: replace (MVP1.2-R6).
 5. ~~Source counts.~~ Answered 28 October 2026: counts within the other active filters (MVP1.3-R2).
-6. ~~Count wording.~~ Answered 28 October 2026: option B, "Showing 51–100 of 340 headlines" (MVP1.1-R1).
+6. ~~Count wording.~~ Answered by Ben on 28 October 2026 in the MVP1.1 session: option B, the range, "Showing 51–100 of 340 headlines" (MVP1.1-R1). The draft wording "Showing X of Y headlines", with X as this page's count, was not chosen.
 7. ~~Country filter value.~~ Answered 28 October 2026: hold MVP1.4 until a second country is ingested.
 8. ~~Earliest date.~~ Answered: the oldest stored headline's day (MVP1.2-R3).
 9. ~~PRD.~~ Answered: PRD-MVP1 updated to v0.3 to match this spec.
