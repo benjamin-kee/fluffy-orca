@@ -3,14 +3,14 @@ id: SPEC-MVP1
 prd: PRD-MVP1
 prd_version: 0.4
 status: MVP1.0 built; MVP1.1 and MVP1.2 approved and built; MVP1.3 to MVP1.6 draft
-version: 0.4.2
+version: 0.4.3
 ---
 
 # MVP1 Specification: Filtering and Keyword Search
 
 **Status:** MVP1.0 approved by Ben on 27 October 2026, built and merged ([pull request 5](https://github.com/benjamin-kee/fluffy-orca/pull/5)). MVP1.2 approved by Ben on 27–28 October 2026 and built ([pull request 7](https://github.com/benjamin-kee/fluffy-orca/pull/7)). MVP1.1 approved by Ben on 28 October 2026 and built on `claude/mvp1.1-results-controls`. MVP1.3 to MVP1.6 are drafts: each starts only after Ben approves it.
 **Branch:** one branch and one pull request into `main` per sub-sprint. MVP1.0 was built on `mvp1`, MVP1.2 on `mvp1.2`.
-**Last updated:** 2026-10-28
+**Last updated:** 2026-11-01
 **Replaces:** the v0.1 keyword-search-only draft, now in `docs/specs/Retired/`. Its approved items (D-002 keyword search, D-005 headline text only) carry forward into MVP1.6.
 **Source:** MVP1 sprint breakdown, draft of 26 October 2026.
 
@@ -156,6 +156,32 @@ Approved: keyword search across collected news (D-002), headline text only (D-00
 
 Acceptance: "Maybank raises dividend" is found by `maybank dividend`, not by `"dividend raises"`; "Banks cut rates" is found by `bank`; search plus a date returns only that day's matches; a 201-character query is rejected; logs show no GNews request from a search.
 
+#### Why Postgres full-text search (requested by Ben, 1 November 2026)
+
+This explains the choice behind MVP1.6-R2 and R4. No requirement changes.
+
+**What search has to do.** Find words in headline titles only (D-005), require all words, match quoted phrases, and match English word forms. Watchtower stores thousands of headlines and regular collection adds up to about a hundred a day. Relevance ranking, typo tolerance, autocomplete and AI or semantic search are out of scope (section 6).
+
+**Why Postgres.** The headlines already live in Watchtower's Supabase Postgres database, and Postgres has full-text search built in. `websearch_to_tsquery` with the English configuration covers every rule above. Searching where the data lives means:
+- No second copy of the headlines to keep in sync, so a search never misses a headline that the feed shows.
+- No new service, account, key or monthly bill. Section 1 of this spec rules out new search engines and services, and `CLAUDE.md` rules out new infrastructure without approval.
+- Search combines with the date range, sort and (later) source filter in one database query, using the same pagination.
+- Postgres full-text search comfortably handles millions of short rows, far beyond Watchtower's size for the foreseeable future.
+
+**Why this index.** A GIN index on `to_tsvector('english', title)` is the standard way to index Postgres full-text search: the PostgreSQL documentation uses this exact pattern, and GIN is the index type it recommends for text search. GIN finds matching rows quickly, and its slower updates do not matter at about a hundred new headlines a day. An expression index avoids a new column (A3). A stored `tsvector` column is the common alternative; it helps when searching long text or several columns, which titles alone do not need. The query must use the same expression, `to_tsvector('english', title)`, for the index to be used; the Supabase client's `textSearch` filter with `config: 'english'` does this.
+
+**Options considered.**
+
+| Option | What it is | Why not now |
+| --- | --- | --- |
+| **Postgres full-text search (chosen)** | Built into the existing database | — |
+| Postgres `ILIKE` (plain text match) | Simplest possible search | No word forms ("bank" does not find "banks"), no phrases, and it cannot use an index, so it slows down as headlines grow |
+| Azure AI Search | Microsoft's hosted search service | A separate service and copy of the data to keep in sync. The free tier has no uptime guarantee; the first paid tier (Basic) is about US$74 a month. Its strengths (relevance ranking, AI and semantic search) are out of scope |
+| Elasticsearch or OpenSearch | Self-run or hosted search engines | Same sync and cost problem, plus servers to run. Built for far larger data |
+| Algolia, Typesense, Meilisearch | Hosted search with typo tolerance and instant results | Same sync problem, a new account and bill. Typo tolerance and autocomplete are out of scope |
+
+**When to look again.** A dedicated search service, or Postgres extensions first (`pg_trgm` for typo tolerance, `pgvector` for semantic search, both available in Supabase), becomes worth considering if Ben approves relevance ranking, typo tolerance, autocomplete or AI-assisted research (PRD-Later). Malay-language headlines are a known limit: the English configuration still finds Malay words as typed, but does not match their word forms.
+
 ## 5. Approvals needed (data changes)
 
 | # | Item | Needed by | Detail |
@@ -194,6 +220,7 @@ Answered on 27 October 2026 for MVP1.2: Q4 the From and To pair replaces the sin
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 0.4.3 | 2026-11-01 | Added "Why Postgres full-text search" under MVP1.6, at Ben's request: what search needs, why Postgres and the GIN expression index, other options considered (including Azure AI Search) and when to look again. No requirement changed; MVP1.6 is still a draft. |
 | 0.4.2 | 2026-10-28 | Ben approved MVP1.1. Q6 answered: the count line shows the range, "Showing 51–100 of 340 headlines". The web address stores only the filters that exist; later sprints add theirs. Invalid values stay ignored (MVP1-S7). "Clear all" replaces the "Show all dates" link. MVP1.1 built. |
 | 0.4.1 | 2026-10-28 | Ben answered Q5 (source counts within the other active filters) and Q7 (country filter held until a second country is ingested). Q6 is handled in a separate session. |
 | 0.4 | 2026-10-28 | Ben approved MVP1.2: From and To replace the single-day picker (Q4); earliest date is the oldest stored headline's day (Q8); empty message is now "Our keyboard warriors are working hard to add more news for you."; From after To shows a puzzled miner by a wrong-way signpost. Days and today stay the viewer's own, with `tz` in links (D-040 kept; a brief switch to Malaysia days for all viewers was reversed the same day). One branch per sub-sprint. MVP1.2 built ([pull request 7](https://github.com/benjamin-kee/fluffy-orca/pull/7)). |
