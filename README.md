@@ -15,6 +15,7 @@ Live at <https://watchtower01.vercel.app>.
 - Opens the publisher's article in a new tab when a headline is clicked.
 - Filters the feed by a From and To date, both included (`?from=2026-10-19&to=2026-10-21`). Either can be left empty. Dates can be picked from the day of the oldest stored headline to today. A day runs midnight to midnight in the viewer's own time zone, which the date picker adds to the link (`&tz=America%2FToronto`); a link without `tz` uses Malaysia time. Older `?date=2026-10-21` links still work as a one-day range.
 - Shows which headlines are listed, e.g. "Showing 51–100 of 340 headlines", above the results, sorts newest first or oldest first (`?sort=oldest`), and has a "Clear all" button that returns to page 1 of the full feed with the same page size. Page links, the page-size selector and the date pickers keep the chosen dates and sort. Emptying both date boxes shows all dates and keeps the sort.
+- Searches headline titles (`?q=petronas`), up to 200 characters, together with the dates and sort. All words must match, text in quotes matches as a phrase, and English word forms match ("bank" finds "banks"). Search runs on the stored headlines only; it never calls GNews.
 
 On the GNews free plan, headlines become available 12 hours after publication, and use is limited to non-commercial purposes.
 
@@ -53,6 +54,8 @@ The secret key gives full database access. It is used only on the server. Never 
 In the Supabase dashboard, open **SQL Editor** and run the contents of [`supabase/migrations/0001_create_articles.sql`](supabase/migrations/0001_create_articles.sql) once. This creates the `articles` table, the rule that blocks duplicates, and an index for newest-first ordering. It also enables row-level security, so the public API key cannot read or write the table.
 
 Then run [`supabase/migrations/0003_grant_service_role.sql`](supabase/migrations/0003_grant_service_role.sql). Newer Supabase projects give API keys no table access by default; this lets the server-side secret key read and add articles. (`0002` sets up the schedule and is run after deployment; see below.)
+
+For keyword search, also run [`supabase/migrations/0005_title_search_index.sql`](supabase/migrations/0005_title_search_index.sql) once. It adds a search index on headline titles and changes no data. Search works without it, but slows down as headlines grow.
 
 ## Running locally
 

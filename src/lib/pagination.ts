@@ -21,17 +21,18 @@ export function parsePageParams(params: SearchParams): PageParams {
   };
 }
 
-// The filters and sort that page links carry.
-export type FeedQuery = { range?: RangeParam | null; sort?: Sort };
+// The filters, search and sort that page links carry.
+export type FeedQuery = { range?: RangeParam | null; sort?: Sort; q?: string | null };
 
-// Links keep the chosen dates and sort, if any. The default sort is left out.
-export function pageHref(page: number, size: number, { range, sort }: FeedQuery = {}): string {
+// Links keep the chosen dates, search and sort, if any. The default sort is left out.
+export function pageHref(page: number, size: number, { range, sort, q }: FeedQuery = {}): string {
   const params = new URLSearchParams();
   if (range) {
     if (range.from) params.set("from", range.from);
     if (range.to) params.set("to", range.to);
     params.set("tz", range.timeZone);
   }
+  if (q) params.set("q", q);
   if (sort && sort !== DEFAULT_SORT) params.set("sort", sort);
   params.set("page", String(page));
   params.set("size", String(size));

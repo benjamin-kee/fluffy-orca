@@ -33,11 +33,16 @@ export async function insertNewArticles(articles: NewArticle[]): Promise<number>
 // Optional publication window: start <= published_at < end (ISO instants). A null bound is open.
 export type PublishedWindow = { start: string | null; end: string | null };
 
-// Number of stored articles, within the window if one is given.
-export async function countArticles(window: PublishedWindow | null = null): Promise<number> {
+// Headline search (MVP1.6-R2): Postgres full-text search, English rules, websearch syntax.
+// PostgREST compares to_tsvector('english', title), the expression the search index covers.
+const SEARCH = { type: "websearch", config: "english" } as const;
+
+// Number of stored articles, within the window and matching the search if given.
+export async function countArticles(window: PublishedWindow | null = null, q: string | null = null): Promise<number> {
   let query = getDb().from(TABLE).select("id", { count: "exact", head: true });
   if (window?.start) query = query.gte("published_at", window.start);
   if (window?.end) query = query.lt("published_at", window.end);
+  if (q) query = query.textSearch("title", q, SEARCH);
 
   const { count, error } = await query;
   if (error) throw new Error(`Failed to count articles: ${error.message}`);
@@ -63,12 +68,14 @@ export async function listArticles(
   limit: number,
   window: PublishedWindow | null = null,
   sort: Sort = "newest",
+  q: string | null = null,
 ): Promise<Article[]> {
   let query = getDb()
     .from(TABLE)
     .select("id, title, source, source_url, article_url, published_at, ingested_at, external_id");
   if (window?.start) query = query.gte("published_at", window.start);
   if (window?.end) query = query.lt("published_at", window.end);
+  if (q) query = query.textSearch("title", q, SEARCH);
 
   const { data, error } = await query
     .order("published_at", { ascending: sort === "oldest" })
