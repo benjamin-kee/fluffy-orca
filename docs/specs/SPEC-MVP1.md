@@ -3,7 +3,7 @@ id: SPEC-MVP1
 prd: PRD-MVP1
 prd_version: 0.4
 status: MVP1.0 built; MVP1.1 and MVP1.2 approved and built; MVP1.3 to MVP1.6 draft
-version: 0.4.3
+version: 0.4.4
 ---
 
 # MVP1 Specification: Filtering and Keyword Search
@@ -34,7 +34,7 @@ Each sub-sprint ships a working increment on top of the one before it, and is me
 | MVP1.3 | Source filter | Multi-select of publishers with headline counts | MVP1.1 | Ben approves MVP1.3 and approval item A2 |
 | MVP1.4 | Country filter | Malaysia active, Singapore greyed out "Coming soon" | A second ingested country and approval item A1 | Held until a second country is ingested (Q7) and A1 is approved |
 | MVP1.5 | Mobile filter sheet | Filters behind one button and a bottom sheet on phones | MVP1.1 to MVP1.4 | Ben approves MVP1.5 |
-| MVP1.6 | Keyword search | Search headline titles, combined with active filters | MVP1.1 and approval item A3 | Ben approves MVP1.6 and A3 |
+| MVP1.6 | Keyword search | Search headline titles, combined with active filters | MVP1.1 and approval item A3 | Ben approves MVP1.6 (A3 approved 2026-11-01) |
 
 MVP1.2 and MVP1.3 can run in either order. MVP1.6 can start once MVP1.1 is stable.
 
@@ -152,7 +152,7 @@ Approved: keyword search across collected news (D-002), headline text only (D-00
 | MVP1.6-R3 | Search combines with every active filter (all must match), and results follow the MVP1.1 sort. |
 | MVP1.6-R4 | An expression index on `to_tsvector('english', title)` supports search. No new column (approval item A3). |
 | MVP1.6-R5 | The query is stored in the URL as `q`. |
-| MVP1.6-R6 | No matches shows "No headlines match your search." and a link to clear it. |
+| MVP1.6-R6 | When a search is set and the chosen dates have headlines but none match, the page shows "No headlines match your search." and a link to clear the search. When the chosen dates have no headlines at all, the MVP1.2-R5 miner drawing and message show instead, with or without a search (Ben, 1 November 2026). |
 
 Acceptance: "Maybank raises dividend" is found by `maybank dividend`, not by `"dividend raises"`; "Banks cut rates" is found by `bank`; search plus a date returns only that day's matches; a 201-character query is rejected; logs show no GNews request from a search.
 
@@ -188,7 +188,7 @@ This explains the choice behind MVP1.6-R2 and R4. No requirement changes.
 | --- | --- | --- | --- |
 | A1 | `country` field on `articles` | MVP1.4 | New business-domain field, `text not null default 'my'`, and the GNews adapter writes the request's country. Held until Ben approves. |
 | A2 | Source-count function | MVP1.3 | Migration adding a read-only Postgres function that returns each source and its headline count for the given filters. The Supabase client cannot group and count without it. |
-| A3 | Search index | MVP1.6 | Migration adding the title full-text expression index. Raised when MVP1.6 is ready; it does not block earlier sprints. |
+| A3 | Search index | MVP1.6 | Migration adding the title full-text expression index (GIN on `to_tsvector('english', title)`). Approved by Ben on 1 November 2026. |
 
 MVP1.0, MVP1.1, MVP1.2 and MVP1.5 need no database change.
 
@@ -220,6 +220,7 @@ Answered on 27 October 2026 for MVP1.2: Q4 the From and To pair replaces the sin
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 0.4.4 | 2026-11-01 | Ben approved A3 (search index) and set the MVP1.6 no-results rule: dates with no headlines show the miner; dates with headlines but no match show "No headlines match your search." MVP1.6 is still a draft. |
 | 0.4.3 | 2026-11-01 | Added "Why Postgres full-text search" under MVP1.6, at Ben's request: what search needs, why Postgres and the GIN expression index, other options considered (including Azure AI Search) and when to look again. No requirement changed; MVP1.6 is still a draft. |
 | 0.4.2 | 2026-10-28 | Ben approved MVP1.1. Q6 answered: the count line shows the range, "Showing 51–100 of 340 headlines". The web address stores only the filters that exist; later sprints add theirs. Invalid values stay ignored (MVP1-S7). "Clear all" replaces the "Show all dates" link. MVP1.1 built. |
 | 0.4.1 | 2026-10-28 | Ben answered Q5 (source counts within the other active filters) and Q7 (country filter held until a second country is ingested). Q6 is handled in a separate session. |
