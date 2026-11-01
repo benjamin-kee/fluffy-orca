@@ -3,7 +3,7 @@ id: SPEC-MVP1
 prd: PRD-MVP1
 prd_version: 0.4
 status: MVP1.0 built; MVP1.1 and MVP1.2 approved and built; MVP1.3 to MVP1.6 draft
-version: 0.4.4
+version: 0.4.5
 ---
 
 # MVP1 Specification: Filtering and Keyword Search
@@ -152,7 +152,8 @@ Approved: keyword search across collected news (D-002), headline text only (D-00
 | MVP1.6-R3 | Search combines with every active filter (all must match), and results follow the MVP1.1 sort. |
 | MVP1.6-R4 | An expression index on `to_tsvector('english', title)` supports search. No new column (approval item A3). |
 | MVP1.6-R5 | The query is stored in the URL as `q`. |
-| MVP1.6-R6 | When a search is set and the chosen dates have headlines but none match, the page shows "No headlines match your search." and a link to clear the search. When the chosen dates have no headlines at all, the MVP1.2-R5 miner drawing and message show instead, with or without a search (Ben, 1 November 2026). |
+| MVP1.6-R6 | When a search is set and the chosen dates have headlines but none match, the page shows a small drawing of the MVP1.0 miner, puzzled, holding a magnifying glass up to a newspaper that shows only a "?", with a message that repeats the search and names the chosen dates, and a "Clear search" link. The drawing is inline SVG. When the chosen dates have no headlines at all, the MVP1.2-R5 miner drawing and message show instead, with or without a search (Ben, 1 November 2026). |
+| MVP1.6-R7 | The R6 message, with the search as typed and dates written like the feed's dates (`21 Oct 2026`): no dates: No headlines match “petronas”. From and To: No headlines match “petronas” from 19 Oct 2026 to 21 Oct 2026. From and To on the same day: No headlines match “petronas” on 21 Oct 2026. From alone: No headlines match “petronas” from 19 Oct 2026 onward. To alone: No headlines match “petronas” up to 21 Oct 2026. The search text is shown as plain text, never as HTML (Ben, 1 November 2026). |
 
 Acceptance: "Maybank raises dividend" is found by `maybank dividend`, not by `"dividend raises"`; "Banks cut rates" is found by `bank`; search plus a date returns only that day's matches; a 201-character query is rejected; logs show no GNews request from a search.
 
@@ -220,6 +221,7 @@ Answered on 27 October 2026 for MVP1.2: Q4 the From and To pair replaces the sin
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 0.4.5 | 2026-11-01 | Ben approved the puzzled-miner-with-magnifying-glass drawing for no search matches, and changed the message to repeat the search and name the chosen dates (MVP1.6-R6, new R7). MVP1.6 is still a draft. |
 | 0.4.4 | 2026-11-01 | Ben approved A3 (search index) and set the MVP1.6 no-results rule: dates with no headlines show the miner; dates with headlines but no match show "No headlines match your search." MVP1.6 is still a draft. |
 | 0.4.3 | 2026-11-01 | Added "Why Postgres full-text search" under MVP1.6, at Ben's request: what search needs, why Postgres and the GIN expression index, other options considered (including Azure AI Search) and when to look again. No requirement changed; MVP1.6 is still a draft. |
 | 0.4.2 | 2026-10-28 | Ben approved MVP1.1. Q6 answered: the count line shows the range, "Showing 51–100 of 340 headlines". The web address stores only the filters that exist; later sprints add theirs. Invalid values stay ignored (MVP1-S7). "Clear all" replaces the "Show all dates" link. MVP1.1 built. |
