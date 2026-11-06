@@ -7,12 +7,15 @@ import { pageHref, type FeedQuery } from "@/lib/pagination";
 
 type Props = { query: FeedQuery; size: number; oldest: string | null };
 
-// From and To dates in the viewer's own time zone, each from the oldest headline's day to today.
-// Changing either goes to page 1 and keeps the sort; clearing both shows all dates. On touch screens the date applies
-// when the calendar closes: phones such as iPhones fill in today as soon as an empty box is
-// opened, and applying that at once reloads the list and closes the calendar.
+// From and To dates in the viewer's own time zone. The calendars offer the oldest headline's day
+// to today, but some phones (iPhones) let any day be picked, so every real date picked is applied:
+// a range with no headlines shows the empty message and From after To shows the wrong-order
+// drawing, rather than the box showing a date the list ignores. Changing either date goes to
+// page 1 and keeps the search and sort; clearing both shows all dates. On touch screens the date
+// applies when the calendar closes: phones such as iPhones fill in today as soon as an empty box
+// is opened, and applying that at once reloads the list and closes the calendar.
 export function DateFilter({ query, size, oldest }: Props) {
-  const { range, sort } = query;
+  const { range } = query;
   const router = useRouter();
   const from = range?.from ?? "";
   const to = range?.to ?? "";
@@ -28,14 +31,15 @@ export function DateFilter({ query, size, oldest }: Props) {
     setTouch(window.matchMedia("(pointer: coarse)").matches);
   }, []);
 
-  function apply(end: "from" | "to", value: string) {
-    if (value === (end === "from" ? from : to)) return;
-    const { earliest, today } = limits;
-    // Skips partial values some browsers report while the year is being typed, and out-of-range days.
-    if (value !== "" && (!isValidDate(value) || (earliest && value < earliest) || (today && value > today))) return;
+  // Returns false when the value is not a whole date yet (some browsers report partial values
+  // while the year is being typed), so nothing is applied.
+  function apply(end: "from" | "to", value: string): boolean {
+    if (value === (end === "from" ? from : to)) return true;
+    if (value !== "" && !isValidDate(value)) return false;
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const next = { from: from || null, to: to || null, timeZone, [end]: value || null };
-    router.push(pageHref(1, size, { range: next.from || next.to ? next : null, sort }));
+    router.push(pageHref(1, size, { ...query, range: next.from || next.to ? next : null }));
+    return true;
   }
 
   const input = (end: "from" | "to", value: string) => (
@@ -46,7 +50,11 @@ export function DateFilter({ query, size, oldest }: Props) {
       max={limits.today}
       defaultValue={value}
       onChange={(e) => !touch && apply(end, e.target.value)}
-      onBlur={(e) => apply(end, e.target.value)}
+      onBlur={(e) => {
+        // A box left holding an unfinished date goes back to the date in use, so it never shows
+        // a date the list is not filtered by.
+        if (!apply(end, e.target.value)) e.target.value = value;
+      }}
     />
   );
 

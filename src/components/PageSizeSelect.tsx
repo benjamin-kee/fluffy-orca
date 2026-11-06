@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { PAGE_SIZES, pageHref, type FeedQuery } from "@/lib/pagination";
 
-// Changing the page size always returns to page 1 and keeps the chosen dates and sort.
+// Changing the page size always returns to page 1 and keeps the chosen dates, search and sort.
 export function PageSizeSelect({ size, query }: { size: number; query: FeedQuery }) {
   const router = useRouter();
 

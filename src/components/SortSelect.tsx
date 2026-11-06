@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { pageHref, type FeedQuery } from "@/lib/pagination";
 import type { Sort } from "@/lib/sort";
 
-// Changing the sort returns to page 1 and keeps the chosen day and page size.
+// Changing the sort returns to page 1 and keeps the chosen dates, search and page size.
 export function SortSelect({ size, query }: { size: number; query: FeedQuery }) {
   const router = useRouter();
 
