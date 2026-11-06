@@ -576,3 +576,31 @@ The following changes were approved by the product owner after the original spec
    - A manual command, `npm run backfill -- [max_requests]`, fetches past headlines oldest day first, so days about to leave the 30-day window are fetched first. It uses the same GNews request settings, Article model and duplicate prevention as regular ingestion.
    - Each day it may use up to 90 GNews requests. The remaining 10 requests (about 100 headlines) are kept for regular ingestion of new headlines.
    - It runs once a day, after the GNews quota resets at 00:00 UTC (8am Malaysia time), from 23 Oct to 21 Nov 2026. After that period the rule is to be reviewed.
+
+## Future Roadmap Considerations
+
+<!-- future-roadmap-considerations: MVP0 -->
+
+Improvements recorded while building MVP0 (under "Future consideration", per Implementation behaviour above), or in the retired SPEC-MVP0 v2.1 draft, that are not part of MVP0 and not approved for any milestone. Nothing here is a requirement. Later capabilities named in "MVP1 future context" (topic metadata, company extraction, alerts, AI) are covered by PRD-Later and the Roadmap, so they are not repeated here.
+
+Convention: see [docs/README.md](../README.md#future-roadmap-considerations). IDs are never reused or renumbered; "Backlog" holds the `B-` number once the item is copied into the [Backlog](../roadmap-and-decisions/Backlog.md).
+
+| ID | Item | Why it came up | Source | Raised | Backlog |
+| --- | --- | --- | --- | --- | --- |
+| FRC-MVP0-01 | Opt-in integration test that checks duplicate blocking against a real test database | Unit tests cover deduplication logic only | MVP0 build | 2026-10 | In Backlog, "Future consideration" (no number yet) |
+| FRC-MVP0-02 | Ingestion-run log table, or a health alert when GNews returns no articles for several runs | Failed or empty runs are only visible in logs | MVP0 build | 2026-10 | In Backlog, "Future consideration" (no number yet) |
+| FRC-MVP0-03 | Automatic retries with backoff for GNews requests | A failed request waits for the next 3-hourly run | MVP0 build | 2026-10 | In Backlog, "Future consideration" (no number yet) |
+| FRC-MVP0-04 | More thorough link cleaning, and updating stored headlines when publishers edit them | MVP0 removes tracking parameters only and never updates a stored headline | MVP0 build | 2026-10 | In Backlog, "Future consideration" (no number yet) |
+| FRC-MVP0-05 | Caching of feed pages | Every page view queries the database | MVP0 build | 2026-10 | In Backlog, "Future consideration" (no number yet) |
+| FRC-MVP0-06 | A "new headlines available" notice | Viewers must reload to see new headlines | MVP0 build | 2026-10 | Now proposed as MVP2-R8 |
+| FRC-MVP0-07 | A data retention or archiving policy | Headlines are kept forever | MVP0 build | 2026-10 | In Backlog, "Future consideration" (no number yet) |
+| FRC-MVP0-08 | Additional sources, for example Malay-language headlines | MVP0 ingests English only | MVP0 build | 2026-10 | B-005 |
+| FRC-MVP0-09 | Accessibility and visual polish | MVP0 has a basic interface by design | MVP0 build | 2026-10 | Now MVP2 |
+| FRC-MVP0-10 | Include articles with a missing or unreadable publication date, for example using the ingestion time | They are skipped and logged | MVP0 build | 2026-10 | In Backlog, "Further improvement" (no number yet) |
+| FRC-MVP0-11 | Move to a paid GNews plan (real-time, more articles per request) | Free plan: 12-hour delay, 10 articles per request, non-commercial only | Approved change 5 | 2026-10 | In Backlog, "Future fix"; proposed amendment A-19 |
+| FRC-MVP0-12 | Send `nullable=description,content,image` so GNews does not drop headlines missing those fields | From the retired v2.1 draft (D-037) | Retired v2.1 draft | 2026-10 | In Backlog, "From the retired SPEC-MVP0 v2.1 draft" |
+| FRC-MVP0-13 | Limit each scheduled request to articles from the last 24 hours (lookback window) | From the retired v2.1 draft | Retired v2.1 draft | 2026-10 | In Backlog, "From the retired SPEC-MVP0 v2.1 draft" |
+| FRC-MVP0-14 | Use the GNews article `id` as the duplicate key, with the cleaned link as fallback | From the retired v2.1 draft | Retired v2.1 draft | 2026-10 | In Backlog, "From the retired SPEC-MVP0 v2.1 draft" |
+| FRC-MVP0-15 | Send the GNews key in the `X-Api-Key` header instead of the link, so it is not logged | From the retired v2.1 draft | Retired v2.1 draft | 2026-10 | In Backlog, "From the retired SPEC-MVP0 v2.1 draft" |
+| FRC-MVP0-16 | Tests for GNews error responses (401, 403, 429, 5xx): stop on key or quota errors, retry on 429 and 5xx | From the retired v2.1 draft | Retired v2.1 draft | 2026-10 | In Backlog, "From the retired SPEC-MVP0 v2.1 draft" |
+| FRC-MVP0-17 | A one-day coverage test of how many Malaysian business headlines and publishers GNews returns | From the retired v2.1 draft | Retired v2.1 draft | 2026-10 | In Backlog, "From the retired SPEC-MVP0 v2.1 draft" |
