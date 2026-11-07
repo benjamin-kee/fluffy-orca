@@ -11,7 +11,7 @@ type Props = { query: FeedQuery; size: number; oldest: string | null };
 // to today, but some phones (iPhones) let any day be picked, so every real date picked is applied:
 // a range with no headlines shows the empty message and From after To shows the wrong-order
 // drawing, rather than the box showing a date the list ignores. Changing either date goes to
-// page 1 and keeps the search and sort; clearing both shows all dates. On touch screens the date
+// page 1 and keeps the search, sources and sort; clearing both shows all dates. On touch screens the date
 // applies when the calendar closes: phones such as iPhones fill in today as soon as an empty box
 // is opened, and applying that at once reloads the list and closes the calendar.
 export function DateFilter({ query, size, oldest }: Props) {

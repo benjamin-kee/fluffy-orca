@@ -37,12 +37,17 @@ export type PublishedWindow = { start: string | null; end: string | null };
 // PostgREST compares to_tsvector('english', title), the expression the search index covers.
 const SEARCH = { type: "websearch", config: "english" } as const;
 
-// Number of stored articles, within the window and matching the search if given.
-export async function countArticles(window: PublishedWindow | null = null, q: string | null = null): Promise<number> {
+// Number of stored articles, within the window, matching the search and from the given sources, if given.
+export async function countArticles(
+  window: PublishedWindow | null = null,
+  q: string | null = null,
+  sources: string[] = [],
+): Promise<number> {
   let query = getDb().from(TABLE).select("id", { count: "exact", head: true });
   if (window?.start) query = query.gte("published_at", window.start);
   if (window?.end) query = query.lt("published_at", window.end);
   if (q) query = query.textSearch("title", q, SEARCH);
+  if (sources.length > 0) query = query.in("source", sources);
 
   const { count, error } = await query;
   if (error) throw new Error(`Failed to count articles: ${error.message}`);
@@ -62,13 +67,14 @@ export async function oldestPublishedAt(): Promise<Date | null> {
 }
 
 // Ordered by publication time, newest first unless sort is "oldest"; id breaks ties in the
-// same direction so pages are stable.
+// same direction so pages are stable. No sources means all sources.
 export async function listArticles(
   offset: number,
   limit: number,
   window: PublishedWindow | null = null,
   sort: Sort = "newest",
   q: string | null = null,
+  sources: string[] = [],
 ): Promise<Article[]> {
   let query = getDb()
     .from(TABLE)
@@ -76,6 +82,7 @@ export async function listArticles(
   if (window?.start) query = query.gte("published_at", window.start);
   if (window?.end) query = query.lt("published_at", window.end);
   if (q) query = query.textSearch("title", q, SEARCH);
+  if (sources.length > 0) query = query.in("source", sources);
 
   const { data, error } = await query
     .order("published_at", { ascending: sort === "oldest" })
@@ -84,4 +91,21 @@ export async function listArticles(
 
   if (error) throw new Error(`Failed to list articles: ${error.message}`);
   return data;
+}
+
+export type SourceCount = { source: string; headlines: number };
+
+// Every stored publisher, alphabetical, with its headline count within the window (MVP1.3).
+// Uses the read-only source_counts database function (migration 0004).
+export async function sourceCounts(window: PublishedWindow | null = null): Promise<SourceCount[]> {
+  const { data, error } = await getDb().rpc("source_counts", {
+    p_start: window?.start ?? null,
+    p_end: window?.end ?? null,
+  });
+
+  if (error) throw new Error(`Failed to count sources: ${error.message}`);
+  return (data as { source: string; headlines: number | string }[]).map((row) => ({
+    source: row.source,
+    headlines: Number(row.headlines),
+  }));
 }

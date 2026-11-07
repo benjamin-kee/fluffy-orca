@@ -55,6 +55,8 @@ In the Supabase dashboard, open **SQL Editor** and run the contents of [`supabas
 
 Then run [`supabase/migrations/0003_grant_service_role.sql`](supabase/migrations/0003_grant_service_role.sql). Newer Supabase projects give API keys no table access by default; this lets the server-side secret key read and add articles. (`0002` sets up the schedule and is run after deployment; see below.)
 
+For the source filter, also run [`supabase/migrations/0004_source_counts.sql`](supabase/migrations/0004_source_counts.sql). It adds a read-only function that counts headlines per publisher; only the server-side secret key can call it.
+
 For keyword search, also run [`supabase/migrations/0005_title_search_index.sql`](supabase/migrations/0005_title_search_index.sql) once. It adds a search index on headline titles and changes no data. Search works without it, but slows down as headlines grow.
 
 ## Running locally

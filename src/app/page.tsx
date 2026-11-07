@@ -6,13 +6,15 @@ import { PageSizeSelect } from "@/components/PageSizeSelect";
 import { Pagination } from "@/components/Pagination";
 import { SearchBox } from "@/components/SearchBox";
 import { SortSelect } from "@/components/SortSelect";
+import { SourceFilter } from "@/components/SourceFilter";
 import { WrongOrder } from "@/components/WrongOrder";
 import type { Article } from "@/lib/article";
-import { countArticles, listArticles, oldestPublishedAt } from "@/lib/articleRepository";
+import { countArticles, listArticles, oldestPublishedAt, sourceCounts, type SourceCount } from "@/lib/articleRepository";
 import { parseDateRange } from "@/lib/dateFilter";
 import { pageHref, parsePageParams, resultCountText, type FeedQuery } from "@/lib/pagination";
 import { MAX_SEARCH_LENGTH, noMatchText, parseSearch } from "@/lib/search";
 import { DEFAULT_SORT, parseSort } from "@/lib/sort";
+import { parseSources } from "@/lib/sourceFilter";
 
 export const dynamic = "force-dynamic";
 
@@ -25,12 +27,6 @@ export default async function HomePage({ searchParams }: Props) {
   const sort = parseSort(params);
   const search = parseSearch(params);
   const q = search && !search.tooLong ? search.q : null;
-  const query: FeedQuery = {
-    range: range && { from: range.from, to: range.to, timeZone: range.timeZone },
-    sort,
-    q: search?.q ?? null,
-  };
-  const anythingSet = range !== null || sort !== DEFAULT_SORT || search !== null;
   // From after To, or a search over the length limit, lists nothing.
   const listNothing = !!range?.reversed || !!search?.tooLong;
 
@@ -39,13 +35,23 @@ export default async function HomePage({ searchParams }: Props) {
   let oldest: Date | null;
   // Whether the chosen dates have any headlines, read only when a search finds none (MVP1.6-R6).
   let datesHaveHeadlines = true;
+  let counts: SourceCount[];
+  let sources: string[] = [];
   try {
-    [oldest, total, articles] = await Promise.all([
-      oldestPublishedAt(),
-      listNothing ? 0 : countArticles(range, q),
-      listNothing ? [] : listArticles((page - 1) * size, size, range, sort, q),
-    ]);
-    if (q && total === 0) datesHaveHeadlines = (await countArticles(range)) > 0;
+    // Publisher counts follow the chosen dates (MVP1.3-R2). They are read first, because a `source`
+    // value in the URL that is not a stored publisher is ignored.
+    [oldest, counts] = await Promise.all([oldestPublishedAt(), sourceCounts(range)]);
+    sources = parseSources(
+      params,
+      counts.map((c) => c.source),
+    );
+    if (!listNothing) {
+      [total, articles] = await Promise.all([
+        countArticles(range, q, sources),
+        listArticles((page - 1) * size, size, range, sort, q, sources),
+      ]);
+    }
+    if (q && total === 0) datesHaveHeadlines = (await countArticles(range, null, sources)) > 0;
   } catch (err) {
     console.error(`[feed] failed to load headlines: ${err instanceof Error ? err.message : String(err)}`);
     return (
@@ -56,6 +62,13 @@ export default async function HomePage({ searchParams }: Props) {
     );
   }
 
+  const query: FeedQuery = {
+    range: range && { from: range.from, to: range.to, timeZone: range.timeZone },
+    sort,
+    q: search?.q ?? null,
+    sources,
+  };
+  const anythingSet = range !== null || sort !== DEFAULT_SORT || search !== null || sources.length > 0;
   const totalPages = Math.ceil(total / size);
 
   return (
@@ -66,6 +79,7 @@ export default async function HomePage({ searchParams }: Props) {
         <DateFilter query={query} size={size} oldest={oldest && oldest.toISOString()} />
         <SortSelect query={query} size={size} />
         <PageSizeSelect size={size} query={query} />
+        <SourceFilter counts={counts} query={query} size={size} />
         {anythingSet && (
           // Clear all: back to page 1 of the full feed, keeping only the page size.
           <form action="/" className="clear-all">
@@ -95,7 +109,7 @@ export default async function HomePage({ searchParams }: Props) {
         ) : (
           <EmptyDay />
         )
-      ) : range && total === 0 ? (
+      ) : (range || sources.length > 0) && total === 0 ? (
         <EmptyDay />
       ) : (
         <p>{total === 0 ? "No headlines yet." : "No headlines on this page."}</p>
