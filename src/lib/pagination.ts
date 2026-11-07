@@ -21,11 +21,11 @@ export function parsePageParams(params: SearchParams): PageParams {
   };
 }
 
-// The filters and sort that page links carry.
-export type FeedQuery = { range?: RangeParam | null; sort?: Sort; sources?: string[] };
+// The filters, search and sort that page links carry.
+export type FeedQuery = { range?: RangeParam | null; sort?: Sort; q?: string | null; sources?: string[] };
 
-// Links keep the chosen dates, sources and sort, if any. The default sort is left out.
-export function pageHref(page: number, size: number, { range, sort, sources = [] }: FeedQuery = {}): string {
+// Links keep the chosen dates, sources, search and sort, if any. The default sort is left out.
+export function pageHref(page: number, size: number, { range, sort, q, sources = [] }: FeedQuery = {}): string {
   const params = new URLSearchParams();
   if (range) {
     if (range.from) params.set("from", range.from);
@@ -33,6 +33,7 @@ export function pageHref(page: number, size: number, { range, sort, sources = []
     params.set("tz", range.timeZone);
   }
   for (const source of sources) params.append("source", source);
+  if (q) params.set("q", q);
   if (sort && sort !== DEFAULT_SORT) params.set("sort", sort);
   params.set("page", String(page));
   params.set("size", String(size));

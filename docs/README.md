@@ -16,4 +16,15 @@ Each section keeps only current files. A retired file moves to that section's `R
 
 Reading order: Current-Status, then Product-Decisions (items awaiting sign-off), then PRD-MVP0 and `specs/MVP0.md`.
 
+## Future roadmap considerations
+
+Every spec in [specs](specs/) ends with a section titled exactly **Future Roadmap Considerations**. It lists ideas raised while specifying or building that milestone but not approved for it. To collect them into one list (for example with a backlog agent):
+
+1. Read every `*.md` file under `docs/specs/`, skipping `Retired/`.
+2. In each, find the comment `<!-- future-roadmap-considerations: <spec id> -->`, or the heading containing "Future Roadmap Considerations".
+3. Read the table under it. Columns: ID (`FRC-<spec id>-NN`, never reused), Item, Why it came up, Source, Raised, Backlog.
+4. Copy items whose Backlog cell is empty into [Backlog](roadmap-and-decisions/Backlog.md) with a new `B-` number, then write that number in the spec's Backlog cell.
+
+Nothing in these sections is a requirement until Ben approves it into a milestone.
+
 Requirements for Claude Code (see `CLAUDE.md`) are `specs/MVP0.md` and the approved sub-sprints of `specs/SPEC-MVP1.md` (MVP1.0 so far). Everything else is planning context.

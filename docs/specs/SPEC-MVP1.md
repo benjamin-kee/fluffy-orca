@@ -2,15 +2,15 @@
 id: SPEC-MVP1
 prd: PRD-MVP1
 prd_version: 0.4
-status: MVP1.0 built; MVP1.1 and MVP1.2 approved and built; MVP1.3 to MVP1.6 draft
-version: 0.4.2
+status: MVP1.0 built; MVP1.1, MVP1.2 and MVP1.6 approved and built; MVP1.3 to MVP1.5 draft
+version: 0.5
 ---
 
 # MVP1 Specification: Filtering and Keyword Search
 
-**Status:** MVP1.0 approved by Ben on 27 October 2026, built and merged ([pull request 5](https://github.com/benjamin-kee/fluffy-orca/pull/5)). MVP1.2 approved by Ben on 27–28 October 2026 and built ([pull request 7](https://github.com/benjamin-kee/fluffy-orca/pull/7)). MVP1.1 approved by Ben on 28 October 2026 and built on `claude/mvp1.1-results-controls`. MVP1.3 to MVP1.6 are drafts: each starts only after Ben approves it.
+**Status:** MVP1.0 approved by Ben on 27 October 2026, built and merged ([pull request 5](https://github.com/benjamin-kee/fluffy-orca/pull/5)). MVP1.2 approved by Ben on 27–28 October 2026 and built ([pull request 7](https://github.com/benjamin-kee/fluffy-orca/pull/7)). MVP1.1 approved by Ben on 28 October 2026 and built ([pull request 10](https://github.com/benjamin-kee/fluffy-orca/pull/10)). MVP1.6 approved by Ben on 1 November 2026 and built on `mvp1.6-search-capability`. MVP1.3 to MVP1.5 are drafts: each starts only after Ben approves it.
 **Branch:** one branch and one pull request into `main` per sub-sprint. MVP1.0 was built on `mvp1`, MVP1.2 on `mvp1.2`.
-**Last updated:** 2026-10-28
+**Last updated:** 2026-11-01
 **Replaces:** the v0.1 keyword-search-only draft, now in `docs/specs/Retired/`. Its approved items (D-002 keyword search, D-005 headline text only) carry forward into MVP1.6.
 **Source:** MVP1 sprint breakdown, draft of 26 October 2026.
 
@@ -34,7 +34,7 @@ Each sub-sprint ships a working increment on top of the one before it, and is me
 | MVP1.3 | Source filter | Multi-select of publishers with headline counts | MVP1.1 | Ben approves MVP1.3 and approval item A2 |
 | MVP1.4 | Country filter | Malaysia active, Singapore greyed out "Coming soon" | A second ingested country and approval item A1 | Held until a second country is ingested (Q7) and A1 is approved |
 | MVP1.5 | Mobile filter sheet | Filters behind one button and a bottom sheet on phones | MVP1.1 to MVP1.4 | Ben approves MVP1.5 |
-| MVP1.6 | Keyword search | Search headline titles, combined with active filters | MVP1.1 and approval item A3 | Ben approves MVP1.6 and A3 |
+| MVP1.6 | Keyword search | Search headline titles, combined with active filters | MVP1.1 and approval item A3 | Approved 2026-11-01 (with A3). Built |
 
 MVP1.2 and MVP1.3 can run in either order. MVP1.6 can start once MVP1.1 is stable.
 
@@ -143,18 +143,45 @@ Acceptance: at 375px wide the controls are hidden behind the button and every fi
 
 ### MVP1.6 Keyword search
 
-Approved: keyword search across collected news (D-002), headline text only (D-005). The rest are proposals carried forward from the v0.1 draft.
+Approved by Ben on 1 November 2026, building on keyword search across collected news (D-002) and headline text only (D-005).
 
 | ID | Requirement |
 | --- | --- |
-| MVP1.6-R1 | A search box on the feed page searches stored headline titles only. Query length 1 to 200 characters; a longer query is rejected with a short message. |
-| MVP1.6-R2 | Matching uses Postgres full-text search, English configuration, `websearch_to_tsquery`: all words must match, quoted text matches as a phrase, and English word forms match ("bank" finds "banks"). |
+| MVP1.6-R1 | A search box on the feed page searches stored headline titles only. Query length 1 to 200 characters: the box accepts no more than 200, and a longer `q` in the URL shows "Search is limited to 200 characters." and no results (Ben, 28 October 2026). |
+| MVP1.6-R2 | Matching uses Postgres full-text search, English configuration, `websearch_to_tsquery`: all words must match, quoted text matches as a phrase, and English word forms match ("bank" finds "banks"). A search of only common words such as "the" finds nothing and shows the R6 no-match screen (Ben, 28 October 2026). |
 | MVP1.6-R3 | Search combines with every active filter (all must match), and results follow the MVP1.1 sort. |
 | MVP1.6-R4 | An expression index on `to_tsvector('english', title)` supports search. No new column (approval item A3). |
 | MVP1.6-R5 | The query is stored in the URL as `q`. |
-| MVP1.6-R6 | No matches shows "No headlines match your search." and a link to clear it. |
+| MVP1.6-R6 | When a search is set and the chosen dates have headlines but none match, the page shows a small drawing of the MVP1.0 miner, puzzled, holding a magnifying glass up to a newspaper that shows only a "?", with a message that repeats the search and names the chosen dates, and a "Clear search" link. The drawing is inline SVG. When the chosen dates have no headlines at all, the MVP1.2-R5 miner drawing and message show instead, with or without a search (Ben, 1 November 2026). |
+| MVP1.6-R7 | The R6 message, with the search as typed and dates written like the feed's dates (`21 Oct 2026`): no dates: No headlines match “petronas”. From and To: No headlines match “petronas” from 19 Oct 2026 to 21 Oct 2026. From and To on the same day: No headlines match “petronas” on 21 Oct 2026. From alone: No headlines match “petronas” from 19 Oct 2026 onward. To alone: No headlines match “petronas” up to 21 Oct 2026. The search text is shown as plain text, never as HTML (Ben, 1 November 2026). |
 
 Acceptance: "Maybank raises dividend" is found by `maybank dividend`, not by `"dividend raises"`; "Banks cut rates" is found by `bank`; search plus a date returns only that day's matches; a 201-character query is rejected; logs show no GNews request from a search.
+
+#### Why Postgres full-text search (requested by Ben, 1 November 2026)
+
+This explains the choice behind MVP1.6-R2 and R4. No requirement changes.
+
+**What search has to do.** Find words in headline titles only (D-005), require all words, match quoted phrases, and match English word forms. Watchtower stores thousands of headlines and regular collection adds up to about a hundred a day. Relevance ranking, typo tolerance, autocomplete and AI or semantic search are out of scope (section 6).
+
+**Why Postgres.** The headlines already live in Watchtower's Supabase Postgres database, and Postgres has full-text search built in. `websearch_to_tsquery` with the English configuration covers every rule above. Searching where the data lives means:
+- No second copy of the headlines to keep in sync, so a search never misses a headline that the feed shows.
+- No new service, account, key or monthly bill. Section 1 of this spec rules out new search engines and services, and `CLAUDE.md` rules out new infrastructure without approval.
+- Search combines with the date range, sort and (later) source filter in one database query, using the same pagination.
+- Postgres full-text search comfortably handles millions of short rows, far beyond Watchtower's size for the foreseeable future.
+
+**Why this index.** A GIN index on `to_tsvector('english', title)` is the standard way to index Postgres full-text search: the PostgreSQL documentation uses this exact pattern, and GIN is the index type it recommends for text search. GIN finds matching rows quickly, and its slower updates do not matter at about a hundred new headlines a day. An expression index avoids a new column (A3). A stored `tsvector` column is the common alternative; it helps when searching long text or several columns, which titles alone do not need. The query must use the same expression, `to_tsvector('english', title)`, for the index to be used; the Supabase client's `textSearch` filter with `config: 'english'` does this.
+
+**Options considered.**
+
+| Option | What it is | Why not now |
+| --- | --- | --- |
+| **Postgres full-text search (chosen)** | Built into the existing database | — |
+| Postgres `ILIKE` (plain text match) | Simplest possible search | No word forms ("bank" does not find "banks"), no phrases, and it cannot use an index, so it slows down as headlines grow |
+| Azure AI Search | Microsoft's hosted search service | A separate service and copy of the data to keep in sync. The free tier has no uptime guarantee; the first paid tier (Basic) is about US$74 a month. Its strengths (relevance ranking, AI and semantic search) are out of scope |
+| Elasticsearch or OpenSearch | Self-run or hosted search engines | Same sync and cost problem, plus servers to run. Built for far larger data |
+| Algolia, Typesense, Meilisearch | Hosted search with typo tolerance and instant results | Same sync problem, a new account and bill. Typo tolerance and autocomplete are out of scope |
+
+**When to look again.** A dedicated search service, or Postgres extensions first (`pg_trgm` for typo tolerance, `pgvector` for semantic search, both available in Supabase), becomes worth considering if Ben approves relevance ranking, typo tolerance, autocomplete or AI-assisted research (PRD-Later). Malay-language headlines are a known limit: the English configuration still finds Malay words as typed, but does not match their word forms.
 
 ## 5. Approvals needed (data changes)
 
@@ -162,7 +189,7 @@ Acceptance: "Maybank raises dividend" is found by `maybank dividend`, not by `"d
 | --- | --- | --- | --- |
 | A1 | `country` field on `articles` | MVP1.4 | New business-domain field, `text not null default 'my'`, and the GNews adapter writes the request's country. Held until Ben approves. |
 | A2 | Source-count function | MVP1.3 | Migration adding a read-only Postgres function that returns each source and its headline count for the given filters. The Supabase client cannot group and count without it. |
-| A3 | Search index | MVP1.6 | Migration adding the title full-text expression index. Raised when MVP1.6 is ready; it does not block earlier sprints. |
+| A3 | Search index | MVP1.6 | Migration adding the title full-text expression index (GIN on `to_tsvector('english', title)`). Approved by Ben on 1 November 2026. |
 
 MVP1.0, MVP1.1, MVP1.2 and MVP1.5 need no database change.
 
@@ -190,10 +217,38 @@ Answered on 27 October 2026 for MVP1.2: Q4 the From and To pair replaces the sin
 8. ~~Earliest date.~~ Answered: the oldest stored headline's day (MVP1.2-R3).
 9. ~~PRD.~~ Answered: PRD-MVP1 updated to v0.3 to match this spec.
 
-## 8. Change log
+## 8. Future Roadmap Considerations
+
+<!-- future-roadmap-considerations: SPEC-MVP1 -->
+
+Ideas raised while specifying or building MVP1 that are **not** part of MVP1 and not approved for any milestone. Each is a candidate for the [Backlog](../roadmap-and-decisions/Backlog.md) and the [Roadmap](../roadmap-and-decisions/Roadmap.md). Nothing here is a requirement.
+
+**Convention for every spec** (see [docs/README.md](../README.md#future-roadmap-considerations)): the section is titled exactly `Future Roadmap Considerations`, starts with the comment marker `<!-- future-roadmap-considerations: <spec id> -->`, and lists items in this table. IDs are `FRC-<spec id>-NN`, never reused or renumbered. "Backlog" is filled in with the `B-` number when the item is copied into the Backlog, so an agent collecting items can skip ones already copied.
+
+| ID | Item | Why it came up | Source | Raised | Backlog |
+| --- | --- | --- | --- | --- | --- |
+| FRC-SPEC-MVP1-01 | Typo-tolerant search ("petronsa" finds "Petronas"), for example with the Postgres `pg_trgm` extension | MVP1.6 matches exact words only | MVP1.6, "Why Postgres full-text search" | 2026-11-01 | |
+| FRC-SPEC-MVP1-02 | Relevance sort for search ("best match first") | MVP1.6 results follow the date sort only | Section 6 | 2026-10-27 | |
+| FRC-SPEC-MVP1-03 | Search suggestions and autocomplete | Out of scope for MVP1.6 | Section 6 | 2026-10-27 | |
+| FRC-SPEC-MVP1-04 | Semantic or AI-assisted search, for example with the `pgvector` extension; links to AI-assisted research in PRD-Later | Out of scope for MVP1.6 | Section 6, MVP1.6 reasoning | 2026-11-01 | |
+| FRC-SPEC-MVP1-05 | Search that matches Malay word forms | The English rules find Malay words only as typed | MVP1.6 reasoning; related to B-005 | 2026-11-01 | |
+| FRC-SPEC-MVP1-06 | Highlight matched words in results, and search tips on the no-match screen | Out of scope for MVP1.6 | Section 6 | 2026-10-27 | |
+| FRC-SPEC-MVP1-07 | A short notice when a web address has an invalid filter value (for example "That date isn't valid, so all dates are shown") | Ben kept "ignore quietly" (MVP1-S7); worth adding if viewers get confused | MVP1.1 discussion | 2026-10-28 | |
+| FRC-SPEC-MVP1-08 | Quick date presets "Today" and "Last 7 days" | Pending Ben's decision; low effort on top of MVP1.2 | Section 6 | 2026-10-27 | |
+| FRC-SPEC-MVP1-09 | Remember filters between visits, beyond the web address | Out of scope | Section 6 | 2026-10-27 | |
+| FRC-SPEC-MVP1-10 | A date picker styled to match a Watchtower design | The browser's built-in date input looks different in each browser and cannot be restyled; candidate for MVP2 | MVP1.1 discussion | 2026-10-28 | |
+| FRC-SPEC-MVP1-11 | Group the same story across outlets | Parked | Section 6 | 2026-10-27 | |
+| FRC-SPEC-MVP1-12 | CSV export of results | Parked | Section 6 | 2026-10-27 | |
+| FRC-SPEC-MVP1-13 | Saved searches and alerts | Need login | Section 6 | 2026-10-27 | |
+
+## 9. Change log
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 0.5 | 2026-11-01 | Ben approved MVP1.6. Recorded the 200-character rule and the common-words rule (R1, R2). Added section 8, Future Roadmap Considerations, with a convention every spec follows so an agent can collect the items into the Backlog. MVP1.6 built. Change log is now section 9. |
+| 0.4.5 | 2026-11-01 | Ben approved the puzzled-miner-with-magnifying-glass drawing for no search matches, and changed the message to repeat the search and name the chosen dates (MVP1.6-R6, new R7). MVP1.6 is still a draft. |
+| 0.4.4 | 2026-11-01 | Ben approved A3 (search index) and set the MVP1.6 no-results rule: dates with no headlines show the miner; dates with headlines but no match show "No headlines match your search." MVP1.6 is still a draft. |
+| 0.4.3 | 2026-11-01 | Added "Why Postgres full-text search" under MVP1.6, at Ben's request: what search needs, why Postgres and the GIN expression index, other options considered (including Azure AI Search) and when to look again. No requirement changed; MVP1.6 is still a draft. |
 | 0.4.2 | 2026-10-28 | Ben approved MVP1.1. Q6 answered: the count line shows the range, "Showing 51–100 of 340 headlines". The web address stores only the filters that exist; later sprints add theirs. Invalid values stay ignored (MVP1-S7). "Clear all" replaces the "Show all dates" link. MVP1.1 built. |
 | 0.4.1 | 2026-10-28 | Ben answered Q5 (source counts within the other active filters) and Q7 (country filter held until a second country is ingested). Q6 is handled in a separate session. |
 | 0.4 | 2026-10-28 | Ben approved MVP1.2: From and To replace the single-day picker (Q4); earliest date is the oldest stored headline's day (Q8); empty message is now "Our keyboard warriors are working hard to add more news for you."; From after To shows a puzzled miner by a wrong-way signpost. Days and today stay the viewer's own, with `tz` in links (D-040 kept; a brief switch to Malaysia days for all viewers was reversed the same day). One branch per sub-sprint. MVP1.2 built ([pull request 7](https://github.com/benjamin-kee/fluffy-orca/pull/7)). |

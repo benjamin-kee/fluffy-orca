@@ -3,7 +3,7 @@ id: SPEC-MVP2
 prd: PRD-MVP2
 prd_version: 0.3
 status: Draft
-version: 0.3-draft
+version: 0.3.1-draft
 ---
 
 # MVP2 Specification: UI/UX Improvements
@@ -91,7 +91,25 @@ Reply by number.
 3. **New-headlines notice (R8).** It needs a small read-only endpoint and a check every 5 minutes. Keep it in MVP2, or move it to the backlog?
 4. **Targets.** Keep the Lighthouse targets of 90 and 95?
 
-## 8. Change log
+## 8. Future Roadmap Considerations
 
+<!-- future-roadmap-considerations: SPEC-MVP2 -->
+
+Ideas outside MVP2 that are not approved for any milestone. Nothing here is a requirement.
+
+Convention: see [docs/README.md](../README.md#future-roadmap-considerations). IDs are never reused or renumbered; "Backlog" holds the `B-` number once the item is copied into the [Backlog](../roadmap-and-decisions/Backlog.md).
+
+| ID | Item | Why it came up | Source | Raised | Backlog |
+| --- | --- | --- | --- | --- | --- |
+| FRC-SPEC-MVP2-01 | A manual light/dark theme switch | MVP2 follows the device setting only | Section 5 | 2026-10-27 | |
+| FRC-SPEC-MVP2-02 | Publisher logos next to headlines | Out of scope; needs a logo source and licensing check | Section 5 | 2026-10-27 | |
+| FRC-SPEC-MVP2-03 | Article images and summaries | Out of scope; Watchtower stores headline metadata only (licensing) | Section 5 | 2026-10-27 | |
+| FRC-SPEC-MVP2-04 | Richer animations than simple CSS transitions | Out of scope | Section 5 | 2026-10-27 | |
+
+Related: a date picker styled to the chosen design is listed as FRC-SPEC-MVP1-10.
+
+## 9. Change log
+
+- 0.3.1-draft (2026-11-06): Added section 8, Future Roadmap Considerations, at Ben's request (convention in docs/README.md). No requirement changed.
 - 0.3-draft (2026-10-27): Renamed from SPEC-MVP0.1 to SPEC-MVP2 and placed after MVP1. Added the design-option step (R1), the MVP1 controls (R11), the empty-day miner, page-size precedence, working alongside MVP1, delivery steps, and the `mvp2` branch.
 - 0.1-draft (2026-10-02): First draft as SPEC-MVP0.1.

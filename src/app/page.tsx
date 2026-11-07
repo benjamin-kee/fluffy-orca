@@ -1,15 +1,18 @@
 import { ArticleItem } from "@/components/ArticleItem";
 import { DateFilter } from "@/components/DateFilter";
 import { EmptyDay } from "@/components/EmptyDay";
+import { NoSearchMatch } from "@/components/NoSearchMatch";
 import { PageSizeSelect } from "@/components/PageSizeSelect";
 import { Pagination } from "@/components/Pagination";
+import { SearchBox } from "@/components/SearchBox";
 import { SortSelect } from "@/components/SortSelect";
 import { SourceFilter } from "@/components/SourceFilter";
 import { WrongOrder } from "@/components/WrongOrder";
 import type { Article } from "@/lib/article";
 import { countArticles, listArticles, oldestPublishedAt, sourceCounts, type SourceCount } from "@/lib/articleRepository";
 import { parseDateRange } from "@/lib/dateFilter";
-import { parsePageParams, resultCountText, type FeedQuery } from "@/lib/pagination";
+import { pageHref, parsePageParams, resultCountText, type FeedQuery } from "@/lib/pagination";
+import { MAX_SEARCH_LENGTH, noMatchText, parseSearch } from "@/lib/search";
 import { DEFAULT_SORT, parseSort } from "@/lib/sort";
 import { parseSources } from "@/lib/sourceFilter";
 
@@ -22,27 +25,33 @@ export default async function HomePage({ searchParams }: Props) {
   const { page, size } = parsePageParams(params);
   const range = parseDateRange(params);
   const sort = parseSort(params);
+  const search = parseSearch(params);
+  const q = search && !search.tooLong ? search.q : null;
+  // From after To, or a search over the length limit, lists nothing.
+  const listNothing = !!range?.reversed || !!search?.tooLong;
 
   let total = 0;
   let articles: Article[] = [];
   let oldest: Date | null;
+  // Whether the chosen dates have any headlines, read only when a search finds none (MVP1.6-R6).
+  let datesHaveHeadlines = true;
   let counts: SourceCount[];
   let sources: string[] = [];
   try {
-    // Publisher counts follow the other active filters (the dates). They are read first, because a
-    // `source` value in the URL that is not a stored publisher is ignored.
+    // Publisher counts follow the chosen dates (MVP1.3-R2). They are read first, because a `source`
+    // value in the URL that is not a stored publisher is ignored.
     [oldest, counts] = await Promise.all([oldestPublishedAt(), sourceCounts(range)]);
     sources = parseSources(
       params,
       counts.map((c) => c.source),
     );
-    // From after To lists nothing.
-    if (!range?.reversed) {
+    if (!listNothing) {
       [total, articles] = await Promise.all([
-        countArticles(range, sources),
-        listArticles((page - 1) * size, size, range, sort, sources),
+        countArticles(range, q, sources),
+        listArticles((page - 1) * size, size, range, sort, q, sources),
       ]);
     }
+    if (q && total === 0) datesHaveHeadlines = (await countArticles(range, null, sources)) > 0;
   } catch (err) {
     console.error(`[feed] failed to load headlines: ${err instanceof Error ? err.message : String(err)}`);
     return (
@@ -53,13 +62,19 @@ export default async function HomePage({ searchParams }: Props) {
     );
   }
 
-  const query: FeedQuery = { range: range && { from: range.from, to: range.to, timeZone: range.timeZone }, sort, sources };
-  const anythingSet = range !== null || sort !== DEFAULT_SORT || sources.length > 0;
+  const query: FeedQuery = {
+    range: range && { from: range.from, to: range.to, timeZone: range.timeZone },
+    sort,
+    q: search?.q ?? null,
+    sources,
+  };
+  const anythingSet = range !== null || sort !== DEFAULT_SORT || search !== null || sources.length > 0;
   const totalPages = Math.ceil(total / size);
 
   return (
     <main>
       <h1>Watchtower</h1>
+      <SearchBox query={query} size={size} />
       <div className="controls">
         <DateFilter query={query} size={size} oldest={oldest && oldest.toISOString()} />
         <SortSelect query={query} size={size} />
@@ -77,12 +92,23 @@ export default async function HomePage({ searchParams }: Props) {
       {articles.length > 0 && <p className="result-count">{resultCountText(page, size, articles.length, total)}</p>}
       {range?.reversed ? (
         <WrongOrder />
+      ) : search?.tooLong ? (
+        <p role="alert">Search is limited to {MAX_SEARCH_LENGTH} characters.</p>
       ) : articles.length > 0 ? (
         <ol className="feed">
           {articles.map((article) => (
             <ArticleItem key={article.id} article={article} />
           ))}
         </ol>
+      ) : q && total === 0 ? (
+        datesHaveHeadlines ? (
+          <NoSearchMatch
+            message={noMatchText(q, range?.from ?? null, range?.to ?? null)}
+            clearHref={pageHref(1, size, { ...query, q: null })}
+          />
+        ) : (
+          <EmptyDay />
+        )
       ) : (range || sources.length > 0) && total === 0 ? (
         <EmptyDay />
       ) : (
