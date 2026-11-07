@@ -38,9 +38,9 @@ export default async function HomePage({ searchParams }: Props) {
   let counts: SourceCount[];
   let sources: string[] = [];
   try {
-    // Publisher counts follow the chosen dates (MVP1.3-R2). They are read first, because a `source`
-    // value in the URL that is not a stored publisher is ignored.
-    [oldest, counts] = await Promise.all([oldestPublishedAt(), sourceCounts(range)]);
+    // Publisher counts follow the chosen dates and the search (MVP1.3-R2). They are read first,
+    // because a `source` value in the URL that is not a stored publisher is ignored.
+    [oldest, counts] = await Promise.all([oldestPublishedAt(), sourceCounts(range, q)]);
     sources = parseSources(
       params,
       counts.map((c) => c.source),

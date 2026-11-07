@@ -2,13 +2,13 @@
 id: SPEC-MVP1
 prd: PRD-MVP1
 prd_version: 0.4
-status: MVP1.0 built; MVP1.1, MVP1.2 and MVP1.6 approved and built; MVP1.3 to MVP1.5 draft
-version: 0.5
+status: MVP1.0 built; MVP1.1, MVP1.2, MVP1.3 and MVP1.6 approved and built; MVP1.4 and MVP1.5 draft
+version: 0.5.1
 ---
 
 # MVP1 Specification: Filtering and Keyword Search
 
-**Status:** MVP1.0 approved by Ben on 27 October 2026, built and merged ([pull request 5](https://github.com/benjamin-kee/fluffy-orca/pull/5)). MVP1.2 approved by Ben on 27–28 October 2026 and built ([pull request 7](https://github.com/benjamin-kee/fluffy-orca/pull/7)). MVP1.1 approved by Ben on 28 October 2026 and built ([pull request 10](https://github.com/benjamin-kee/fluffy-orca/pull/10)). MVP1.6 approved by Ben on 1 November 2026 and built on `mvp1.6-search-capability`. MVP1.3 to MVP1.5 are drafts: each starts only after Ben approves it.
+**Status:** MVP1.0 approved by Ben on 27 October 2026, built and merged ([pull request 5](https://github.com/benjamin-kee/fluffy-orca/pull/5)). MVP1.2 approved by Ben on 27–28 October 2026 and built ([pull request 7](https://github.com/benjamin-kee/fluffy-orca/pull/7)). MVP1.1 approved by Ben on 28 October 2026 and built ([pull request 10](https://github.com/benjamin-kee/fluffy-orca/pull/10)). MVP1.6 approved by Ben on 1 November 2026 and built on `mvp1.6-search-capability`. MVP1.3 approved by Ben on 28 October 2026 (with A2) and built ([pull request 11](https://github.com/benjamin-kee/fluffy-orca/pull/11)). MVP1.4 and MVP1.5 are drafts: each starts only after Ben approves it.
 **Branch:** one branch and one pull request into `main` per sub-sprint. MVP1.0 was built on `mvp1`, MVP1.2 on `mvp1.2`.
 **Last updated:** 2026-11-01
 **Replaces:** the v0.1 keyword-search-only draft, now in `docs/specs/Retired/`. Its approved items (D-002 keyword search, D-005 headline text only) carry forward into MVP1.6.
@@ -31,7 +31,7 @@ Each sub-sprint ships a working increment on top of the one before it, and is me
 | MVP1.0 | Single-day date filter | Pick one day; feed shows that day's headlines | MVP0 feed | Approved 2026-10-27. Built |
 | MVP1.1 | Results controls | Result count, clear all, newest or oldest sort, URL state for all filters | MVP1.0 | Approved 2026-10-28. Built |
 | MVP1.2 | Date range | From and To dates | MVP1.0 | Approved 2026-10-28. Built |
-| MVP1.3 | Source filter | Multi-select of publishers with headline counts | MVP1.1 | Ben approves MVP1.3 and approval item A2 |
+| MVP1.3 | Source filter | Multi-select of publishers with headline counts | MVP1.1 | Approved 2026-10-28 with A2. Built |
 | MVP1.4 | Country filter | Malaysia active, Singapore greyed out "Coming soon" | A second ingested country and approval item A1 | Held until a second country is ingested (Q7) and A1 is approved |
 | MVP1.5 | Mobile filter sheet | Filters behind one button and a bottom sheet on phones | MVP1.1 to MVP1.4 | Ben approves MVP1.5 |
 | MVP1.6 | Keyword search | Search headline titles, combined with active filters | MVP1.1 and approval item A3 | Approved 2026-11-01 (with A3). Built |
@@ -240,11 +240,13 @@ Ideas raised while specifying or building MVP1 that are **not** part of MVP1 and
 | FRC-SPEC-MVP1-11 | Group the same story across outlets | Parked | Section 6 | 2026-10-27 | |
 | FRC-SPEC-MVP1-12 | CSV export of results | Parked | Section 6 | 2026-10-27 | |
 | FRC-SPEC-MVP1-13 | Saved searches and alerts | Need login | Section 6 | 2026-10-27 | |
+| FRC-SPEC-MVP1-14 | Combine publisher names that are the same outlet in the source filter (for example "The Star" and "thestar.com.my"; "Paul Tan", "Paul Tan's Automotive News" and "paultan.org"), and hide names that are not outlets (for example a web address) | GNews sends several names for one outlet, so the live list has 122 names with many duplicates; MVP1.3 shows names as stored (D-026) | MVP1.3, live data check | 2026-11-07 | |
 
 ## 9. Change log
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 0.5.1 | 2026-11-07 | MVP1.3 built. With MVP1.6 live, publisher counts also follow the search, as MVP1.3-R2 ("within the other active filters") requires: migration 0006 replaces the source_counts function (approval item A2). The publisher list scrolls inside a box about six lines tall. Added FRC-SPEC-MVP1-14 (duplicate publisher names). |
 | 0.5 | 2026-11-01 | Ben approved MVP1.6. Recorded the 200-character rule and the common-words rule (R1, R2). Added section 8, Future Roadmap Considerations, with a convention every spec follows so an agent can collect the items into the Backlog. MVP1.6 built. Change log is now section 9. |
 | 0.4.5 | 2026-11-01 | Ben approved the puzzled-miner-with-magnifying-glass drawing for no search matches, and changed the message to repeat the search and name the chosen dates (MVP1.6-R6, new R7). MVP1.6 is still a draft. |
 | 0.4.4 | 2026-11-01 | Ben approved A3 (search index) and set the MVP1.6 no-results rule: dates with no headlines show the miner; dates with headlines but no match show "No headlines match your search." MVP1.6 is still a draft. |

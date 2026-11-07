@@ -59,6 +59,8 @@ For the source filter, also run [`supabase/migrations/0004_source_counts.sql`](s
 
 For keyword search, also run [`supabase/migrations/0005_title_search_index.sql`](supabase/migrations/0005_title_search_index.sql) once. It adds a search index on headline titles and changes no data. Search works without it, but slows down as headlines grow.
 
+Then run [`supabase/migrations/0006_source_counts_with_search.sql`](supabase/migrations/0006_source_counts_with_search.sql), so the publisher counts also follow the search. It replaces the 0004 function and changes no data.
+
 ## Running locally
 
 ```bash
