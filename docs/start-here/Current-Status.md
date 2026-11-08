@@ -1,36 +1,57 @@
 # Current Status
 
 **As of:** 8 November 2026
-**Active milestone:** MVP1 (filtering and keyword search). MVP1.0, the single-day date filter, is built and live at <https://watchtower01.vercel.app>
-**Repo:** github.com/benjamin-kee/fluffy-orca. `main` is what Vercel deploys. MVP1 sub-sprints are built on one branch each (MVP1.0 on `mvp1`, MVP1.2 on `mvp1.2`), MVP2 on `mvp2`, and planning documents on `claude/inspiring-galileo-33vjef`.
+**Owner:** the Orchestrator (Ben's product-manager agent). It updates this page after each sprint, merge or decision. Ben approves each update by merging it.
+**Active milestone:** MVP1 (filtering and keyword search). Five of seven sub-sprints are built and live at <https://watchtower01.vercel.app>.
+**Repo:** github.com/benjamin-kee/fluffy-orca. `main` is what Vercel deploys. Each sub-sprint is built on its own branch and merged by pull request.
 
-## Completed
+## MVP1 sprints
 
-- **Platform principle (D-041):** Watchtower is web first and mobile friendly. Recorded in [Product-Principles](../product/Product-Principles.md) P-1, which every PRD and spec now points to.
+| Sprint | What it does | Status |
+| --- | --- | --- |
+| MVP1.0 | Single-day date filter | Live, 27 Oct ([pull request 5](https://github.com/benjamin-kee/fluffy-orca/pull/5)) |
+| MVP1.1 | Count line, sort, "Clear all" | Live, 28 Oct ([pull request 10](https://github.com/benjamin-kee/fluffy-orca/pull/10)) |
+| MVP1.2 | From and To date range | Live, 28 Oct ([pull request 7](https://github.com/benjamin-kee/fluffy-orca/pull/7)) |
+| MVP1.6 | Keyword search on headline titles | Live, 6 Nov ([pull request 12](https://github.com/benjamin-kee/fluffy-orca/pull/12)) |
+| MVP1.3 | Source filter with headline counts, behind a "Sources" dropdown | Live, 7 Nov ([pull request 11](https://github.com/benjamin-kee/fluffy-orca/pull/11)), follow-ups 8 Nov ([pull request 13](https://github.com/benjamin-kee/fluffy-orca/pull/13)) |
+| MVP1.4 | Country filter | Held until a second country is ingested (Q7) and approval item A1 |
+| MVP1.5 | Mobile filter sheet | Draft, waiting for Ben's approval |
 
-- MVP0 built to `docs/specs/MVP0.md` (approved changes 1 to 6): GNews ingestion, Supabase Postgres, duplicate blocking, feed with 50/100 pagination, time display, cleaned links, tests, README.
-- Scheduled ingestion every 3 hours from 12am Malaysia time (Supabase `pg_cron`).
-- Deployed on Vercel Hobby.
-- Former product name retired everywhere it could be edited (D-033, proposed).
-- Planning documents imported into the repo under `docs/`, which is now the source of truth (D-031, proposed).
-- MVP1 widened to filtering and keyword search (D-039). MVP1.0 single-day date filter approved, built and live on 27 October 2026 ([pull request 5](https://github.com/benjamin-kee/fluffy-orca/pull/5)). Days follow the viewer's time zone (D-040).
-- MVP1.2 date range approved and built on 28 October 2026 ([pull request 7](https://github.com/benjamin-kee/fluffy-orca/pull/7)), waiting for Ben to merge. From and To dates replace the single-day picker; the earliest date is the oldest headline's day; days stay the viewer's own (D-040 confirmed). SPEC-MVP1 v0.4 records it.
-- MVP0.1 renamed MVP2 and moved after MVP1 (D-038). Draft PRD and spec written for a separate session on the `mvp2` branch.
+## Waiting for Ben
 
-## In progress
+1. **Answer the 5 SPEC-MVP2 questions** (design references, brand, new-headlines notice, Lighthouse targets, MVP1.5 or MVP2 first). The spec was refreshed on 8 November to match what is live (v0.4-draft).
+2. **Sign off the decision log**: 18 proposed amendments and decisions from 27 October in [Product-Decisions](../roadmap-and-decisions/Product-Decisions.md#awaiting-sign-off).
+3. **Approve SPEC-MVP2**, once the questions are answered. A UI design session on 30 October stopped to wait for these answers.
+4. **Approve MVP1.5**, unless MVP2 goes first (SPEC-MVP2 question 5).
+5. **Review items 68 (login placement) and 69 (behaviour tracking)**.
 
-- 30-day backfill: up to 90 GNews requests a day, once a day after 8am Malaysia time, until 21 November 2026.
-- Ben signs off the proposed decision amendments and new decisions in [Product-Decisions](../roadmap-and-decisions/Product-Decisions.md#awaiting-sign-off).
-- GitHub Action to mirror `docs/` to Google Drive, and one consolidated Watchtower folder in Drive.
+## Recently decided
 
-## Open
+- **Product principles** in [Product-Principles](../product/Product-Principles.md), which every PRD and spec now points to: P-1 web first, mobile friendly (D-041); P-2 sorting names A–Z (D-042).
 
-- Review items 68 (login placement) and 69 (behaviour tracking).
-- Ben approves MVP1.1 (results controls) to start the next sub-sprint, and answers SPEC-MVP1 question Q6 (handled in a separate session). Q5 and Q7 answered on 28 October.
-- Ben reviews the MVP2 PRD and spec (SPEC-MVP2 questions 1 to 4), and the Later PRD (item 44).
-- Change requests FS-50 to FS-65 in the [fs-review](../reviews/fs-review_2026-10-02_SPEC-MVP0.md) were written against the retired v2.1 draft. They are not applied.
-- What the backfill rule becomes after 21 November 2026.
+## Data and ingestion
+
+- 1,798 headlines stored, from 23 September 2026 to today, across 123 source names. The database uses 13 MB.
+- Scheduled ingestion runs 8 times a day (every 3 hours) and every run in the last 3 days succeeded. Each run makes 1 GNews request and gets at most the 10 newest headlines. About 20 to 60 new headlines arrive a day.
+- The daily backfill (up to 90 requests) also catches headlines the scheduled runs miss. The 30-day window was complete on 8 November.
+- GNews free plan: 100 requests a day, 10 headlines per request, 30 days of history, headlines appear 12 hours after publication, non-commercial use only.
+- Backfill rule after 21 November 2026: Ben revisits it around 15 November.
+
+## Exploratory work outside this repo
+
+- **Headline RAG chat ("MVP3")**: planned in the "RAG implementation planning" session (29 October to 1 November), run from Ben's Mac in `~/Watchtower/MVP3-RAG`. An eval suite exists there (67 test cases, 4 judge prompts, no runs yet). The chat itself is not built. It is not in the roadmap and has no PRD or spec. Two decisions were left open: what to show when filters find nothing, and whether investment questions get a fixed refusal.
+
+## Known issues
+
+- **Titles cut at hyphens.** Found on 29 October: some titles lose the text before a hyphen ("tron sets…" from "e-tron"). 98 stored titles start with a lowercase letter, 14 of them from the last 7 days, so it likely still happens. Needs a fix decision.
+- **One outlet, several source names** ("The Star" and "thestar.com.my"). Logged as FRC-SPEC-MVP1-14 for a later decision.
+- **Supabase project name** still uses the product's retired former name. Rename it in the Supabase dashboard.
+
+## Still in progress from October
+
+- GitHub Action to mirror `docs/` to Google Drive, and one consolidated Watchtower folder in Drive. Not checked since 28 October.
 - Vision doc: waiting on the ChatGPT strategy export.
+- Change requests FS-50 to FS-65 in the [fs-review](../reviews/fs-review_2026-10-02_SPEC-MVP0.md) were written against the retired v2.1 draft. They are not applied.
 
 ## Workflow (proposed amendment A-22)
 
@@ -38,7 +59,8 @@ Ben approves the PRD, then the spec, as pull requests. Claude Code builds only f
 
 ## Next
 
-1. Ben signs off the items awaiting sign-off in the decision log.
-2. Set up the Drive mirror.
-3. Approve MVP1.1, and start MVP2 in a new session on the `mvp2` branch once its spec is approved.
-4. Decide where login goes before any public release.
+1. Ben answers the SPEC-MVP2 questions, then approves the spec.
+2. Step 1 of MVP2: two or three design options for Ben to pick from.
+3. Decide the backfill rule after 21 November (around 15 November).
+4. Decide whether to fix the hyphen bug now.
+5. Decide whether the RAG chat becomes a roadmap milestone with its own PRD.
