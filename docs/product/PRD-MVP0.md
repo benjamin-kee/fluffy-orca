@@ -7,6 +7,7 @@
 | Status | Built and live at <https://watchtower01.vercel.app>. v0.4 awaits Ben's sign-off |
 | Version | 0.4, 27 October 2026 |
 | Owner | Ben (product manager and approver) |
+| Principles | [Product-Principles](Product-Principles.md) P-1: web first, mobile friendly (D-041, added 8 November 2026) |
 | Spec | `docs/specs/MVP0.md` (original spec plus approved changes 1 to 6) |
 | Decisions | `docs/roadmap-and-decisions/Product-Decisions.md` |
 | News input | GNews API only |

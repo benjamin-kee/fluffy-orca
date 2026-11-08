@@ -5,11 +5,14 @@ status: Draft, proposals only
 version: 0.3, 27 October 2026
 owner: Ben (product manager and approver)
 spec: SPEC-MVP2 (draft)
-decisions: D-038 in the decision log
+decisions: D-038, D-041 in the decision log
 news_input: GNews API only
+principles: Product-Principles P-1 (web first, mobile friendly)
 ---
 
 # PRD MVP2: UI/UX Improvements
+
+**Platform:** web first, mobile friendly. Every requirement here follows [Product-Principles](../product/Product-Principles.md) P-1 (D-041).
 
 Formerly MVP0.1. Renamed MVP2 and moved after MVP1 on 27 October 2026 (D-038). Only the milestone is approved. Every requirement below is a proposal.
 
@@ -60,7 +63,7 @@ No change to the Article model or to ingestion. "Updated N minutes ago" reads th
 |---|---|
 | MVP2-F1 | Clear visual hierarchy: headline dominant, source and time secondary, consistent spacing, readable type scale. |
 | MVP2-F2 | Loading skeleton, empty state and error state for the feed. |
-| MVP2-F3 | Mobile-first layout with 44px minimum touch targets and no horizontal scroll. |
+| MVP2-F3 | Web-first layout designed for desktop browsers, that is also mobile friendly: 44px minimum touch targets on phones and no horizontal scroll from 320px (P-1, D-041). |
 | MVP2-F4 | Accessibility baseline to WCAG 2.2 AA: semantic list, keyboard navigation, visible focus, 4.5:1 contrast. |
 | MVP2-F5 | Light and dark themes follow the system setting. |
 | MVP2-F6 | A freshness indicator shows when the feed was last updated. |
@@ -91,6 +94,7 @@ Same as PRD-MVP0. Plus: no visual change ships without a design Ben has picked, 
 ## 12. Change log
 | Version | Date | Change |
 |---|---|---|
+| 0.3.1 | 8 November 2026 | F3 corrected from "mobile-first" to web first, mobile friendly (D-041, Product-Principles P-1). |
 | 0.3 | 27 October 2026 | Renamed from MVP0.1 to MVP2 and moved after MVP1 (D-038). Covers the MVP1 controls (F10). Login placement removed from open questions (on the roadmap). "New headlines" notice open question added |
 | 0.2 | 2 October 2026 | Word format. Out of scope heading. Login placement points to the roadmap |
 | 0.1 | 2 October 2026 | First draft |

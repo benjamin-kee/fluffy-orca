@@ -5,11 +5,14 @@ status: MVP1.0 and MVP1.2 approved and built; MVP1.1 and MVP1.3 onward draft
 version: 0.4, 28 October 2026
 owner: Ben (product manager and approver)
 spec: SPEC-MVP1 v0.4
-decisions: D-002, D-005, D-038 to D-040 in the decision log
+decisions: D-002, D-005, D-038 to D-041 in the decision log
 news_input: GNews API only
+principles: Product-Principles P-1 (web first, mobile friendly)
 ---
 
 # PRD MVP1: Filtering and Keyword Search
+
+**Platform:** web first, mobile friendly. Every requirement here follows [Product-Principles](../product/Product-Principles.md) P-1 (D-041).
 
 Approved: keyword search across collected news (D-002), headline text only (D-005), MVP1 widened to filtering and keyword search in sub-sprints (D-039), days follow the viewer's time zone (D-040), sub-sprint MVP1.0, the single-day date filter, and sub-sprint MVP1.2, the From and To date range. Everything else is a proposal until Ben approves its sub-sprint.
 
@@ -94,6 +97,7 @@ Same as PRD-MVP0. Claude Code builds only sub-sprints Ben has approved, adds no 
 ## 13. Change log
 | Version | Date | Change |
 |---|---|---|
+| 0.4.1 | 8 November 2026 | Follows Product-Principles P-1, web first and mobile friendly (D-041). MVP1.5's phone filter sheet is the mobile-friendly layout; the desktop layout stays primary. |
 | 0.4 | 28 October 2026 | MVP1.2 approved and built: From and To dates replace the single-day picker, the earliest date is the oldest stored headline's day, and days stay the viewer's own (D-040). |
 | 0.3 | 27 October 2026 | MVP1 widened from keyword search to filtering and keyword search, in sub-sprints MVP1.0 to MVP1.6. MVP1.0 approved and built. Days follow the viewer's time zone. Now second on the roadmap, before MVP2 (formerly MVP0.1) |
 | 0.2.1 | 27 October 2026 | Outcome no longer promises history from 1 January 2026; MVP0 keeps 30 days of backfilled history (spec approved change 6) |

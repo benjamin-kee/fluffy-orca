@@ -1,5 +1,7 @@
 # Watchtower — MVP0 News Dashboard
 
+> Platform (added 8 November 2026): web first, mobile friendly, per [Product-Principles](../product/Product-Principles.md) P-1 (D-041). MVP0's "desktop and mobile layouts at a basic functional level" is consistent with it. No requirement changed.
+
 I am building Watchtower, a lightweight business-news intelligence platform.
 
 For this task, build ONLY MVP0 according to the specification below.

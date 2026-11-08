@@ -95,12 +95,14 @@ export async function listArticles(
 
 export type SourceCount = { source: string; headlines: number };
 
-// Every stored publisher, alphabetical, with its headline count within the window (MVP1.3).
-// Uses the read-only source_counts database function (migration 0004).
-export async function sourceCounts(window: PublishedWindow | null = null): Promise<SourceCount[]> {
+// Every stored publisher, alphabetical, with its headline count within the window and matching
+// the search, if given (MVP1.3-R2). Uses the read-only source_counts database function
+// (migration 0006), which matches titles by the same rules as the headline list.
+export async function sourceCounts(window: PublishedWindow | null = null, q: string | null = null): Promise<SourceCount[]> {
   const { data, error } = await getDb().rpc("source_counts", {
     p_start: window?.start ?? null,
     p_end: window?.end ?? null,
+    p_q: q,
   });
 
   if (error) throw new Error(`Failed to count sources: ${error.message}`);

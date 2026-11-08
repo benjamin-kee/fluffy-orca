@@ -11,6 +11,7 @@ version: 0.3.1-draft
 **Status:** Draft, for Ben's approval. Nothing here is approved for implementation yet. Formerly SPEC-MVP0.1, renamed on 27 October 2026 (D-038).
 **Last updated:** 2026-10-27
 **Implements:** PRD-MVP2 v0.3
+**Platform:** web first, mobile friendly ([Product-Principles](../product/Product-Principles.md) P-1, D-041). Design options and reviews start from the desktop browser, then are checked at phone width (R1, R4); the mobile Lighthouse targets (R12) stay as the phone-friendliness check.
 **Branch:** `mvp2`, created from `main`. One pull request into `main` per step in section 6.
 
 ## 1. Scope control
@@ -110,6 +111,7 @@ Related: a date picker styled to the chosen design is listed as FRC-SPEC-MVP1-10
 
 ## 9. Change log
 
+- 0.3.2-draft (2026-11-08): Platform line added: web first, mobile friendly (D-041, Product-Principles P-1).
 - 0.3.1-draft (2026-11-06): Added section 8, Future Roadmap Considerations, at Ben's request (convention in docs/README.md). No requirement changed.
 - 0.3-draft (2026-10-27): Renamed from SPEC-MVP0.1 to SPEC-MVP2 and placed after MVP1. Added the design-option step (R1), the MVP1 controls (R11), the empty-day miner, page-size precedence, working alongside MVP1, delivery steps, and the `mvp2` branch.
 - 0.1-draft (2026-10-02): First draft as SPEC-MVP0.1.

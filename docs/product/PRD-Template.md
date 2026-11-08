@@ -10,7 +10,7 @@ Agentic practice (GitHub Spec Kit, Kiro, SpecRoute and similar) agrees on four p
 4. Start light. Grow the template only when the one-page version feels cramped.
 
 ## Layout
-A header table (PRD ID, milestone, status, version, owner, spec, decisions, news input), then numbered sections:
+A header table (PRD ID, milestone, status, version, owner, spec, decisions, news input, principles), then numbered sections. Every PRD follows [Product-Principles](Product-Principles.md), starting with P-1, web first and mobile friendly (D-041):
 1. Summary, written like the system prompt for the milestone: what it is, who for, what it never does.
 2. Problem and outcome
 3. Users and jobs

@@ -109,12 +109,81 @@ a {
   color: #999;
 }
 
+/* Sources dropdown: a button that opens a scrolling list of publishers over the page. */
 .source-filter {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem 1rem;
-  margin: 0;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #e5e5e5;
+  position: relative;
+}
+
+.source-filter summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid #c8c8c8;
   border-radius: 4px;
+  background: #fafafa;
+  white-space: nowrap;
+  max-width: 16rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.source-filter summary::-webkit-details-marker {
+  display: none;
+}
+
+.source-filter summary::after {
+  content: " ▾";
+}
+
+.source-filter[open] summary::after {
+  content: " ▴";
+}
+
+.source-list {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 4px);
+  left: 0;
+  width: min(20rem, calc(100vw - 2rem));
+  max-height: 18rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  background: #ffffff;
+  border: 1px solid #c8c8c8;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* A–Z / Most headlines toggle at the top of the Sources list; stays visible while the list scrolls. */
+.source-order {
+  position: sticky;
+  top: -0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin: -0.5rem -0.75rem 0.25rem;
+  padding: 0.5rem 0.75rem;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e5e5;
+  font-size: 0.875rem;
+  color: #555;
+}
+
+.source-order button {
+  padding: 0.125rem 0.5rem;
+  border: 1px solid #c8c8c8;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #1a1a1a;
+  font: inherit;
+  cursor: pointer;
+}
+
+.source-order button[aria-pressed="true"] {
+  background: #0b4f9c;
+  border-color: #0b4f9c;
+  color: #ffffff;
 }
