@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { isValidDate, localDate } from "@/lib/dateFilter";
+import { isWholeDate, localDate } from "@/lib/dateFilter";
 import { pageHref, type FeedQuery } from "@/lib/pagination";
 
 type Props = { query: FeedQuery; size: number; oldest: string | null };
@@ -31,11 +31,11 @@ export function DateFilter({ query, size, oldest }: Props) {
     setTouch(window.matchMedia("(pointer: coarse)").matches);
   }, []);
 
-  // Returns false when the value is not a whole date yet (some browsers report partial values
-  // while the year is being typed), so nothing is applied.
+  // Returns false when the value is not a whole date yet (browsers report partial values, such as
+  // the year 0202 on the way to 2026, while a date is being typed), so nothing is applied.
   function apply(end: "from" | "to", value: string): boolean {
     if (value === (end === "from" ? from : to)) return true;
-    if (value !== "" && !isValidDate(value)) return false;
+    if (value !== "" && !isWholeDate(value)) return false;
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const next = { from: from || null, to: to || null, timeZone, [end]: value || null };
     router.push(pageHref(1, size, { ...query, range: next.from || next.to ? next : null }));
