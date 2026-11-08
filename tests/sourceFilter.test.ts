@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { pageHref } from "@/lib/pagination";
-import { parseSources, sortSources, sourcesLabel, toggleSource } from "@/lib/sourceFilter";
+import { compareSourceNames, parseSources, sortSources, sourcesLabel, toggleSource } from "@/lib/sourceFilter";
 
 const known = ["Bernama", "The Edge", "The Star"];
 
@@ -41,16 +41,36 @@ test("the dropdown button names what is chosen", () => {
   assert.equal(sourcesLabel(["The Star", "Bernama"]), "Sources: 2 selected");
 });
 
-test("the publisher list sorts alphabetically or by most headlines, ties alphabetical", () => {
+test("A–Z puts names starting with A to Z first, ignoring case, then everything else", () => {
+  const names = ["9to5Linux", "the edge", "https://example.com/", "8days.sg", "AeroRoutes", "airlive", "Bernama", "10x News", "@Media", "The Star"];
+  assert.deepEqual(names.sort(compareSourceNames), [
+    "AeroRoutes",
+    "airlive",
+    "Bernama",
+    "https://example.com/",
+    "the edge",
+    "The Star",
+    "@Media",
+    "8days.sg",
+    "9to5Linux",
+    "10x News",
+  ]);
+});
+
+test("the publisher list sorts A–Z or by most headlines, ties in A–Z order", () => {
   const counts = [
+    { source: "8days.sg", headlines: 2 },
+    { source: "The Star", headlines: 9 },
     { source: "Bernama", headlines: 2 },
     { source: "CNA", headlines: 5 },
     { source: "Malay Mail", headlines: 2 },
-    { source: "The Star", headlines: 9 },
   ];
-  assert.deepEqual(sortSources(counts, "name"), counts);
+  assert.deepEqual(
+    sortSources(counts, "name").map((c) => c.source),
+    ["Bernama", "CNA", "Malay Mail", "The Star", "8days.sg"],
+  );
   assert.deepEqual(
     sortSources(counts, "count").map((c) => c.source),
-    ["The Star", "CNA", "Bernama", "Malay Mail"],
+    ["The Star", "CNA", "Bernama", "Malay Mail", "8days.sg"],
   );
 });

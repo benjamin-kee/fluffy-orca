@@ -23,9 +23,20 @@ export function sourcesLabel(chosen: string[]): string {
 
 export type SourceOrder = "name" | "count";
 
-// The publisher list in the chosen order: as given (alphabetical), or most headlines first,
-// with ties kept alphabetical.
-export function sortSources<T extends { headlines: number }>(counts: T[], order: SourceOrder): T[] {
-  if (order === "name") return counts;
-  return counts.map((c, i) => ({ c, i })).sort((a, b) => b.c.headlines - a.c.headlines || a.i - b.i).map((x) => x.c);
+// Case-insensitive, with numbers in number order ("9to5Linux" before "10x").
+const collator = new Intl.Collator("en", { sensitivity: "base", numeric: true });
+
+// A–Z order for publisher names (Ben, 8 November 2026): names starting with a letter A to Z come
+// first, alphabetical and ignoring case; names starting with anything else (a digit, a symbol)
+// follow after Z, in the same order among themselves.
+export function compareSourceNames(a: string, b: string): number {
+  const group = (name: string) => (/^[a-z]/i.test(name) ? 0 : 1);
+  return group(a) - group(b) || collator.compare(a, b);
+}
+
+// The publisher list in the chosen order: A–Z as above, or most headlines first with ties in A–Z order.
+export function sortSources<T extends { source: string; headlines: number }>(counts: T[], order: SourceOrder): T[] {
+  return [...counts].sort(
+    (a, b) => (order === "count" ? b.headlines - a.headlines : 0) || compareSourceNames(a.source, b.source),
+  );
 }
