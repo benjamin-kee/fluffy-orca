@@ -1,6 +1,6 @@
 # Product Decisions Log
 
-Chronological log of approved decisions only. Sources: D-001 to D-016 from review_2026-09-24_version_1. D-017 to D-030 from Ben's replies on 2026-10-02. D-038 to D-040 from Ben's instructions on 2026-10-27. D-041 from Ben's instruction on 2026-11-08.
+Chronological log of approved decisions only. Sources: D-001 to D-016 from review_2026-09-24_version_1. D-017 to D-030 from Ben's replies on 2026-10-02. D-038 to D-040 from Ben's instructions on 2026-10-27. D-041 and D-042 from Ben's instructions on 2026-11-08.
 
 Imported into the repo on 27 October 2026 from the Google Doc of the same name, unchanged. Where a decision mentions SPEC-MVP0 or its requirement numbers (R20, R22 and so on), it means the v2.1 draft, which is now retired in `docs/specs/Retired/`. The built spec is `docs/specs/MVP0.md`.
 
@@ -44,6 +44,7 @@ Several decisions below no longer match what was built. Proposed amendments and 
 | D-039 | 2026-10-27 | MVP1 is filtering and keyword search, delivered as sub-sprints MVP1.0, MVP1.1 and onward, all on the `mvp1` branch, each approved by Ben before it starts. MVP1.0 (single-day date filter) is approved | Ben's sprint breakdown of 26 October and instruction of 27 October | SPEC-MVP1 v0.3 and PRD-MVP1 v0.3. Amends D-002 | Keyword search only |
 | D-040 | 2026-10-27 | A filter day runs midnight to midnight in the viewer's own time zone. The date picker puts the time zone in the link (`tz`); a link without it uses Malaysia time | A viewer reads publication times in their own time zone (D-024), so days should match | Shared links show the sender's day | Malaysia day for everyone |
 | D-041 | 2026-11-08 | Watchtower is web first and mobile friendly: designed and reviewed for desktop browsers first, and every page also works well on a phone from 320px wide, with every feature available. Recorded as principle P-1 in [Product-Principles](../product/Product-Principles.md), which every PRD and spec follows | Most use will be in a desktop browser, but readers also check headlines on their phones (Ben, 8 November 2026) | Replaces "mobile-first" wording (PRD-MVP2 F3). The UI and UX agent designs desktop first and checks phone width. Long option lists sit behind a dropdown on every screen size | Mobile-first design; a native phone app |
+| D-042 | 2026-11-08 | Names listed A–Z follow standard collation: letters A to Z first, ignoring case and accents (an accented letter counts as its plain letter, so "École" files under E); then names in other alphabets; then names starting with a number or symbol. Ties in count-sorted lists follow the same rule. Recorded as principle P-2 in [Product-Principles](../product/Product-Principles.md) | Matches how dictionaries and phone contact lists sort, so readers find names where they expect (Ben, 8 November 2026) | First used by the Sources dropdown (MVP1.3-R1) | Plain character-code order, which puts accented and lower-case names in odd places |
 
 ## Awaiting sign-off
 
