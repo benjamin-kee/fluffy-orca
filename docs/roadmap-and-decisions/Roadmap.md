@@ -7,8 +7,8 @@ This is the Watchtower roadmap (D-004, proposed amendment A-04). Unscheduled ide
 | # | Milestone | Scope | Status |
 | --- | --- | --- | --- |
 | 1 | MVP0 | Central business-news dashboard fed by GNews ([spec](../specs/MVP0.md), [PRD](../product/PRD-MVP0.md)) | Built and live at <https://watchtower01.vercel.app>. Private demo, no login. 30-day backfill runs daily until 21 November 2026 |
-| 2 | MVP1 | Filtering and keyword search over stored headlines, in sub-sprints MVP1.0 to MVP1.x on the `mvp1` branch ([PRD](../product/PRD-MVP1.md), [spec](../specs/SPEC-MVP1.md), [execution plan](../execution-and-agents/Execution-Plan-MVP1.md)) | MVP1.0 single-day date filter built and live (27 October 2026). MVP1.1 to MVP1.6 drafts, each needs Ben's approval |
-| 3 | MVP2 | UI/UX improvements, formerly MVP0.1, on the `mvp2` branch ([PRD](../product/PRD-MVP2.md), [draft spec](../specs/SPEC-MVP2.md)) | Draft PRD and spec, proposals only |
+| 2 | MVP1 | Filtering and keyword search over stored headlines, in sub-sprints MVP1.0 to MVP1.x on the `mvp1` branch ([PRD](../product/PRD-MVP1.md), [spec](../specs/SPEC-MVP1.md), [execution plan](../execution-and-agents/Execution-Plan-MVP1.md)) | Complete. MVP1.0 to MVP1.3 and MVP1.6 built and live (27 October to 7 November 2026). MVP1.4 country filter moved to the Backlog (B-009); MVP1.5 mobile filter sheet moved into MVP2 (8 November 2026) |
+| 3 | MVP2 | UI/UX improvements, formerly MVP0.1, including the phone filter sheet (formerly MVP1.5), on the `mvp2` branch ([PRD](../product/PRD-MVP2.md), [draft spec](../specs/SPEC-MVP2.md)) | Draft PRD and spec, proposals only |
 | 4 | Later | Candidates only, not scheduled: article metadata, topic tagging, company extraction, company profiles, alerts, AI-assisted research, wider coverage ([PRD](../product/PRD-Later.md)) | Not scheduled |
 
 ## On the roadmap, not yet placed

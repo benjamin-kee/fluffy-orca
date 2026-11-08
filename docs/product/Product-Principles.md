@@ -9,7 +9,7 @@ Watchtower is a web app used mainly in a desktop browser. It must also work well
 | Rule | What it means in practice |
 | --- | --- |
 | Design for the desktop browser first | Layouts, controls and density are designed and reviewed at desktop widths first (about 1280px). Desktop is never a stretched phone layout. |
-| Work well on a phone | Every page works from 320px wide: no horizontal scroll, text readable without zooming, controls easy to tap, and every feature available. Phone layouts may rearrange controls (for example MVP1.5's filter sheet), but never remove a feature. |
+| Work well on a phone | Every page works from 320px wide: no horizontal scroll, text readable without zooming, controls easy to tap, and every feature available. Phone layouts may rearrange controls (for example the phone filter sheet in MVP2, formerly MVP1.5), but never remove a feature. |
 | Keep long lists out of the way | Controls with many options (for example the publisher list) sit behind a dropdown or similar, closed by default, on every screen size. |
 | Check both | Every UI change is checked at desktop width and at a phone width (375px) before it ships. |
 

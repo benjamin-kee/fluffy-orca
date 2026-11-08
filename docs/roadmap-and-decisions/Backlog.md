@@ -16,6 +16,7 @@ Merged on 27 October 2026 from `docs/roadmap.md` (the MVP0 backlog kept by Claud
 | B-006 | Google Sheet checklist for task tracking | D-004, 2026-09-24 | Optional | The roadmap itself is [Roadmap.md](Roadmap.md) (proposed amendment A-04) |
 | B-007 | History back to 1 January 2026 | D-013, proposed amendment A-13 | Later | MVP0 holds the 30 days the GNews free plan allows. Older history needs a paid plan |
 | B-008 | Publisher names that are web addresses (for example "https://docksiderestaurant.com.au/"): decide whether to hide them or show the site name | FRC-SPEC-MVP1-15, 2026-11-08 | Later | Fine as is for now (Ben, 8 November 2026). They sort under their first letter in the Sources list. Related: FRC-SPEC-MVP1-14, one outlet under several names |
+| B-009 | Country filter: Malaysia active, Singapore greyed out "Coming soon" (formerly MVP1.4) | SPEC-MVP1 MVP1.4, moved by Ben 2026-11-08 | Later | Changes no results while Malaysia is the only country collected. Needs a second country (B-004) and approval item A1 (a `country` field on articles). Requirements kept in SPEC-MVP1, MVP1.4 |
 
 ## Further improvement
 
