@@ -156,3 +156,34 @@ a {
   border-radius: 4px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
+
+/* A–Z / Most headlines toggle at the top of the Sources list; stays visible while the list scrolls. */
+.source-order {
+  position: sticky;
+  top: -0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin: -0.5rem -0.75rem 0.25rem;
+  padding: 0.5rem 0.75rem;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e5e5;
+  font-size: 0.875rem;
+  color: #555;
+}
+
+.source-order button {
+  padding: 0.125rem 0.5rem;
+  border: 1px solid #c8c8c8;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #1a1a1a;
+  font: inherit;
+  cursor: pointer;
+}
+
+.source-order button[aria-pressed="true"] {
+  background: #0b4f9c;
+  border-color: #0b4f9c;
+  color: #ffffff;
+}

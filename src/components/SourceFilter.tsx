@@ -1,21 +1,23 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { SourceCount } from "@/lib/articleRepository";
 import { pageHref, type FeedQuery } from "@/lib/pagination";
-import { sourcesLabel, toggleSource } from "@/lib/sourceFilter";
+import { sortSources, sourcesLabel, toggleSource, type SourceOrder } from "@/lib/sourceFilter";
 
 type Props = { counts: SourceCount[]; query: FeedQuery; size: number };
 
 // A "Sources" dropdown button. Opening it shows one checkbox per publisher, alphabetical, with its
 // headline count within the other active filters. Ticking or unticking one goes to page 1 and keeps
 // the other filters, the sort and the page size; the dropdown stays open so several can be ticked.
-// Clicking outside it, or pressing Escape, closes it.
+// Inside, the list can be ordered A–Z (the default) or by most headlines; the choice lasts while the
+// page is open. Clicking outside the dropdown, or pressing Escape, closes it.
 export function SourceFilter({ counts, query, size }: Props) {
   const router = useRouter();
   const ref = useRef<HTMLDetailsElement>(null);
   const chosen = query.sources ?? [];
+  const [order, setOrder] = useState<SourceOrder>("name");
 
   useEffect(() => {
     const close = (e: Event) => {
@@ -37,7 +39,20 @@ export function SourceFilter({ counts, query, size }: Props) {
     <details className="source-filter" ref={ref}>
       <summary>{sourcesLabel(chosen)}</summary>
       <div className="source-list" role="group" aria-label="Sources">
-        {counts.map(({ source, headlines }) => (
+        <div className="source-order" role="group" aria-label="Order publishers">
+          Sort{" "}
+          {(
+            [
+              ["name", "A–Z"],
+              ["count", "Most headlines"],
+            ] as const
+          ).map(([value, label]) => (
+            <button key={value} type="button" aria-pressed={order === value} onClick={() => setOrder(value)}>
+              {label}
+            </button>
+          ))}
+        </div>
+        {sortSources(counts, order).map(({ source, headlines }) => (
           <label key={source}>
             {/* Uncontrolled so the tick shows at once, before the new list loads. */}
             <input

@@ -20,3 +20,12 @@ export function sourcesLabel(chosen: string[]): string {
   if (chosen.length === 1) return `Sources: ${chosen[0]}`;
   return `Sources: ${chosen.length} selected`;
 }
+
+export type SourceOrder = "name" | "count";
+
+// The publisher list in the chosen order: as given (alphabetical), or most headlines first,
+// with ties kept alphabetical.
+export function sortSources<T extends { headlines: number }>(counts: T[], order: SourceOrder): T[] {
+  if (order === "name") return counts;
+  return counts.map((c, i) => ({ c, i })).sort((a, b) => b.c.headlines - a.c.headlines || a.i - b.i).map((x) => x.c);
+}

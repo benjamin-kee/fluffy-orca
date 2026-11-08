@@ -9,6 +9,7 @@ version: 0.5.1
 # MVP1 Specification: Filtering and Keyword Search
 
 **Status:** MVP1.0 approved by Ben on 27 October 2026, built and merged ([pull request 5](https://github.com/benjamin-kee/fluffy-orca/pull/5)). MVP1.2 approved by Ben on 27–28 October 2026 and built ([pull request 7](https://github.com/benjamin-kee/fluffy-orca/pull/7)). MVP1.1 approved by Ben on 28 October 2026 and built ([pull request 10](https://github.com/benjamin-kee/fluffy-orca/pull/10)). MVP1.6 approved by Ben on 1 November 2026 and built on `mvp1.6-search-capability`. MVP1.3 approved by Ben on 28 October 2026 (with A2) and built ([pull request 11](https://github.com/benjamin-kee/fluffy-orca/pull/11)). MVP1.4 and MVP1.5 are drafts: each starts only after Ben approves it.
+**Platform:** web first, mobile friendly ([Product-Principles](../product/Product-Principles.md) P-1, D-041). Filters are designed for the desktop browser; MVP1.5 makes them phone friendly.
 **Branch:** one branch and one pull request into `main` per sub-sprint. MVP1.0 was built on `mvp1`, MVP1.2 on `mvp1.2`.
 **Last updated:** 2026-11-01
 **Replaces:** the v0.1 keyword-search-only draft, now in `docs/specs/Retired/`. Its approved items (D-002 keyword search, D-005 headline text only) carry forward into MVP1.6.
@@ -114,7 +115,7 @@ Acceptance: 19–21 Oct returns the three days' headlines and nothing from 18 or
 
 | ID | Requirement |
 | --- | --- |
-| MVP1.3-R1 | A list of checkboxes, one per publisher name found in the stored `source` values, alphabetical. Watchtower keeps no publisher list of its own (D-026). |
+| MVP1.3-R1 | A list of checkboxes, one per publisher name found in the stored `source` values, alphabetical. Watchtower keeps no publisher list of its own (D-026). The list sits behind a "Sources" dropdown button, closed by default; inside it the viewer can switch the order between A–Z (default) and most headlines first (Ben, 8 November 2026). |
 | MVP1.3-R2 | Each name shows its headline count within the other active filters (for example, the chosen dates), so it shows how many headlines ticking it would add (Q5, Ben, 28 October 2026). |
 | MVP1.3-R3 | Selecting several names shows headlines from any of them. Selecting none means all sources. Stored in the URL as repeated `source=` values. |
 | MVP1.3-R4 | Counting by source needs one read-only database function (approval item A2). |
@@ -246,7 +247,7 @@ Ideas raised while specifying or building MVP1 that are **not** part of MVP1 and
 
 | Version | Date | Change |
 | --- | --- | --- |
-| 0.5.1 | 2026-11-07 | MVP1.3 built. With MVP1.6 live, publisher counts also follow the search, as MVP1.3-R2 ("within the other active filters") requires: migration 0006 replaces the source_counts function (approval item A2). At Ben's request the publisher checkboxes sit behind a "Sources" dropdown button ("Sources: All", the one chosen name, or "Sources: N selected"), which opens a scrolling list over the page and closes on a click outside or Escape. Added FRC-SPEC-MVP1-14 (duplicate publisher names). |
+| 0.5.1 | 2026-11-07 | MVP1.3 built. With MVP1.6 live, publisher counts also follow the search, as MVP1.3-R2 ("within the other active filters") requires: migration 0006 replaces the source_counts function (approval item A2). At Ben's request the publisher checkboxes sit behind a "Sources" dropdown button ("Sources: All", the one chosen name, or "Sources: N selected"), which opens a scrolling list over the page and closes on a click outside or Escape. Inside it, the list can be ordered A–Z (default) or by most headlines (R1). Platform line added: web first, mobile friendly (D-041, Product-Principles P-1). Added FRC-SPEC-MVP1-14 (duplicate publisher names). |
 | 0.5 | 2026-11-01 | Ben approved MVP1.6. Recorded the 200-character rule and the common-words rule (R1, R2). Added section 8, Future Roadmap Considerations, with a convention every spec follows so an agent can collect the items into the Backlog. MVP1.6 built. Change log is now section 9. |
 | 0.4.5 | 2026-11-01 | Ben approved the puzzled-miner-with-magnifying-glass drawing for no search matches, and changed the message to repeat the search and name the chosen dates (MVP1.6-R6, new R7). MVP1.6 is still a draft. |
 | 0.4.4 | 2026-11-01 | Ben approved A3 (search index) and set the MVP1.6 no-results rule: dates with no headlines show the miner; dates with headlines but no match show "No headlines match your search." MVP1.6 is still a draft. |

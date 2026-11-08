@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { pageHref } from "@/lib/pagination";
-import { parseSources, sourcesLabel, toggleSource } from "@/lib/sourceFilter";
+import { parseSources, sortSources, sourcesLabel, toggleSource } from "@/lib/sourceFilter";
 
 const known = ["Bernama", "The Edge", "The Star"];
 
@@ -39,4 +39,18 @@ test("the dropdown button names what is chosen", () => {
   assert.equal(sourcesLabel([]), "Sources: All");
   assert.equal(sourcesLabel(["The Star"]), "Sources: The Star");
   assert.equal(sourcesLabel(["The Star", "Bernama"]), "Sources: 2 selected");
+});
+
+test("the publisher list sorts alphabetically or by most headlines, ties alphabetical", () => {
+  const counts = [
+    { source: "Bernama", headlines: 2 },
+    { source: "CNA", headlines: 5 },
+    { source: "Malay Mail", headlines: 2 },
+    { source: "The Star", headlines: 9 },
+  ];
+  assert.deepEqual(sortSources(counts, "name"), counts);
+  assert.deepEqual(
+    sortSources(counts, "count").map((c) => c.source),
+    ["The Star", "CNA", "Bernama", "Malay Mail"],
+  );
 });

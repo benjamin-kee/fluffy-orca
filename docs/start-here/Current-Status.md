@@ -1,10 +1,12 @@
 # Current Status
 
-**As of:** 28 October 2026
+**As of:** 8 November 2026
 **Active milestone:** MVP1 (filtering and keyword search). MVP1.0, the single-day date filter, is built and live at <https://watchtower01.vercel.app>
 **Repo:** github.com/benjamin-kee/fluffy-orca. `main` is what Vercel deploys. MVP1 sub-sprints are built on one branch each (MVP1.0 on `mvp1`, MVP1.2 on `mvp1.2`), MVP2 on `mvp2`, and planning documents on `claude/inspiring-galileo-33vjef`.
 
 ## Completed
+
+- **Platform principle (D-041):** Watchtower is web first and mobile friendly. Recorded in [Product-Principles](../product/Product-Principles.md) P-1, which every PRD and spec now points to.
 
 - MVP0 built to `docs/specs/MVP0.md` (approved changes 1 to 6): GNews ingestion, Supabase Postgres, duplicate blocking, feed with 50/100 pagination, time display, cleaned links, tests, README.
 - Scheduled ingestion every 3 hours from 12am Malaysia time (Supabase `pg_cron`).

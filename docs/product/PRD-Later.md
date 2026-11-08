@@ -5,8 +5,9 @@ status: Draft, opportunity brief
 version: 0.2, 2 October 2026
 owner: Ben (product manager and approver)
 spec: none by design
-decisions: D-017 to D-030 in the decision log
+decisions: D-017 to D-030, D-041 in the decision log
 news_input: GNews API only
+principles: Product-Principles P-1 (web first, mobile friendly)
 ---
 
 # PRD Later: Intelligence Layer Candidates
