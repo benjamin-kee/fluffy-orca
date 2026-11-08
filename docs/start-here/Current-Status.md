@@ -24,7 +24,8 @@ Fixes since, both live on 8 November: typed dates now filter the feed ([pull req
 1. **Answer the 4 open SPEC-MVP2 questions** (design references, brand, new-headlines notice, Lighthouse targets). Question 5, MVP1.5 or MVP2 first, was answered on 8 November. The spec was refreshed on 8 November to match what is live (v0.4.1-draft).
 2. **Sign off the decision log**: 18 proposed amendments and decisions from 27 October in [Product-Decisions](../roadmap-and-decisions/Product-Decisions.md#awaiting-sign-off).
 3. **Approve SPEC-MVP2**, once the questions are answered. A UI design session on 30 October stopped to wait for these answers.
-4. **Review items 68 (login placement) and 69 (behaviour tracking)**.
+4. **Move MVP3 to GitHub**: run the copy prompt in Claude Code on the Mac, so a `mvp3` branch holds the RAG work and cloud sessions can work on it with the Mac off.
+5. **Review items 68 (login placement) and 69 (behaviour tracking)**.
 
 ## Recently decided
 
@@ -42,7 +43,7 @@ Fixes since, both live on 8 November: typed dates now filter the feed ([pull req
 
 ## Exploratory work outside this repo
 
-- **Headline RAG chat ("MVP3")**: planned in the "RAG implementation planning" session (29 October to 1 November), run from Ben's Mac in `~/Watchtower/MVP3-RAG`. An eval suite exists there (67 test cases, 4 judge prompts, no runs yet). The chat itself is not built. It is not in the roadmap and has no PRD or spec. Two decisions were left open: what to show when filters find nothing, and whether investment questions get a fixed refusal.
+- **Headline RAG chat ("MVP3")**: planned in the "RAG implementation planning" session (29 October to 1 November), run from Ben's Mac in `~/Watchtower/MVP3-RAG`. An eval suite exists there (67 test cases, 4 judge prompts, no runs yet). The chat itself is not built. It is not in the roadmap and has no PRD or spec. Planned move: a `mvp3` branch in this repo, folder `mvp3-rag/`. Two decisions were left open: what to show when filters find nothing, and whether investment questions get a fixed refusal.
 
 ## Known issues
 
@@ -65,4 +66,4 @@ Ben approves the PRD, then the spec, as pull requests. Claude Code builds only f
 2. Step 1 of MVP2: two or three design options for Ben to pick from.
 3. Decide the backfill rule after 21 November (around 15 November).
 4. Decide whether to fix the hyphen bug now.
-5. Decide whether the RAG chat becomes a roadmap milestone with its own PRD.
+5. Move MVP3 to the `mvp3` branch, then decide whether it becomes a roadmap milestone with its own PRD.
