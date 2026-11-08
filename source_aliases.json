@@ -1,0 +1,21 @@
+{
+  "_comment": "Canonical source name -> raw `source` values observed in public.articles (snapshot 2026-10-27) plus user-facing aliases. Used by the filter-extraction grader and by any source filter at query time. Raw values come from the DB; user aliases (lowercase) are what people type.",
+  "The Star": {"raw": ["The Star", "thestar.com.my"], "user_aliases": ["the star", "star", "thestar"]},
+  "The Edge Malaysia": {"raw": ["The Edge Malaysia", "theedgemalaysia.com"], "user_aliases": ["the edge", "edge"]},
+  "Paul Tan": {"raw": ["Paul Tan's Automotive News", "Paul Tan", "paultan.org"], "user_aliases": ["paul tan", "paultan"]},
+  "Free Malaysia Today": {"raw": ["Free Malaysia Today", "freemalaysiatoday.com"], "user_aliases": ["fmt", "free malaysia today"]},
+  "Malay Mail": {"raw": ["Malay Mail", "malaymail.com"], "user_aliases": ["malay mail", "malaymail"]},
+  "CNA": {"raw": ["CNA", "channelnewsasia.com"], "user_aliases": ["cna", "channel newsasia", "channelnewsasia"]},
+  "The Straits Times": {"raw": ["The Straits Times", "straitstimes.com"], "user_aliases": ["straits times", "st"]},
+  "The Rakyat Post": {"raw": ["TRP | The Rakyat Post", "The Rakyat Post"], "user_aliases": ["trp", "rakyat post"]},
+  "SAYS": {"raw": ["SAYS", "says.com"], "user_aliases": ["says"]},
+  "AsiaOne": {"raw": ["AsiaOne.com", "asiaone.com"], "user_aliases": ["asiaone"]},
+  "Bangkok Post": {"raw": ["Bangkok Post", "bangkokpost.com"], "user_aliases": ["bangkok post"]},
+  "autoevolution": {"raw": ["autoevolution", "autoevolution.com"], "user_aliases": ["autoevolution"]},
+  "CryptoPotato": {"raw": ["CryptoPotato", "cryptopotato.com"], "user_aliases": ["cryptopotato"]},
+  "Mashable": {"raw": ["Mashable", "Mashable SEA"], "user_aliases": ["mashable"]},
+  "Reuters": {"raw": ["Reuters"], "user_aliases": ["reuters"]},
+  "Bloomberg": {"raw": ["Bloomberg"], "user_aliases": ["bloomberg"]},
+  "VnExpress International": {"raw": ["VnExpress International"], "user_aliases": ["vnexpress"]},
+  "Malaysiakini": {"raw": ["Malaysiakini"], "user_aliases": ["malaysiakini", "mkini"]}
+}
