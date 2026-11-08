@@ -3,7 +3,7 @@ id: SPEC-MVP2
 prd: PRD-MVP2
 prd_version: 0.3.1
 status: Draft
-version: 0.4-draft
+version: 0.4.1-draft
 ---
 
 # MVP2 Specification: UI/UX Improvements
@@ -49,7 +49,7 @@ Messages and drawings shown instead of the list:
 
 ## 2. Working alongside MVP1
 
-MVP1.0 to MVP1.3 and MVP1.6 are built and merged. MVP1.4 (country filter) is held, and MVP1.5 (mobile filter sheet) is a draft. Both MVP1.5 and MVP2 change the phone layout of the same controls, so Ben decides their order first (Q5).
+MVP1 is complete: MVP1.0 to MVP1.3 and MVP1.6 are built and merged. On 8 November 2026 Ben moved MVP1.4 (country filter) to the Backlog (B-009) and folded MVP1.5 (mobile filter sheet) into MVP2 as R13, so the phone layout of the controls is designed once, in MVP2 (Q5).
 
 - Bring `main` into `mvp2` (merge, no rebase) before starting each step and before each pull request.
 - Do not edit `src/lib/dateFilter.ts`, `src/lib/search.ts`, `src/lib/sort.ts`, `src/lib/sourceFilter.ts`, `src/lib/articleRepository.ts` or `src/lib/pagination.ts` except where a requirement below needs it, and then keep their behaviour and tests unchanged.
@@ -73,6 +73,7 @@ All are proposals until Ben approves them.
 | MVP2-R10 | A footer says that headlines are provided via GNews and that articles belong to their publishers. | F9 |
 | MVP2-R11 | Every control in section 1.1 (search box, From and To pickers, sort, page size, Sources dropdown, "Clear all", count line, pagination), and any MVP1 control added later, uses the chosen design, with unchanged behaviour. | F10 |
 | MVP2-R12 | Lighthouse mobile scores at least 90 for performance and 95 for accessibility on the feed page, and CLS stays under 0.1. JavaScript for the feed page stays under 150 KB gzipped. | Metrics |
+| MVP2-R13 | On a phone, the filter controls (search, dates, sort, Sources, page size, "Clear all") sit behind one "Filters" button that opens a sheet holding the same controls, which behave as on desktop, plus a "Close" button. At desktop widths the controls show inline. The phone breakpoint and the sheet's look follow the design chosen in R1. No animation library. Moved from MVP1.5 (Ben, 8 November 2026). | MVP1.5 |
 
 ## 4. Acceptance criteria
 
@@ -92,6 +93,7 @@ All are proposals until Ben approves them.
 | R9 | Page size 100 is saved | The viewer opens a link with `size=50` | Page size is 50 |
 | R11 | A search, a date range, a sort and two sources are set | The viewer pages, changes page size, and clicks "Clear all" | Behaviour matches MVP1 exactly; the existing tests still pass |
 | R12 | Production build | Lighthouse mobile runs on the feed page | Scores meet the targets |
+| R13 | A 375px-wide phone, then a 1280px desktop | Viewer opens "Filters", uses every control, closes the sheet; then views the desktop | On the phone every filter works from the sheet; on the desktop the controls are inline and there is no "Filters" button |
 
 ## 5. Out of scope
 
@@ -105,7 +107,7 @@ Each step is one pull request into `main`, with typecheck, tests and a productio
 |---|---|---|
 | 1 | Design options (R1) | Ben picks one |
 | 2 | Design tokens, type and spacing scale, themes, feed list and controls (R2, R5, R6, R11) | Ben approves the pull request |
-| 3 | Loading, empty and error states; responsive layout and touch targets (R3, R4) | Ben approves |
+| 3 | Loading, empty and error states; responsive layout, touch targets and the phone filter sheet (R3, R4, R13) | Ben approves |
 | 4 | Freshness line, page size memory, footer (R7, R9, R10) | Ben approves |
 | 5 | New-headlines notice (R8), only if Ben keeps it after Q3 | Ben approves |
 | 6 | Lighthouse check and fixes (R12) | Scores recorded in the pull request |
@@ -118,7 +120,7 @@ Reply by number.
 2. **Brand.** Neutral for now, or a Watchtower name style, logo and colour? Proposal: neutral.
 3. **New-headlines notice (R8).** It needs a small read-only endpoint and a check every 5 minutes. Keep it in MVP2, or move it to the backlog?
 4. **Targets.** Keep the Lighthouse targets of 90 and 95?
-5. **MVP1.5 or MVP2 first.** MVP1.5 (mobile filter sheet) and MVP2-R4 both change how the controls look on a phone. Proposal: build MVP2 first and design the filter sheet inside MVP2's chosen design, so the phone layout is designed once.
+5. ~~MVP1.5 or MVP2 first.~~ Answered by Ben on 8 November 2026: MVP1.5 folds into MVP2 as R13, and the filter sheet is designed inside MVP2's chosen design.
 
 ## 8. Future Roadmap Considerations
 
@@ -139,7 +141,9 @@ Related: a date picker styled to the chosen design is listed as FRC-SPEC-MVP1-10
 
 ## 9. Change log
 
+- 0.4.1-draft (2026-11-08): Merged with 0.3.3-draft (R13). Section 2 and Q5 updated: MVP1 is complete, MVP1.4 moved to the Backlog and MVP1.5 folded into MVP2 as R13 (Ben).
 - 0.4-draft (2026-11-08): Refreshed to match what is live, at Ben's request. New section 1.1 lists the live controls and messages (MVP1.0 to MVP1.3 and MVP1.6). "Show all dates" and the MVP1.0 empty-day wording removed (replaced in MVP1.1 and MVP1.2). R3 to R6, R11 and their acceptance criteria now cover the search box, From and To, sort, the Sources dropdown and "Clear all". R4 follows P-1 (desktop first, checked at 375px). Section 2 updated for the MVP1 sprints still open. Q5 added: MVP1.5 or MVP2 first. Still a draft.
+- 0.3.3-draft (2026-11-08): R13 added: the phone filter sheet, moved from MVP1.5 (Ben). Designed inside the chosen design and delivered with the responsive layout (step 3).
 - 0.3.2-draft (2026-11-08): Platform line added: web first, mobile friendly (D-041, Product-Principles P-1).
 - 0.3.1-draft (2026-11-06): Added section 8, Future Roadmap Considerations, at Ben's request (convention in docs/README.md). No requirement changed.
 - 0.3-draft (2026-10-27): Renamed from SPEC-MVP0.1 to SPEC-MVP2 and placed after MVP1. Added the design-option step (R1), the MVP1 controls (R11), the empty-day miner, page-size precedence, working alongside MVP1, delivery steps, and the `mvp2` branch.

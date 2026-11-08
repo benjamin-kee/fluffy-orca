@@ -2,16 +2,16 @@
 id: SPEC-MVP1
 prd: PRD-MVP1
 prd_version: 0.4
-status: MVP1.0 built; MVP1.1, MVP1.2, MVP1.3 and MVP1.6 approved and built; MVP1.4 and MVP1.5 draft
-version: 0.5.1
+status: Complete. MVP1.0 to MVP1.3 and MVP1.6 built; MVP1.4 moved to the Backlog (B-009); MVP1.5 moved to MVP2 (MVP2-R13)
+version: 0.6
 ---
 
 # MVP1 Specification: Filtering and Keyword Search
 
-**Status:** MVP1.0 approved by Ben on 27 October 2026, built and merged ([pull request 5](https://github.com/benjamin-kee/fluffy-orca/pull/5)). MVP1.2 approved by Ben on 27–28 October 2026 and built ([pull request 7](https://github.com/benjamin-kee/fluffy-orca/pull/7)). MVP1.1 approved by Ben on 28 October 2026 and built ([pull request 10](https://github.com/benjamin-kee/fluffy-orca/pull/10)). MVP1.6 approved by Ben on 1 November 2026 and built on `mvp1.6-search-capability`. MVP1.3 approved by Ben on 28 October 2026 (with A2) and built ([pull request 11](https://github.com/benjamin-kee/fluffy-orca/pull/11)). MVP1.4 and MVP1.5 are drafts: each starts only after Ben approves it.
-**Platform:** web first, mobile friendly ([Product-Principles](../product/Product-Principles.md) P-1, D-041). Filters are designed for the desktop browser; MVP1.5 makes them phone friendly.
+**Status:** MVP1.0 approved by Ben on 27 October 2026, built and merged ([pull request 5](https://github.com/benjamin-kee/fluffy-orca/pull/5)). MVP1.2 approved by Ben on 27–28 October 2026 and built ([pull request 7](https://github.com/benjamin-kee/fluffy-orca/pull/7)). MVP1.1 approved by Ben on 28 October 2026 and built ([pull request 10](https://github.com/benjamin-kee/fluffy-orca/pull/10)). MVP1.6 approved by Ben on 1 November 2026 and built on `mvp1.6-search-capability`. MVP1.3 approved by Ben on 28 October 2026 (with A2) and built ([pull request 11](https://github.com/benjamin-kee/fluffy-orca/pull/11)). On 8 November 2026 Ben moved MVP1.4 (country filter) to the Backlog as B-009 and folded MVP1.5 (mobile filter sheet) into MVP2 as MVP2-R13, so MVP1 is complete.
+**Platform:** web first, mobile friendly ([Product-Principles](../product/Product-Principles.md) P-1, D-041). Filters are designed for the desktop browser; their phone layout is designed in MVP2 (MVP2-R13, formerly MVP1.5).
 **Branch:** one branch and one pull request into `main` per sub-sprint. MVP1.0 was built on `mvp1`, MVP1.2 on `mvp1.2`.
-**Last updated:** 2026-11-01
+**Last updated:** 2026-11-08
 **Replaces:** the v0.1 keyword-search-only draft, now in `docs/specs/Retired/`. Its approved items (D-002 keyword search, D-005 headline text only) carry forward into MVP1.6.
 **Source:** MVP1 sprint breakdown, draft of 26 October 2026.
 
@@ -33,8 +33,8 @@ Each sub-sprint ships a working increment on top of the one before it, and is me
 | MVP1.1 | Results controls | Result count, clear all, newest or oldest sort, URL state for all filters | MVP1.0 | Approved 2026-10-28. Built |
 | MVP1.2 | Date range | From and To dates | MVP1.0 | Approved 2026-10-28. Built |
 | MVP1.3 | Source filter | Multi-select of publishers with headline counts | MVP1.1 | Approved 2026-10-28 with A2. Built |
-| MVP1.4 | Country filter | Malaysia active, Singapore greyed out "Coming soon" | A second ingested country and approval item A1 | Held until a second country is ingested (Q7) and A1 is approved |
-| MVP1.5 | Mobile filter sheet | Filters behind one button and a bottom sheet on phones | MVP1.1 to MVP1.4 | Ben approves MVP1.5 |
+| MVP1.4 | Country filter | Malaysia active, Singapore greyed out "Coming soon" | A second ingested country and approval item A1 | Moved to the Backlog as B-009 (Ben, 2026-11-08) |
+| MVP1.5 | Mobile filter sheet | Filters behind one button and a bottom sheet on phones | MVP1.1 to MVP1.4 | Moved to MVP2 as MVP2-R13 (Ben, 2026-11-08) |
 | MVP1.6 | Keyword search | Search headline titles, combined with active filters | MVP1.1 and approval item A3 | Approved 2026-11-01 (with A3). Built |
 
 MVP1.2 and MVP1.3 can run in either order. MVP1.6 can start once MVP1.1 is stable.
@@ -122,7 +122,9 @@ Acceptance: 19–21 Oct returns the three days' headlines and nothing from 18 or
 
 Acceptance: ticking two sources lists only their headlines; each count equals that source's matching headlines; an unknown `source=` value in the URL is ignored.
 
-### MVP1.4 Country filter (held)
+### MVP1.4 Country filter (moved to the Backlog)
+
+Moved to the Backlog as B-009 on 8 November 2026 (Ben), with approval item A1. Not part of MVP1. The requirements below are kept for when it is scheduled.
 
 | ID | Requirement |
 | --- | --- |
@@ -132,7 +134,9 @@ Acceptance: ticking two sources lists only their headlines; each count equals th
 
 Note: while Malaysia is the only country ingested, this filter changes no results, so it is held until a second country is ingested (Q7, Ben, 28 October 2026). Ingesting Singapore headlines is not part of MVP1 (D-007, backlog B-004).
 
-### MVP1.5 Mobile filter sheet
+### MVP1.5 Mobile filter sheet (moved to MVP2)
+
+Folded into MVP2 as MVP2-R13 on 8 November 2026 (Ben), so the phone layout of the filters is designed once, inside MVP2's chosen design. Not part of MVP1. The requirements below are kept as the starting point for MVP2-R13.
 
 | ID | Requirement |
 | --- | --- |
@@ -188,11 +192,11 @@ This explains the choice behind MVP1.6-R2 and R4. No requirement changes.
 
 | # | Item | Needed by | Detail |
 | --- | --- | --- | --- |
-| A1 | `country` field on `articles` | MVP1.4 | New business-domain field, `text not null default 'my'`, and the GNews adapter writes the request's country. Held until Ben approves. |
+| A1 | `country` field on `articles` | MVP1.4 | New business-domain field, `text not null default 'my'`, and the GNews adapter writes the request's country. Moved with MVP1.4 to the Backlog (B-009); not approved. |
 | A2 | Source-count function | MVP1.3 | Migration adding a read-only Postgres function that returns each source and its headline count for the given filters. The Supabase client cannot group and count without it. |
 | A3 | Search index | MVP1.6 | Migration adding the title full-text expression index (GIN on `to_tsvector('english', title)`). Approved by Ben on 1 November 2026. |
 
-MVP1.0, MVP1.1, MVP1.2 and MVP1.5 need no database change.
+MVP1.0, MVP1.1 and MVP1.2 need no database change.
 
 ## 6. Out of scope
 
@@ -248,6 +252,7 @@ Ideas raised while specifying or building MVP1 that are **not** part of MVP1 and
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 0.6 | 2026-11-08 | MVP1 complete. Ben moved MVP1.4 (country filter, with A1) to the Backlog as B-009 and folded MVP1.5 (mobile filter sheet) into MVP2 as MVP2-R13. Both sections are kept for reference. |
 | 0.5.1 | 2026-11-07 | MVP1.3 built. With MVP1.6 live, publisher counts also follow the search, as MVP1.3-R2 ("within the other active filters") requires: migration 0006 replaces the source_counts function (approval item A2). At Ben's request the publisher checkboxes sit behind a "Sources" dropdown button ("Sources: All", the one chosen name, or "Sources: N selected"), which opens a scrolling list over the page and closes on a click outside or Escape. Inside it, the list can be ordered A–Z (default) or by most headlines; "Most headlines" is the default; in A–Z, accented letters count as their base letter, and names in other alphabets, then names starting with a digit or symbol, go after Z (R1). Added FRC-SPEC-MVP1-15 (web-address publisher names, backlog B-008). Platform line added: web first, mobile friendly (D-041, Product-Principles P-1). Added FRC-SPEC-MVP1-14 (duplicate publisher names). |
 | 0.5 | 2026-11-01 | Ben approved MVP1.6. Recorded the 200-character rule and the common-words rule (R1, R2). Added section 8, Future Roadmap Considerations, with a convention every spec follows so an agent can collect the items into the Backlog. MVP1.6 built. Change log is now section 9. |
 | 0.4.5 | 2026-11-01 | Ben approved the puzzled-miner-with-magnifying-glass drawing for no search matches, and changed the message to repeat the search and name the chosen dates (MVP1.6-R6, new R7). MVP1.6 is still a draft. |

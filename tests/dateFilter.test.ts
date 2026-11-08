@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { parseDateRange, type DateRange } from "@/lib/dateFilter";
+import { isWholeDate, parseDateRange, type DateRange } from "@/lib/dateFilter";
 import { pageHref } from "@/lib/pagination";
 
 const inRange = (iso: string, range: DateRange) => {
@@ -88,4 +88,15 @@ test("page links keep the chosen dates and time zone", () => {
     pageHref(1, 50, { range: { from: null, to: "2026-10-21", timeZone: "Asia/Kuala_Lumpur" } }),
     "/?to=2026-10-21&tz=Asia%2FKuala_Lumpur&page=1&size=50",
   );
+});
+
+test("a year still being typed is not a whole date", () => {
+  for (const date of ["0002-11-07", "0020-11-07", "0202-11-07", "0999-12-31"]) {
+    assert.equal(isWholeDate(date), false, date);
+  }
+  for (const date of ["2026-11-07", "1000-01-01", "2026-04-14"]) {
+    assert.equal(isWholeDate(date), true, date);
+  }
+  assert.equal(isWholeDate("2026-02-30"), false);
+  assert.equal(isWholeDate(""), false);
 });

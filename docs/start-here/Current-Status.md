@@ -2,7 +2,7 @@
 
 **As of:** 8 November 2026
 **Owner:** the Orchestrator (Ben's product-manager agent). It updates this page after each sprint, merge or decision. Ben approves each update by merging it.
-**Active milestone:** MVP1 (filtering and keyword search). Five of seven sub-sprints are built and live at <https://watchtower01.vercel.app>.
+**Active milestone:** MVP1 (filtering and keyword search) is complete and live at <https://watchtower01.vercel.app>. Next is MVP2 (UI/UX), whose spec waits for Ben's approval.
 **Repo:** github.com/benjamin-kee/fluffy-orca. `main` is what Vercel deploys. Each sub-sprint is built on its own branch and merged by pull request.
 
 ## MVP1 sprints
@@ -14,19 +14,22 @@
 | MVP1.2 | From and To date range | Live, 28 Oct ([pull request 7](https://github.com/benjamin-kee/fluffy-orca/pull/7)) |
 | MVP1.6 | Keyword search on headline titles | Live, 6 Nov ([pull request 12](https://github.com/benjamin-kee/fluffy-orca/pull/12)) |
 | MVP1.3 | Source filter with headline counts, behind a "Sources" dropdown | Live, 7 Nov ([pull request 11](https://github.com/benjamin-kee/fluffy-orca/pull/11)), follow-ups 8 Nov ([pull request 13](https://github.com/benjamin-kee/fluffy-orca/pull/13)) |
-| MVP1.4 | Country filter | Held until a second country is ingested (Q7) and approval item A1 |
-| MVP1.5 | Mobile filter sheet | Draft, waiting for Ben's approval |
+| MVP1.4 | Country filter | Moved to the Backlog as B-009, 8 Nov ([pull request 16](https://github.com/benjamin-kee/fluffy-orca/pull/16)) |
+| MVP1.5 | Mobile filter sheet | Moved into MVP2 as MVP2-R13, 8 Nov ([pull request 16](https://github.com/benjamin-kee/fluffy-orca/pull/16)) |
+
+Fixes since, both live on 8 November: typed dates now filter the feed ([pull request 14](https://github.com/benjamin-kee/fluffy-orca/pull/14)), and a request Supabase briefly refuses ("JWT issued at future") is retried instead of showing "Headlines could not be loaded" ([pull request 15](https://github.com/benjamin-kee/fluffy-orca/pull/15)).
 
 ## Waiting for Ben
 
-1. **Answer the 5 SPEC-MVP2 questions** (design references, brand, new-headlines notice, Lighthouse targets, MVP1.5 or MVP2 first). The spec was refreshed on 8 November to match what is live (v0.4-draft).
+1. **Answer the 4 open SPEC-MVP2 questions** (design references, brand, new-headlines notice, Lighthouse targets). Question 5, MVP1.5 or MVP2 first, was answered on 8 November. The spec was refreshed on 8 November to match what is live (v0.4.1-draft).
 2. **Sign off the decision log**: 18 proposed amendments and decisions from 27 October in [Product-Decisions](../roadmap-and-decisions/Product-Decisions.md#awaiting-sign-off).
 3. **Approve SPEC-MVP2**, once the questions are answered. A UI design session on 30 October stopped to wait for these answers.
-4. **Approve MVP1.5**, unless MVP2 goes first (SPEC-MVP2 question 5).
-5. **Review items 68 (login placement) and 69 (behaviour tracking)**.
+4. **Review items 68 (login placement) and 69 (behaviour tracking)**.
 
 ## Recently decided
 
+- **MVP1 closed** (8 November, [pull request 16](https://github.com/benjamin-kee/fluffy-orca/pull/16)): the country filter (MVP1.4) moved to the Backlog as B-009, and the phone filter sheet (MVP1.5) moved into MVP2 as MVP2-R13, so the phone layout of the filters is designed once, in MVP2.
+- **Supabase project renamed** to "Watchtower" (8 November).
 - **Product principles** in [Product-Principles](../product/Product-Principles.md), which every PRD and spec now points to: P-1 web first, mobile friendly (D-041); P-2 sorting names A–Z (D-042).
 
 ## Data and ingestion
@@ -45,7 +48,6 @@
 
 - **Titles cut at hyphens.** Found on 29 October: some titles lose the text before a hyphen ("tron sets…" from "e-tron"). 98 stored titles start with a lowercase letter, 14 of them from the last 7 days, so it likely still happens. Needs a fix decision.
 - **One outlet, several source names** ("The Star" and "thestar.com.my"). Logged as FRC-SPEC-MVP1-14 for a later decision.
-- **Supabase project name** still uses the product's retired former name. Rename it in the Supabase dashboard.
 
 ## Still in progress from October
 

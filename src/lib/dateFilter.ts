@@ -32,6 +32,13 @@ export function isValidDate(date: string): boolean {
   return parsed.getUTCFullYear() === y && parsed.getUTCMonth() === m - 1 && parsed.getUTCDate() === d;
 }
 
+// A date picked or typed in full. While a year is being typed, browsers report it as it grows
+// (0002, 0020, 0202, then 2026), and each of those is a real date; a year before 1000 is taken
+// as still being typed, so the filter waits for the whole year.
+export function isWholeDate(date: string): boolean {
+  return isValidDate(date) && Number(date.slice(0, 4)) >= 1000;
+}
+
 // How far the time zone's wall clock is ahead of UTC at the given instant, in ms.
 function offsetMs(timeZone: string, instant: number): number {
   const parts = new Intl.DateTimeFormat("en-US", {

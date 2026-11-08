@@ -1,5 +1,5 @@
 import type { Article, NewArticle } from "@/lib/article";
-import { getDb } from "@/lib/db";
+import { dbErrorText, getDb } from "@/lib/db";
 import type { Sort } from "@/lib/sort";
 
 const TABLE = "articles";
@@ -21,12 +21,12 @@ export async function insertNewArticles(articles: NewArticle[]): Promise<number>
   const rows = dedupeArticles(articles);
   if (rows.length === 0) return 0;
 
-  const { data, error } = await getDb()
+  const { data, error, status } = await getDb()
     .from(TABLE)
     .upsert(rows, { onConflict: "source,external_id", ignoreDuplicates: true })
     .select("id");
 
-  if (error) throw new Error(`Failed to insert articles: ${error.message}`);
+  if (error) throw new Error(`Failed to insert articles: ${dbErrorText(error, status)}`);
   return data.length;
 }
 
@@ -49,20 +49,20 @@ export async function countArticles(
   if (q) query = query.textSearch("title", q, SEARCH);
   if (sources.length > 0) query = query.in("source", sources);
 
-  const { count, error } = await query;
-  if (error) throw new Error(`Failed to count articles: ${error.message}`);
+  const { count, error, status } = await query;
+  if (error) throw new Error(`Failed to count articles: ${dbErrorText(error, status)}`);
   return count ?? 0;
 }
 
 // Publication time of the oldest stored article, or null when there are none.
 export async function oldestPublishedAt(): Promise<Date | null> {
-  const { data, error } = await getDb()
+  const { data, error, status } = await getDb()
     .from(TABLE)
     .select("published_at")
     .order("published_at", { ascending: true })
     .limit(1);
 
-  if (error) throw new Error(`Failed to read oldest article: ${error.message}`);
+  if (error) throw new Error(`Failed to read oldest article: ${dbErrorText(error, status)}`);
   return data.length > 0 ? new Date(data[0].published_at) : null;
 }
 
@@ -84,12 +84,12 @@ export async function listArticles(
   if (q) query = query.textSearch("title", q, SEARCH);
   if (sources.length > 0) query = query.in("source", sources);
 
-  const { data, error } = await query
+  const { data, error, status } = await query
     .order("published_at", { ascending: sort === "oldest" })
     .order("id", { ascending: sort === "oldest" })
     .range(offset, offset + limit - 1);
 
-  if (error) throw new Error(`Failed to list articles: ${error.message}`);
+  if (error) throw new Error(`Failed to list articles: ${dbErrorText(error, status)}`);
   return data;
 }
 
@@ -99,13 +99,13 @@ export type SourceCount = { source: string; headlines: number };
 // the search, if given (MVP1.3-R2). Uses the read-only source_counts database function
 // (migration 0006), which matches titles by the same rules as the headline list.
 export async function sourceCounts(window: PublishedWindow | null = null, q: string | null = null): Promise<SourceCount[]> {
-  const { data, error } = await getDb().rpc("source_counts", {
+  const { data, error, status } = await getDb().rpc("source_counts", {
     p_start: window?.start ?? null,
     p_end: window?.end ?? null,
     p_q: q,
   });
 
-  if (error) throw new Error(`Failed to count sources: ${error.message}`);
+  if (error) throw new Error(`Failed to count sources: ${dbErrorText(error, status)}`);
   return (data as { source: string; headlines: number | string }[]).map((row) => ({
     source: row.source,
     headlines: Number(row.headlines),
