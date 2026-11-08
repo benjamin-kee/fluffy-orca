@@ -10,7 +10,7 @@ Each section keeps only current files. A retired file moves to that section's `R
 | [product](product/) | [Product-Principles](product/Product-Principles.md) (rules every milestone follows: P-1 web first, mobile friendly; P-2 sorting names A–Z), PRDs (MVP0, MVP1, MVP2, Later), PRD-Template, Product-Vision |
 | [specs](specs/) | [MVP0.md](specs/MVP0.md), the approved and built spec. [SPEC-MVP1](specs/SPEC-MVP1.md) (filtering and keyword search): MVP1.0 approved and built, later sub-sprints draft. [SPEC-MVP2](specs/SPEC-MVP2.md) (UI/UX, formerly MVP0.1): draft. `Retired/` holds the SPEC-MVP0 v2.1 draft and the keyword-only MVP1 v0.1 draft |
 | [roadmap-and-decisions](roadmap-and-decisions/) | [Roadmap](roadmap-and-decisions/Roadmap.md), [Backlog](roadmap-and-decisions/Backlog.md), [Product-Decisions](roadmap-and-decisions/Product-Decisions.md), [MVP1-Sprint-Breakdown](roadmap-and-decisions/MVP1-Sprint-Breakdown.md) |
-| [research](research/) | News-Sources (GNews), Licensing, User-Behaviour-Tracking |
+| [research](research/) | News-Sources (GNews), Licensing, User-Behaviour-Tracking, [RAG-Chatbot](research/RAG-Chatbot.md) (MVP3 competitor research and proposed architecture) |
 | [execution-and-agents](execution-and-agents/) | [Execution-Plan-MVP1](execution-and-agents/Execution-Plan-MVP1.md) (draft), Research-Agent brief, Specwright auditor prompt. `Retired/` holds Execution-Plan-GNews |
 | [reviews](reviews/) | The latest review round and the fs-review of the v2.1 draft. `Retired/` holds earlier rounds |
 
