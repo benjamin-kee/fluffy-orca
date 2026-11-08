@@ -109,17 +109,50 @@ a {
   color: #999;
 }
 
-/* Full width; with many publishers the list scrolls inside a box about six lines tall,
-   so the headlines stay near the top of the page. */
+/* Sources dropdown: a button that opens a scrolling list of publishers over the page. */
 .source-filter {
-  display: flex;
-  flex-wrap: wrap;
-  flex: 1 1 100%;
-  gap: 0.25rem 1rem;
-  margin: 0;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #e5e5e5;
+  position: relative;
+}
+
+.source-filter summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid #c8c8c8;
   border-radius: 4px;
-  max-height: 11rem;
+  background: #fafafa;
+  white-space: nowrap;
+  max-width: 16rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.source-filter summary::-webkit-details-marker {
+  display: none;
+}
+
+.source-filter summary::after {
+  content: " ▾";
+}
+
+.source-filter[open] summary::after {
+  content: " ▴";
+}
+
+.source-list {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 4px);
+  left: 0;
+  width: min(20rem, calc(100vw - 2rem));
+  max-height: 18rem;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  background: #ffffff;
+  border: 1px solid #c8c8c8;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }

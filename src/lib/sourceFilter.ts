@@ -13,3 +13,10 @@ export function parseSources(params: SearchParams, known: string[]): string[] {
 export function toggleSource(chosen: string[], source: string): string[] {
   return chosen.includes(source) ? chosen.filter((s) => s !== source) : [...chosen, source];
 }
+
+// The dropdown button's text: "Sources: All", the one chosen name, or how many are chosen.
+export function sourcesLabel(chosen: string[]): string {
+  if (chosen.length === 0) return "Sources: All";
+  if (chosen.length === 1) return `Sources: ${chosen[0]}`;
+  return `Sources: ${chosen.length} selected`;
+}

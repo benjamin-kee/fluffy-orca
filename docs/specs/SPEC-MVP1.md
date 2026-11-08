@@ -246,7 +246,7 @@ Ideas raised while specifying or building MVP1 that are **not** part of MVP1 and
 
 | Version | Date | Change |
 | --- | --- | --- |
-| 0.5.1 | 2026-11-07 | MVP1.3 built. With MVP1.6 live, publisher counts also follow the search, as MVP1.3-R2 ("within the other active filters") requires: migration 0006 replaces the source_counts function (approval item A2). The publisher list scrolls inside a box about six lines tall. Added FRC-SPEC-MVP1-14 (duplicate publisher names). |
+| 0.5.1 | 2026-11-07 | MVP1.3 built. With MVP1.6 live, publisher counts also follow the search, as MVP1.3-R2 ("within the other active filters") requires: migration 0006 replaces the source_counts function (approval item A2). At Ben's request the publisher checkboxes sit behind a "Sources" dropdown button ("Sources: All", the one chosen name, or "Sources: N selected"), which opens a scrolling list over the page and closes on a click outside or Escape. Added FRC-SPEC-MVP1-14 (duplicate publisher names). |
 | 0.5 | 2026-11-01 | Ben approved MVP1.6. Recorded the 200-character rule and the common-words rule (R1, R2). Added section 8, Future Roadmap Considerations, with a convention every spec follows so an agent can collect the items into the Backlog. MVP1.6 built. Change log is now section 9. |
 | 0.4.5 | 2026-11-01 | Ben approved the puzzled-miner-with-magnifying-glass drawing for no search matches, and changed the message to repeat the search and name the chosen dates (MVP1.6-R6, new R7). MVP1.6 is still a draft. |
 | 0.4.4 | 2026-11-01 | Ben approved A3 (search index) and set the MVP1.6 no-results rule: dates with no headlines show the miner; dates with headlines but no match show "No headlines match your search." MVP1.6 is still a draft. |

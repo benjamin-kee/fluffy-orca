@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { pageHref } from "@/lib/pagination";
-import { parseSources, toggleSource } from "@/lib/sourceFilter";
+import { parseSources, sourcesLabel, toggleSource } from "@/lib/sourceFilter";
 
 const known = ["Bernama", "The Edge", "The Star"];
 
@@ -33,4 +33,10 @@ test("page links keep the chosen sources with the dates and sort", () => {
     }),
     "/?from=2026-10-19&tz=Europe%2FLondon&source=Bernama&source=The+Star&sort=oldest&page=2&size=100",
   );
+});
+
+test("the dropdown button names what is chosen", () => {
+  assert.equal(sourcesLabel([]), "Sources: All");
+  assert.equal(sourcesLabel(["The Star"]), "Sources: The Star");
+  assert.equal(sourcesLabel(["The Star", "Bernama"]), "Sources: 2 selected");
 });
