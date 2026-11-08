@@ -23,18 +23,27 @@ export function sourcesLabel(chosen: string[]): string {
 
 export type SourceOrder = "name" | "count";
 
-// Case-insensitive, with numbers in number order ("9to5Linux" before "10x").
+// Ignores case and accents ("École" sorts as "Ecole"), with numbers in number order
+// ("9to5Linux" before "10x").
 const collator = new Intl.Collator("en", { sensitivity: "base", numeric: true });
 
-// A–Z order for publisher names (Ben, 8 November 2026): names starting with a letter A to Z come
-// first, alphabetical and ignoring case; names starting with anything else (a digit, a symbol)
-// follow after Z, in the same order among themselves.
-export function compareSourceNames(a: string, b: string): number {
-  const group = (name: string) => (/^[a-z]/i.test(name) ? 0 : 1);
-  return group(a) - group(b) || collator.compare(a, b);
+// Which block a name sorts in: 0 starts with a letter A to Z, accented or not ("É" counts as "E");
+// 1 starts with a letter of another alphabet (Thai, Chinese and so on); 2 anything else (digit, symbol).
+function nameGroup(name: string): number {
+  const first = name.normalize("NFD").charAt(0);
+  if (/[a-z]/i.test(first)) return 0;
+  return /\p{L}/u.test(first) ? 1 : 2;
 }
 
-// The publisher list in the chosen order: A–Z as above, or most headlines first with ties in A–Z order.
+// A–Z order for publisher names (Ben, 8 November 2026): names starting with a letter A to Z come
+// first, alphabetical, ignoring case and accents; then names in other alphabets; then names starting
+// with a digit or symbol. Each block is sorted the same way.
+export function compareSourceNames(a: string, b: string): number {
+  return nameGroup(a) - nameGroup(b) || collator.compare(a, b);
+}
+
+// The publisher list in the chosen order: most headlines first (the default) with ties in A–Z order,
+// or A–Z as above.
 export function sortSources<T extends { source: string; headlines: number }>(counts: T[], order: SourceOrder): T[] {
   return [...counts].sort(
     (a, b) => (order === "count" ? b.headlines - a.headlines : 0) || compareSourceNames(a.source, b.source),

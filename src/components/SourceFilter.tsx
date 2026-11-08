@@ -11,13 +11,13 @@ type Props = { counts: SourceCount[]; query: FeedQuery; size: number };
 // A "Sources" dropdown button. Opening it shows one checkbox per publisher, alphabetical, with its
 // headline count within the other active filters. Ticking or unticking one goes to page 1 and keeps
 // the other filters, the sort and the page size; the dropdown stays open so several can be ticked.
-// Inside, the list can be ordered A–Z (the default) or by most headlines; the choice lasts while the
+// Inside, the list is ordered by most headlines (the default) or A–Z; the choice lasts while the
 // page is open. Clicking outside the dropdown, or pressing Escape, closes it.
 export function SourceFilter({ counts, query, size }: Props) {
   const router = useRouter();
   const ref = useRef<HTMLDetailsElement>(null);
   const chosen = query.sources ?? [];
-  const [order, setOrder] = useState<SourceOrder>("name");
+  const [order, setOrder] = useState<SourceOrder>("count");
 
   useEffect(() => {
     const close = (e: Event) => {
@@ -43,8 +43,8 @@ export function SourceFilter({ counts, query, size }: Props) {
           Sort{" "}
           {(
             [
-              ["name", "A–Z"],
               ["count", "Most headlines"],
+              ["name", "A–Z"],
             ] as const
           ).map(([value, label]) => (
             <button key={value} type="button" aria-pressed={order === value} onClick={() => setOrder(value)}>

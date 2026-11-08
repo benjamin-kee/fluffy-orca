@@ -15,6 +15,7 @@ Merged on 27 October 2026 from `docs/roadmap.md` (the MVP0 backlog kept by Claud
 | B-005 | Non-English sources (Malay, Chinese) | D-014, 2026-09-24 | Later | GNews supports 40+ languages |
 | B-006 | Google Sheet checklist for task tracking | D-004, 2026-09-24 | Optional | The roadmap itself is [Roadmap.md](Roadmap.md) (proposed amendment A-04) |
 | B-007 | History back to 1 January 2026 | D-013, proposed amendment A-13 | Later | MVP0 holds the 30 days the GNews free plan allows. Older history needs a paid plan |
+| B-008 | Publisher names that are web addresses (for example "https://docksiderestaurant.com.au/"): decide whether to hide them or show the site name | FRC-SPEC-MVP1-15, 2026-11-08 | Later | Fine as is for now (Ben, 8 November 2026). They sort under their first letter in the Sources list. Related: FRC-SPEC-MVP1-14, one outlet under several names |
 
 ## Further improvement
 

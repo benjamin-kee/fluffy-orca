@@ -41,6 +41,20 @@ test("the dropdown button names what is chosen", () => {
   assert.equal(sourcesLabel(["The Star", "Bernama"]), "Sources: 2 selected");
 });
 
+test("accented first letters count as their base letter; other alphabets follow Z, then digits and symbols", () => {
+  const names = ["Zeit", "8days.sg", "École Post", "ไทยรัฐ", "Ecole News", "Échos", "@Media", "Bernama"];
+  assert.deepEqual(names.sort(compareSourceNames), [
+    "Bernama",
+    "Échos",
+    "Ecole News",
+    "École Post",
+    "Zeit",
+    "ไทยรัฐ",
+    "@Media",
+    "8days.sg",
+  ]);
+});
+
 test("A–Z puts names starting with A to Z first, ignoring case, then everything else", () => {
   const names = ["9to5Linux", "the edge", "https://example.com/", "8days.sg", "AeroRoutes", "airlive", "Bernama", "10x News", "@Media", "The Star"];
   assert.deepEqual(names.sort(compareSourceNames), [
