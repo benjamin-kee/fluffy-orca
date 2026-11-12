@@ -1,6 +1,6 @@
 # Current Status
 
-**As of:** 8 November 2026
+**As of:** 11 November 2026
 **Owner:** the Orchestrator (Ben's product-manager agent). It updates this page after each sprint, merge or decision. Ben approves each update by merging it.
 **Active milestone:** MVP1 (filtering and keyword search) is complete and live at <https://watchtower01.vercel.app>. Next is MVP2 (UI/UX), whose spec waits for Ben's approval.
 **Repo:** github.com/benjamin-kee/fluffy-orca. `main` is what Vercel deploys. Each sub-sprint is built on its own branch and merged by pull request.
@@ -34,15 +34,15 @@ Fixes since, both live on 8 November: typed dates now filter the feed ([pull req
 
 ## Data and ingestion
 
-- 1,798 headlines stored, from 23 September 2026 to today, across 123 source names. The database uses 13 MB.
-- Scheduled ingestion runs 8 times a day (every 3 hours) and every run in the last 3 days succeeded. Each run makes 1 GNews request and gets at most the 10 newest headlines. About 20 to 60 new headlines arrive a day.
-- The daily backfill (up to 90 requests) also catches headlines the scheduled runs miss. The 30-day window was complete on 8 November.
+- 1,936 headlines stored on 11 November, from 23 September 2026 onward (138 added since 8 November). The database uses about 13 MB.
+- Scheduled ingestion runs 8 times a day (every 3 hours) and every run from 9 to 11 November succeeded. Each run makes 1 GNews request and gets at most the 10 newest headlines. About 20 to 60 new headlines arrive a day.
+- The daily backfill (up to 90 requests) also catches headlines the scheduled runs miss. The 30-day window was still complete on 11 November (12 October to 11 November).
 - GNews free plan: 100 requests a day, 10 headlines per request, 30 days of history, headlines appear 12 hours after publication, non-commercial use only.
 - Backfill rule after 21 November 2026: Ben revisits it around 15 November.
 
 ## Exploratory work
 
-- **Headline RAG chat ("MVP3")**: on GitHub since 8 November, on branch `mvp3-rag` (not merged): the eval suite in `evals/` (67 test cases, 4 judge prompts, no runs yet) and a research report, [RAG-Chatbot](https://github.com/benjamin-kee/fluffy-orca/blob/mvp3-rag/docs/research/RAG-Chatbot.md), with competitors and a proposed architecture (hybrid search in Supabase Postgres, Claude with citations, answers from headlines only). The chat itself is not built. It is not in the roadmap and has no PRD or spec. Two decisions are open: what to show when filters find nothing, and whether investment questions get a fixed refusal.
+- **Headline RAG chat ("MVP3")**: on GitHub since 8 November, on branch `mvp3-rag` (not merged): the eval suite in `evals/` (67 test cases, 4 judge prompts, no runs yet) and a research report, [RAG-Chatbot](https://github.com/benjamin-kee/fluffy-orca/blob/mvp3-rag/docs/research/RAG-Chatbot.md), with competitors and a proposed architecture (hybrid search in Supabase Postgres, Claude with citations, answers from headlines only). The chat itself is not built. It is not in the roadmap and has no PRD or spec. The research report ends with 10 questions for the PRD. Two earlier decisions are also open: what to show when filters find nothing, and whether investment questions get a fixed refusal.
 
 ## Known issues
 
