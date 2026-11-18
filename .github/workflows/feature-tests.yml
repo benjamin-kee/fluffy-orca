@@ -1,0 +1,47 @@
+# Weekly feature tests: a browser clicks through the live site (search, dates, sort, Sources,
+# Clear all, pagination, phone width) and fails if any feature stops working.
+# A failed run makes GitHub email the person who last enabled this workflow (see README, "Feature tests").
+name: Feature tests
+
+on:
+  schedule:
+    - cron: "23 12 * * 1"
+  workflow_dispatch:
+    inputs:
+      site_url:
+        description: "Site to test (default: the live site)"
+        type: string
+        default: "https://watchtower01.vercel.app"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: feature-tests
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Run feature tests
+        env:
+          SITE_URL: ${{ inputs.site_url || 'https://watchtower01.vercel.app' }}
+        run: npx playwright test
+      - name: Keep the report when tests fail
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: feature-test-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
