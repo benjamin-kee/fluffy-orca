@@ -151,3 +151,15 @@ One-time setup, signed in to Google as the owner of the Drive folder:
 7. **Actions → Sync docs to Google Drive → Run workflow**, with **dry run** ticked, to see what would change. Run it again without dry run to sync.
 
 Google expires a refresh token that goes unused for 6 months. If the sync then fails to sign in, repeat step 5 and update `GOOGLE_REFRESH_TOKEN`.
+
+## Site health check
+
+A GitHub Action ([`.github/workflows/site-health.yml`](.github/workflows/site-health.yml), running [`scripts/site-health.sh`](scripts/site-health.sh)) checks the live site every 3 hours. It passes when the feed page loads within 20 seconds, lists headlines, and its newest headline is at most 36 hours old (GNews releases headlines 12 hours after publication, so a normal newest headline is 12 to 20 hours old). A failed attempt is retried once after a minute, so one slow request does not raise an alert. It uses no secrets and only reads the public page.
+
+When a run fails, GitHub emails the person who last enabled the workflow. One-time setup, so the emails reach you:
+
+1. **Actions → Site health check → ⋯ → Disable workflow**, then **Enable workflow**. Scheduled-run emails now go to you.
+2. **Run workflow** with **test_failure** ticked. The run fails on purpose; check that the email arrives.
+3. If it does not, check **GitHub → Settings → Notifications → Actions** is set to email you on failed workflows.
+
+Each run's result, including the newest headline's age, is shown on its run page under **Summary**. To check by hand: `bash scripts/site-health.sh`.
