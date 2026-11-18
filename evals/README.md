@@ -10,6 +10,8 @@ evals/
   dataset.jsonl             67 test cases built from real headlines
   corpus_snapshot_ids.txt   the 1,357 article ids the dataset was labelled against
   source_aliases.json       canonical source -> raw DB values + user aliases
+  useful-links.md           what makes a fallback link useful, edge cases, QA tests (draft)
+  answer-key-spot-check.md  10 cases shown as headline text for Ben's review
   judges/
     faithfulness.md         claims supported by cited headlines?
     world_knowledge_leakage.md  content that came from the model, not the headlines?

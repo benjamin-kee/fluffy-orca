@@ -16,6 +16,7 @@ Merged on 27 October 2026 from `docs/roadmap.md` (the MVP0 backlog kept by Claud
 | B-006 | Google Sheet checklist for task tracking | D-004, 2026-09-24 | Optional | The roadmap itself is [Roadmap.md](Roadmap.md) (proposed amendment A-04) |
 | B-007 | History back to 1 January 2026 | D-013, proposed amendment A-13 | Later | MVP0 holds the 30 days the GNews free plan allows. Older history needs a paid plan |
 | B-008 | Publisher names that are web addresses (for example "https://docksiderestaurant.com.au/"): decide whether to hide them or show the site name | FRC-SPEC-MVP1-15, 2026-11-08 | Later | Fine as is for now (Ben, 8 November 2026). They sort under their first letter in the Sources list. Related: FRC-SPEC-MVP1-14, one outlet under several names |
+| B-009 | **Must do.** Evaluate which AI model best suits the current MVP: run the eval suite (`evals/`) on a shortlist of models across providers and recommend the one that passes the targets at the best speed and cost | Ben, 18 November 2026 | First task after MVP3 goes live, started as soon as the MVP3 pull request is merged | MVP3 launches on one model chosen for speed to market. Shortlist and cost basis: [RAG-Chatbot](../research/RAG-Chatbot.md), section 3.5. One full run with judges costs about $3 to $5 per model, so 3 repeats on 4 models is about $40 to $60 (estimate). Switching models is a configuration change |
 
 ## Further improvement
 

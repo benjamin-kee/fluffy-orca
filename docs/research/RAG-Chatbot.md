@@ -87,17 +87,32 @@ Deliberately not used: agent frameworks, multi-agent setups, fine-tuning, a sepa
 
 Prices checked 2026-11-18, in US dollars per million tokens (input / output). Anthropic prices come from Anthropic's pricing page; the others from the Vercel AI Gateway model catalog, which lists providers' prices (a provider's own page can differ). Cost per question assumes about 3,000 input tokens (instructions plus about 20 headlines) and about 900 output tokens for the answer step. The question-rewriting step adds about $0.0001 on a small model.
 
-| Provider and model | Tier | Price | Per question | 100 questions | 1,000 questions |
+With prompt caching (Ben, 18 November: use it), the fixed instructions, about 2,000 of the 3,000 input tokens, are charged at the cheaper cached-input price. The headlines change with every question, so they are never cached.
+
+| Provider and model | Tier | Price (cached input) | 100 questions | 1,000 questions | 1,000 questions, cache warm |
 | --- | --- | --- | --- | --- | --- |
-| Anthropic Claude Opus 5.5 | Top | $4 / $20 | $0.030 | $3.00 | $30.00 |
-| Anthropic Claude Sonnet 5.5 | Mid | $2 / $10 | $0.015 | $1.50 | $15.00 |
-| Anthropic Claude Haiku 5.5 | Small | $0.10 / $0.50 | $0.0008 | $0.08 | $0.75 |
-| OpenAI GPT-5.5 | Top | $5 / $30 | $0.042 | $4.20 | $42.00 |
-| OpenAI GPT-5.4 | Mid | $2.50 / $15 | $0.021 | $2.10 | $21.00 |
-| OpenAI GPT-5.4 mini | Small | $0.75 / $4.50 | $0.006 | $0.63 | $6.30 |
-| Google Gemini 3.1 Pro (preview) | Top | $2 / $12 | $0.017 | $1.68 | $16.80 |
-| Google Gemini 3.8 Flash | Mid | $0.75 / $3.75 | $0.006 | $0.56 | $5.60 |
-| DeepSeek V4 Flash (open model, China-based company) | Small | $0.13 / $0.26 | $0.0006 | $0.06 | $0.62 |
+| Anthropic Claude Opus 5.5 | Top | $4 / $20 ($0.20) | $3.00 | $30.00 | $22.40 |
+| Anthropic Claude Sonnet 5.5 | Mid | $2 / $10 ($0.10) | $1.50 | $15.00 | $11.20 |
+| Anthropic Claude Haiku 5.5 | Small | $0.10 / $0.50 ($0.01) | $0.08 | $0.75 | $0.57 |
+| OpenAI GPT-5.5 | Top | $5 / $30 ($0.50) | $4.20 | $42.00 | $33.00 |
+| OpenAI GPT-5.4 | Mid | $2.50 / $15 ($0.25) | $2.10 | $21.00 | $16.50 |
+| OpenAI GPT-5.4 mini | Small | $0.75 / $4.50 ($0.075) | $0.63 | $6.30 | $4.95 |
+| Google Gemini 3.1 Pro (preview) | Top | $2 / $12 ($0.20) | $1.68 | $16.80 | $13.20 |
+| Google Gemini 3.8 Flash | Mid | $0.75 / $3.75 ($0.075) | $0.56 | $5.60 | $4.28 |
+| DeepSeek V4 Flash (open model, China-based company) | Small | $0.13 / $0.26 ($0.028) | $0.06 | $0.62 | $0.42 |
+
+How to read the caching column:
+
+- **Saving is about 25%, not 90%.** Output (the written answer) is most of the cost, and caching only touches input.
+- **"Warm" means questions arrive close together.** On Claude, a cached prompt lasts 5 minutes after its last use (a 1-hour option costs twice as much to write). A demo with a few questions an hour mostly pays the uncached price, plus a 25% premium on the first write. Eval runs, which send 67 questions in a row, get the full saving.
+- **Claude caches anything over 512 tokens** on its current models, so Watchtower's instructions qualify. The other providers cache automatically.
+
+### Launch model, for speed to market (Ben, 18 November: speed matters more than cost)
+
+- **Claude is the fastest to build.** Its built-in citations remove the custom citation code other providers need. Build effort is the same for every Claude tier: the model is one setting.
+- **Haiku is fastest to respond, not to build.** It is also the cheapest. The risk is that it misses the faithfulness or leakage targets, which means rework before launch.
+- **Proposed launch setup: Claude Sonnet 5.5 for answers, Claude Haiku 5.5 for question rewriting.** Sonnet is more likely to pass the eval gate first time, and at demo scale the difference is about $14 per 1,000 questions.
+- **Backlog B-009** (must do, first task after go-live) then runs the full cross-provider comparison and picks the best fit.
 
 Points that matter more than price:
 
@@ -134,10 +149,13 @@ Build effort for option A, in days of Claude Code work (estimate):
 | Embeddings for stored and new headlines, hybrid search function | 1.5 to 2 |
 | Question rewriting and date and source filters | 1 |
 | Answer with citations, three answer types, citation check | 1.5 |
+| Prompt caching, set up and verified | 0.5 |
+| Guardrails beyond the citation check (Appendix A.8) | 1 |
 | Chat page with streamed answers and source cards, desktop and phone | 2 |
-| Eval runner over `evals/`, results summary | 2 |
-| Logging of questions, timing and cost | 0.5 |
-| **Total** | **8.5 to 9** |
+| Traceability: one record per question, stage by stage (Appendix A.9) | 1 |
+| Feedback buttons and storage (Appendix A.10) | 1 |
+| Eval runner over `evals/`, including the useful-link checks, results summary | 2.5 |
+| **Total** | **12 to 12.5** |
 
 ## 6. Risks and legal points
 
@@ -164,7 +182,12 @@ Build effort for option A, in days of Claude Code work (estimate):
 6. Follow-up questions in the same chat work ("Did the PM say anything about it?").
 7. Date and source wording in a question narrows the search ("last week", "from a named publisher").
 8. Desktop first and works on a phone (P-1).
-9. A release passes the targets in `evals/README.md`.
+9. A release passes the targets in `evals/README.md` and `evals/useful-links.md`.
+10. Guardrails protect confidence in the answers (Appendix A.8).
+11. Every question leaves a trace record showing each stage, so a wrong answer can be traced to the step that failed (Appendix A.9).
+12. Readers can say whether an answer helped, with a reason, linked to its trace (Appendix A.10).
+13. Prompt caching is on for the fixed instructions (Ben, 18 November).
+14. The fallback reads "The headlines don't say, check this article" (Ben, 14 November).
 
 **Stays out of scope for MVP3:** article text (options B and C), web search, saved chat history across visits, alerts, company profiles, login, and answers in languages other than English.
 
@@ -172,9 +195,9 @@ Build effort for option A, in days of Claude Code work (estimate):
 
 1. Approve MVP3 as "Ask Watchtower", pulling LATER-F6 forward ahead of company extraction and profiles? **Ben, 14 November: yes.** Not yet recorded in the decision log.
 2. Corpus for MVP3: headlines only (option A, recommended), or also store the GNews description (option B)? **Ben, 14 November: headlines only.** Not yet recorded in the decision log.
-3. Is "the headlines don't say; here is the article" acceptable for questions like the AirAsia salary one in MVP3? Explained in Appendix A.1. Open.
-4. Approve the new dependencies: an AI provider's SDK and API key, the `pgvector` extension, and embeddings on ingestion? Explained in Appendix A.4 to A.7, alternatives in section 3.5. Open.
-5. Model: let the eval results choose from a shortlist across providers (section 3.5)? Is there a monthly spend ceiling for the demo?
+3. Is "the headlines don't say; here is the article" acceptable for questions like the AirAsia salary one in MVP3? **Ben, 18 November: yes, worded "The headlines don't say, check this article".** Not yet recorded in the decision log.
+4. Approve the new dependencies: an AI provider's SDK and API key, the `pgvector` extension, and embeddings on ingestion? **Ben, 18 November: approved.** Not yet recorded in the decision log. Build still waits for the approved PRD and spec.
+5. Model: launch on Claude Sonnet 5.5 (answers) and Haiku 5.5 (rewriting) for speed to market, then choose with backlog B-009? Is there a monthly spend ceiling for the demo?
 6. Does MVP3 stay a private demo with no login?
 7. Fix the hyphen truncation in ingestion before MVP3 starts?
 8. The open spec decision in `evals/README.md`: when a date or source filter matches nothing but the topic is covered elsewhere, is the answer "no coverage" or "not in the headlines"?
@@ -223,8 +246,10 @@ Checked 2026-11-08 unless marked 2026-11-18. Several competitor details come fro
 
 With headlines only, the chatbot can say only what headlines say. The AirAsia salary article is stored, but its headline has no figure, so the answer is:
 
-> The headlines don't give the AirAsia CEO's salary. This article covers it:
+> The headlines don't say, check this article:
 > [1] AirAsia CEO Salary in 2026 · 7 Nov 2026 → opens the article
+
+Wording set by Ben on 18 November. What counts as a useful link, and how links are tested, is in `evals/useful-links.md`.
 
 The alternative is letting the model fill in a number from memory: unsourced, possibly stale, and the failure competitors avoid. Questions headlines do cover ("What's the latest on AirAsia's funding talks?") get a real summary with sources. Watchtower counts how often answers fall back, which is the evidence for storing more text later.
 
@@ -261,7 +286,7 @@ The test set has 67 questions, so these are pass or fail checks on specific case
 | Code, automatically | The score. It compares the headlines search returned with the answer key. No AI is involved, so the same search always gets the same score |
 | Ben | Whether the targets (0.85 and 0.90) are right, and whether the answer key is right. The key is a human judgement of which headlines answer a question, so the score is only as good as the key |
 
-**Proposal:** before the first run, Ben spot-checks about 10 questions in the answer key (shown as headline text, not ids) and confirms or corrects them. After launch, logs add a second signal: which sources readers actually click.
+**Proposal:** before the first run, Ben spot-checks 10 questions in the answer key, shown as headline text in `evals/answer-key-spot-check.md`, and confirms or corrects them. After launch, logs add a second signal: which sources readers actually click.
 
 ### A.4 Where each piece runs
 
@@ -332,3 +357,55 @@ Paid alternatives are also almost free at this scale: OpenAI text-embedding-3-sm
 | Supabase free plan database limit | 500 MB per third-party listings (Unverified) |
 
 `pgvector` is commonly run with up to a few million rows before memory becomes the constraint. On the free GNews plan, Watchtower would take decades to get there. A paid GNews plan pulling thousands of headlines a day could reach millions within a year or two; that would need a larger Supabase plan or a dedicated search service. Nothing built for MVP3 blocks that move.
+
+### A.8 Guardrails: keeping confidence in the answers
+
+A guardrail is a rule enforced in code, around the AI, that stops a bad answer from reaching the reader or limits the damage when one slips through. Instructions to the model help, but guardrails do not rely on the model obeying.
+
+| Stage | Guardrail | What it prevents |
+| --- | --- | --- |
+| Before the AI | Question length limit and a per-visitor rate limit | Abuse and runaway cost |
+| Before the AI | Questions and headlines passed as data, never as instructions. A hidden marker in the instructions is checked so they are never shown | Prompt injection, leaking the instructions |
+| Before the AI | Requests for investment advice ("should I buy...") get the news, with a fixed note that Watchtower does not give advice | Being read as a financial adviser |
+| Search | Only stored headlines, only inside the question's date and publisher limits | Answers from outside Watchtower's coverage |
+| Answer | Citation check: any citation to an article search did not return is removed. If none remain, the reply becomes "The headlines don't say, check this article" | Invented or forged sources |
+| Answer | Number check: every number in the answer must appear in a cited headline, or the answer is replaced by the fallback | Wrong figures, the most damaging error for business news |
+| Answer | Fallback and no-coverage replies use fixed wording, not AI-written text | The AI improvising when it has nothing to say |
+| Display | Every answer shows its sources with dates, the date range of headlines searched, and a short note: "AI summary of headlines. Check the article for details" | Readers trusting an answer more than its sources support |
+| Operations | Release gate: the eval targets must pass before any deploy | Quality slipping between releases |
+| Operations | Kill switch: one setting hides the chatbot and leaves the feed working | A bad day turning into lasting damage |
+| Operations | Monthly spend limit set with the AI provider | Unexpected bills |
+
+### A.9 Traceability: finding where an answer broke
+
+Every question gets a trace id and one record, written stage by stage:
+
+| Stage | What is recorded |
+| --- | --- |
+| 1. Question | The question, earlier turns in the chat, time, an anonymous session id |
+| 2. Rewrite | The standalone question and the date and publisher filters extracted |
+| 3. Search | Headlines returned, with their keyword score, meaning score and final rank |
+| 4. AI call | Model, instruction version, raw answer, citations, tokens, cost, whether the cache was used |
+| 5. Guardrails | Which checks fired: citations removed, numbers unmatched, fallback forced |
+| 6. Reply | What the reader saw: answer type, text, links, time taken per stage |
+| 7. Feedback | The reader's rating and reason, if given (A.10) |
+
+How a trace pinpoints the failure:
+
+| Symptom | Where it broke |
+| --- | --- |
+| The right headline is not in stage 3 | Search, or a wrong filter in stage 2 |
+| It is in stage 3 but not cited in stage 4 | The AI |
+| Stage 4 cites something stage 5 removed | The AI tried to invent a source; the guardrail caught it |
+| The date window in stage 2 is wrong | Question rewriting |
+| A slow reply | Per-stage times in stage 6 |
+
+Records are stored in Supabase. For MVP3, Ben reviews them with saved queries; a review page can come later. The trace id is attached to every reply, so a reader's feedback leads straight to its record. Proposed: questions are kept for 90 days, with no login and no personal details collected.
+
+### A.10 Reader feedback
+
+- **Under every answer:** thumbs up and thumbs down.
+- **On thumbs down, one tap for a reason:** wrong or not what the article says; missed something; sources not relevant; didn't answer my question; too slow; other. Plus an optional comment box.
+- **Stored with the trace id**, so each complaint opens the full record of what happened.
+- **Weekly review:** every thumbs-down is read. Confirmed failures become new eval cases. That is how Watchtower learns: the test set grows from real mistakes, and every later release must pass them.
+- **Measure:** share of answers rated helpful. A target is set after the first two weeks of use.
