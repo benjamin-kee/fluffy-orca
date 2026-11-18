@@ -215,15 +215,15 @@ Build effort for option A, in days of Claude Code work (estimate):
 2. Corpus for MVP3: headlines only (option A, recommended), or also store the GNews description (option B)? **Ben, 14 November: headlines only.** Recorded as D-044.
 3. Is "the headlines don't say; here is the article" acceptable for questions like the AirAsia salary one in MVP3? **Ben, 18 November: yes, worded "The headlines don't say, check this article".** Recorded as D-045, with the link rules.
 4. Approve the new dependencies: an AI provider's SDK and API key, the `pgvector` extension, and embeddings on ingestion? **Ben, 18 November: approved.** Recorded as D-046. Build still waits for the approved PRD and spec.
-5. Model: launch on Claude Sonnet 5.5 (answers) and Haiku 5.5 (rewriting) for speed to market, then choose with backlog B-009? Is there a monthly spend ceiling for the demo?
-6. Does MVP3 stay a private demo with no login?
+5. Model: launch on Claude Sonnet 5.5 (answers) and Haiku 5.5 (rewriting) for speed to market, then choose with backlog B-009? Is there a monthly spend ceiling for the demo? **Ben, 18 November: US$10 a month, hard cap (D-053).**
+6. Does MVP3 stay a private demo with no login? **Ben, 18 November: login will be required to use the chatbot (D-054); timing is PRD-MVP3 open question 2.**
 7. Fix the hyphen truncation in ingestion before MVP3 starts?
 8. The open spec decision in `evals/README.md`: when a date or source filter matches nothing but the topic is covered elsewhere, is the answer "no coverage" or "not in the headlines"?
-9. Chat history: kept only for the current visit (proposed), or saved?
-10. Where MVP3 sits relative to the MVP1 sub-sprints and MVP2, which are still drafts?
-11. Placement: its own `/ask` page, linked from the feed (proposed)?
+9. Chat history: kept only for the current visit (proposed), or saved? **Ben, 18 November: current visit only; saved history is a future paid add-on (D-055).**
+10. Where MVP3 sits relative to the MVP1 sub-sprints and MVP2, which are still drafts? **Ben, 18 November: MVP3 next; MVP1 essentially closed (D-052).**
+11. Placement: its own `/ask` page, linked from the feed (proposed)? **Ben, 18 November: yes (D-050).**
 12. Delivery: approve the sub-sprint plan in section 7, starting with MVP3.0?
-13. Launch model: Claude Sonnet 5.5 for answers (proposed for fewer eval failures) or Claude Haiku 5.5 (fastest and cheapest)?
+13. Launch model: Claude Sonnet 5.5 for answers (proposed for fewer eval failures) or Claude Haiku 5.5 (fastest and cheapest)? **Ben, 18 November: Sonnet 5.5 (D-051).**
 
 ## 9. Sources
 
