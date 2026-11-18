@@ -125,6 +125,16 @@ npm test
 
 The tests cover source normalization and article deduplication. They use Node's built-in test runner, with no extra test dependencies. They do not call GNews or the database.
 
+## Feature tests
+
+`npm test` runs the unit tests. The feature tests in [`e2e/`](e2e/) are different: a real browser ([Playwright](https://playwright.dev)) clicks through a running Watchtower site like a visitor would, and checks that each MVP0 and MVP1 feature still works. They cover the feed and its count line, links opening in a new tab, page size and pagination, sort, From and To dates (including the wrong-order and no-headlines messages), search (a match, no match, and the 200-character limit), the Sources dropdown and its counts, "Clear all", and no sideways scrolling on a 375px phone. They only read pages, so they never change data.
+
+The headlines change every few hours, so the tests read what is on the page and check the rules, not fixed titles or counts.
+
+- **Weekly:** a GitHub Action ([`.github/workflows/feature-tests.yml`](.github/workflows/feature-tests.yml)) runs them against the live site every Monday at 12:23 UTC. A failure emails the person who last enabled the workflow; set this up as for the site health check (Disable workflow, then Enable workflow). The run keeps a report with screenshots for 14 days.
+- **On demand:** **Actions → Feature tests → Run workflow**. Enter another address, such as a preview, to test that instead.
+- **Locally:** `npx playwright install chromium` once, then `npm run test:e2e`. `SITE_URL=http://localhost:3000 npm run test:e2e` tests a local copy.
+
 ## Deploying to Vercel
 
 1. In Vercel, choose **Add New → Project** and import this GitHub repository. Vercel detects Next.js; keep the default build settings. Production deploys come from `main`. Skip the optional Supabase integration Vercel offers; the app uses the variables below.
