@@ -1,6 +1,6 @@
 # Research: AI question answering over Watchtower news (RAG chatbot)
 
-> Research snapshot dated 2026-11-08, for MVP3 planning. Nothing here is approved. It proposes; Ben decides.
+> Research snapshot dated 2026-11-08, updated 2026-11-18 (prices, Ben's first answers, and Appendix A with follow-up questions). For MVP3 planning. It proposes; Ben decides.
 
 ## 1. Question
 
@@ -72,7 +72,7 @@ That one example sums up the whole decision. **What the chatbot can answer depen
 | Part | Recommended | Alternatives considered | Why |
 | --- | --- | --- | --- |
 | Search | **Hybrid search in Supabase Postgres**: the existing full-text title index (migration 0005) plus `pgvector` embeddings, merged with Reciprocal Rank Fusion. Supabase documents this pattern | A separate vector database (Pinecone and similar); keyword only; meaning only | No new vendor. Keyword search catches names and numbers ("RM147,400"), meaning search catches paraphrases ("pay" vs "salary") |
-| Embeddings | `gte-small`, which runs inside Supabase Edge Functions at no extra cost | A paid embedding API | Headlines are short and few (about 1,800). Swap only if evals show weak recall |
+| Embeddings | `gte-small`, which runs inside Supabase Edge Functions at no extra cost (details in Appendix A.6) | A paid embedding API | Headlines are short and few (2,199 on 18 November). Swap only if evals show weak recall |
 | Question understanding | One small model call turns follow-ups into a standalone question and pulls out date and source filters ("last week", "from a named publisher") | Rule-based parsing | The eval suite already tests rewrites and filters |
 | Answer | Claude, given retrieved headlines as `search_result` blocks with citations turned on. Claude then cites the exact headline it used | Free-form answer with ids in text | Built-in citations are the API's supported RAG pattern and are harder to fake |
 | Answer types | Three: answered; not in the headlines (covered, but the headlines do not say), with links; no coverage | Free text only | Matches the eval suite. The UI shows a fixed template for the two fallback cases |
@@ -85,20 +85,34 @@ Deliberately not used: agent frameworks, multi-agent setups, fine-tuning, a sepa
 
 ### 3.5 Model choice
 
-Prices from Anthropic's current price list, per million tokens (input / output). Per-question cost is an estimate for about 3,000 input tokens (instructions plus 20 headlines) and about 900 output tokens.
+Prices checked 2026-11-18, in US dollars per million tokens (input / output). Anthropic prices come from Anthropic's pricing page; the others from the Vercel AI Gateway model catalog, which lists providers' prices (a provider's own page can differ). Cost per question assumes about 3,000 input tokens (instructions plus about 20 headlines) and about 900 output tokens for the answer step. The question-rewriting step adds about $0.0001 on a small model.
 
-| Model | Price | Estimated cost per question | Role |
-| --- | --- | --- | --- |
-| Claude Haiku 5.5 | $0.10 / $0.50 | about $0.001 | Question rewriting and filter extraction. Possibly answers too, if evals allow |
-| Claude Sonnet 5.5 | $2 / $10 | about $0.015 | Answer candidate |
-| Claude Opus 5.5 | $4 / $20 | about $0.03 | Answer candidate, most capable of the three |
+| Provider and model | Tier | Price | Per question | 100 questions | 1,000 questions |
+| --- | --- | --- | --- | --- | --- |
+| Anthropic Claude Opus 5.5 | Top | $4 / $20 | $0.030 | $3.00 | $30.00 |
+| Anthropic Claude Sonnet 5.5 | Mid | $2 / $10 | $0.015 | $1.50 | $15.00 |
+| Anthropic Claude Haiku 5.5 | Small | $0.10 / $0.50 | $0.0008 | $0.08 | $0.75 |
+| OpenAI GPT-5.5 | Top | $5 / $30 | $0.042 | $4.20 | $42.00 |
+| OpenAI GPT-5.4 | Mid | $2.50 / $15 | $0.021 | $2.10 | $21.00 |
+| OpenAI GPT-5.4 mini | Small | $0.75 / $4.50 | $0.006 | $0.63 | $6.30 |
+| Google Gemini 3.1 Pro (preview) | Top | $2 / $12 | $0.017 | $1.68 | $16.80 |
+| Google Gemini 3.8 Flash | Mid | $0.75 / $3.75 | $0.006 | $0.56 | $5.60 |
+| DeepSeek V4 Flash (open model, China-based company) | Small | $0.13 / $0.26 | $0.0006 | $0.06 | $0.62 |
 
-Recommendation: run the eval suite on the answer step with Opus 5.5 and Sonnet 5.5, then choose. The faithfulness and leakage targets decide, not price. A separate model (or version) acts as judge, as `evals/README.md` requires.
+Points that matter more than price:
+
+- **Quality decides.** Every option is cheap at demo scale. Run the eval suite on a shortlist (Claude Sonnet 5.5, Claude Haiku 5.5, Gemini 3.8 Flash, GPT-5.4 mini) and pick the cheapest that passes the faithfulness and leakage targets.
+- **Built-in citations are Claude-specific.** With Claude, each sentence is tied to the headline it came from. With other providers, Watchtower asks the model to list article ids and checks them in code. That works, but it means more custom code.
+- **Prompt caching** cuts the cost of the fixed instructions sent with every question. On Claude Sonnet 5.5, cached input costs $0.10 instead of $2 per million tokens.
+- **Switching providers later.** The Vercel AI Gateway, on the hosting Watchtower already uses, can route to any of these with one setting. Whether Claude's citation feature works through it is Unverified.
+- **Data location.** Each question and its headlines go to the chosen provider. Check where it processes data, especially for a provider based outside Malaysia's usual partners.
+
+A separate model (or version) acts as judge, as `evals/README.md` requires.
 
 ## 4. Recommendation
 
 1. **MVP3 is "Ask Watchtower": headline-only question answering (option A)**, with cited, linked sources and an honest "the headlines don't say" when they fall short. It delivers the user problem's core (an immediate answer and where it came from) without new rights risk.
-2. **Build it inside the current stack**: Supabase hybrid search, Claude with built-in citations, a server-side citation check, a streamed answer, and source cards.
+2. **Build it inside the current stack**: Supabase hybrid search, an AI model chosen by the evals (Claude has built-in citations, section 3.5), a server-side citation check, a streamed answer, and source cards.
 3. **Measure the gap.** Log how often answers fall back to "not in the headlines". That number is the business case for option B or C.
 4. **Treat article text (B, then C) as a separate decision**, after the rights check the PRD-Later entry gate already requires.
 5. **Use the existing eval suite as the release gate**: zero false answers on the trick questions, faithfulness of at least 95%, and the other targets in `evals/README.md`.
@@ -107,11 +121,11 @@ Recommendation: run the eval suite on the answer step with Opus 5.5 and Sonnet 5
 
 | | Private demo (now) | Public launch |
 | --- | --- | --- |
-| AI model calls | About $2 to $30 a month at 1,000 questions, depending on model (estimate) | Scales with use, at about $0.001 to $0.03 a question. Needs rate limits |
+| AI model calls | About $1 to $42 a month at 1,000 questions, depending on model (estimate, section 3.5) | Scales with use, at about $0.001 to $0.04 a question. Needs rate limits |
 | Search and embeddings | $0: pgvector and gte-small come with Supabase | Same, unless the Supabase plan changes |
 | News data | $0, GNews free plan, headlines only | GNews Essential, €49.99 a month, already required before launch (A-19). Option C needs a paid plan anyway |
 | Login | Not needed, private demo (D-027) | Required before launch (LATER-F9), and stops anonymous spend on AI calls |
-| New dependencies needing approval | Anthropic SDK and API key, `pgvector` extension, an embedding step on ingestion | Same |
+| New dependencies needing approval | An AI provider's SDK and API key (Anthropic or an alternative), `pgvector` extension, an embedding step on ingestion | Same |
 
 Build effort for option A, in days of Claude Code work (estimate):
 
@@ -134,7 +148,7 @@ Build effort for option A, in days of Claude Code work (estimate):
 - **Data quality.** The eval README records about 71 headlines cut at a hyphen during ingestion ("tron sets Guinness World Record", missing "e-"). The chatbot must not fill in the missing words. Fixing ingestion first is cheaper.
 - **Unhelpful fallbacks.** With headlines only, many "why", "how much" and "who exactly" questions end in "the headlines don't say". That is honest but can disappoint. The fallback rate is the number to watch.
 - **Cost exposure.** Every question costs money. That doesn't matter for a private demo, but rate limits and login are needed before going public.
-- **Data sent to a model provider.** Each question and its retrieved headlines go to Anthropic's API. Check the provider's data-use terms before launch (Unverified here).
+- **Data sent to a model provider.** Each question and its retrieved headlines go to the chosen provider's API. Check the provider's data-use terms before launch (Unverified here).
 
 ## 7. What it would add to the roadmap
 
@@ -156,11 +170,11 @@ Build effort for option A, in days of Claude Code work (estimate):
 
 ## 8. Open questions for Ben
 
-1. Approve MVP3 as "Ask Watchtower", pulling LATER-F6 forward ahead of company extraction and profiles?
-2. Corpus for MVP3: headlines only (option A, recommended), or also store the GNews description (option B)?
-3. Is "the headlines don't say; here is the article" acceptable for questions like the AirAsia salary one in MVP3?
-4. Approve the new dependencies: Anthropic SDK and API key, the `pgvector` extension, and embeddings on ingestion?
-5. Model: let the eval results choose between Opus 5.5 and Sonnet 5.5 for answers? Is there a monthly spend ceiling for the demo?
+1. Approve MVP3 as "Ask Watchtower", pulling LATER-F6 forward ahead of company extraction and profiles? **Ben, 14 November: yes.** Not yet recorded in the decision log.
+2. Corpus for MVP3: headlines only (option A, recommended), or also store the GNews description (option B)? **Ben, 14 November: headlines only.** Not yet recorded in the decision log.
+3. Is "the headlines don't say; here is the article" acceptable for questions like the AirAsia salary one in MVP3? Explained in Appendix A.1. Open.
+4. Approve the new dependencies: an AI provider's SDK and API key, the `pgvector` extension, and embeddings on ingestion? Explained in Appendix A.4 to A.7, alternatives in section 3.5. Open.
+5. Model: let the eval results choose from a shortlist across providers (section 3.5)? Is there a monthly spend ceiling for the demo?
 6. Does MVP3 stay a private demo with no login?
 7. Fix the hyphen truncation in ingestion before MVP3 starts?
 8. The open spec decision in `evals/README.md`: when a date or source filter matches nothing but the topic is covered elsewhere, is the answer "no coverage" or "not in the headlines"?
@@ -169,7 +183,7 @@ Build effort for option A, in days of Claude Code work (estimate):
 
 ## 9. Sources
 
-All checked 2026-11-08. Several competitor details come from trade press, not the company's own pages, and are marked so above.
+Checked 2026-11-08 unless marked 2026-11-18. Several competitor details come from trade press, not the company's own pages, and are marked so above.
 
 | Title | URL |
 | --- | --- |
@@ -193,4 +207,128 @@ All checked 2026-11-08. Several competitor details come from trade press, not th
 | Supabase AI inference in Edge Functions (gte-small) | https://supabase.com/blog/ai-inference-now-available-in-supabase-edge-functions |
 | Claude API: search results with citations | https://platform.claude.com/docs/en/build-with-claude/search-results |
 | Claude model prices: Anthropic API skill reference, cached 2026-10-06 (Unverified against the live pricing page) | https://platform.claude.com/docs/en/about-claude/pricing |
-| Watchtower database, read-only query on `public.articles` | Internal, 2026-11-08 |
+| Watchtower database, read-only queries on `public.articles` | Internal, 2026-11-08 and 2026-11-18 |
+| Anthropic pricing (2026-11-18) | https://platform.claude.com/docs/en/about-claude/pricing |
+| Vercel AI Gateway model catalog, language and embedding models (2026-11-18) | https://vercel.com/ai-gateway/models |
+| gte-small model card (2026-11-18) | https://huggingface.co/Supabase/gte-small |
+| gte-small specifications (PromptLayer, 2026-11-18) | https://www.promptlayer.com/models/gte-small |
+| Supabase: increase performance of pgvector HNSW (2026-11-18) | https://supabase.com/blog/increase-performance-pgvector-hnsw |
+| How to scale vector search in Postgres (ClickHouse, 2026-11-18) | https://clickhouse.com/resources/engineering/scale-vector-search-postgres |
+| Semantic caching best practices (AWS ElastiCache, 2026-11-18) | https://docs.amazonaws.cn/en_us/AmazonElastiCache/latest/dg/semantic-caching-best-practices.md |
+| Cache invalidation for semantic and RAG caches (2026-11-18) | https://tianpan.co/blog/2026/04/20/cache-invalidation-ai-semantic-rag |
+
+## Appendix A. Follow-up questions from Ben (14 to 18 November)
+
+### A.1 What "the headlines don't say" looks like (open question 3)
+
+With headlines only, the chatbot can say only what headlines say. The AirAsia salary article is stored, but its headline has no figure, so the answer is:
+
+> The headlines don't give the AirAsia CEO's salary. This article covers it:
+> [1] AirAsia CEO Salary in 2026 · 7 Nov 2026 → opens the article
+
+The alternative is letting the model fill in a number from memory: unsourced, possibly stale, and the failure competitors avoid. Questions headlines do cover ("What's the latest on AirAsia's funding talks?") get a real summary with sources. Watchtower counts how often answers fall back, which is the evidence for storing more text later.
+
+### A.2 What "answers well" means
+
+The benchmark is the target set in `evals/README.md`, section 4.1. It was written with the eval suite, and Ben approves it as the release gate.
+
+| Target | In plain terms | Why this level |
+| --- | --- | --- |
+| 0 made-up answers on the trick and attack questions | When the model knows a fact from memory but no headline states it ("Who founded AirAsia?"), it must say the headlines don't say | Each failure is a fabricated fact presented as sourced |
+| Faithfulness of 95% or more | Of the answers given, 95% or more have every claim backed by a cited headline | The answer is the product. General assistants had a significant issue in 45% of news answers (EBU and BBC) |
+| Citation precision of 0.90 or more | 9 in 10 cited headlines are relevant | Readers click through to check |
+| Search finds 85% or more of the right headlines in its top 10 | Search quality, see A.3 | The model can cite only what search hands it |
+| Wrongly refused: 15% or less | Answerable questions that get "the headlines don't say" | Refusing is safe, but too much makes the feature pointless |
+| Fact coverage of 0.80 or more | The answer is complete, not just correct | Incomplete is a lesser failure than wrong |
+| 95% of answers in 6 seconds or less | Speed | A normal wait for a chat answer |
+
+The test set has 67 questions, so these are pass or fail checks on specific cases, not precise statistics. Revisit them after the first run.
+
+### A.3 Search quality: what it is and who determines it
+
+**What it is.** Whether the search step puts the right headlines in front of the model before it writes. It is measured separately from the answer, because a perfect writer still fails if search hands it the wrong headlines.
+
+| Measure | Question it answers | Target | Example |
+| --- | --- | --- | --- |
+| Recall at 10 | Of the headlines that should be found, what share are in search's top 10? | 0.85 or more, on answerable questions | "What's the status of AirAsia's talks with the government about funding?" has 9 right headlines. If 8 are in the top 10, the score for that question is 8 / 9 = 0.89 |
+| Hit at 10 | Is at least one right headline in the top 10? | 0.90 or more, on "not in the headlines" questions | For "Who founded AirAsia?", the reader should at least get a link to a relevant AirAsia headline |
+
+**Who determines it.** Three parties, each with a different job:
+
+| Who | What they decide |
+| --- | --- |
+| The answer key in `evals/dataset.jsonl` | For each test question, which headlines are the right ones (`gold_article_ids`). 57 of the 67 questions have one, 1 to 9 headlines each (3 on average). It was built by reading the stored headlines in the database (`evals/README.md`, section 3.3) |
+| Code, automatically | The score. It compares the headlines search returned with the answer key. No AI is involved, so the same search always gets the same score |
+| Ben | Whether the targets (0.85 and 0.90) are right, and whether the answer key is right. The key is a human judgement of which headlines answer a question, so the score is only as good as the key |
+
+**Proposal:** before the first run, Ben spot-checks about 10 questions in the answer key (shown as headline text, not ids) and confirms or corrects them. After launch, logs add a second signal: which sources readers actually click.
+
+### A.4 Where each piece runs
+
+```
+Browser          Chat page: type a question, see the answer and source cards
+   |
+Vercel server    Holds the AI key (never sent to the browser). Rewrites the question,
+                 runs the search, calls the AI, checks citations, streams the answer
+   |                  \
+Supabase              AI provider
+Headlines, their      Receives the question and about 20 headlines,
+embeddings, search,   returns the written answer
+question logs
+```
+
+### A.5 Does it learn from questions? Would caching answers save time?
+
+- **The model does not learn.** No model is trained on users' questions. Each question is handled from scratch.
+- **The index already exists.** Each headline's embedding is stored ahead of time, so finding matching headlines takes about 0.1 seconds. The slow part is the model writing the answer, about 2 to 5 seconds.
+- **Reusing earlier answers is called a semantic answer cache.** It returns in under half a second, but for news it carries risks:
+  - **Stale answers.** Headlines arrive every 3 hours. An answer cached on 6 November ("no coverage") would stay wrong after the salary article arrived on 7 November.
+  - **Wrong matches.** "AirAsia CEO salary" and "AirAsia X CEO salary" look almost the same but are different questions.
+  - **Repeated errors.** One wrong answer is served to everyone who asks something similar.
+  - **Small saving.** At most about $15 at 1,000 questions a month.
+
+**Proposed for MVP3:**
+1. **Prompt caching** (a provider feature that reuses the fixed instructions). No freshness risk.
+2. **Log every question.** This is the useful learning: the most-asked questions, and those that end in "the headlines don't say".
+3. **An answer cache only later, if logs show many repeats.** It would reuse identical questions only and clear whenever new headlines arrive.
+
+### A.6 Embeddings, and the small model gte-small
+
+**An embedding is a list of numbers that represents what a piece of text means**, like coordinates for meaning. "AirAsia CEO pay" and "AirAsia chief executive salary" get nearby coordinates; "AirAsia flight delays" sits further away. Search turns the question into coordinates and finds the closest headlines.
+
+**An embedding model is not a chat LLM**, though both are neural networks trained on large amounts of text:
+
+| | Embedding model | LLM, such as Claude |
+| --- | --- | --- |
+| Output | A fixed list of numbers (384 for gte-small) | New text |
+| Can it write an answer? | No | Yes |
+| Size | Small. gte-small has about 33 million parameters, about 70 MB | Far larger |
+| Speed and cost | Milliseconds, nearly free | Seconds, paid per use |
+| Job in Watchtower | Find the right headlines | Write the answer from them |
+
+**gte-small** ("General Text Embeddings", small version) was released in 2023 by Alibaba's DAMO Academy and is built on BERT. It is English only and reads up to 512 tokens; Watchtower's headlines average 70 characters. Its average score on the MTEB embedding benchmark is 61.4, against 62.3 for OpenAI's text-embedding-3-small. It runs inside Supabase, so it needs no new account and costs nothing.
+
+Paid alternatives are also almost free at this scale: OpenAI text-embedding-3-small and Voyage 4 Lite cost $0.02 per million tokens, and all 2,199 headlines come to about 40,000 tokens. Switch only if evals show weak search, or when non-English sources arrive (backlog B-005).
+
+### A.7 pgvector: the stack, and whether it scales
+
+| Layer | What it does |
+| --- | --- |
+| Postgres (Supabase) | The existing database |
+| `pgvector` | A free extension: a column type for embeddings and a "find the closest" search |
+| HNSW index | A shortcut map, so search does not compare the question with every row |
+| Keyword index | Already exists (migration 0005). Catches exact names and numbers |
+| One search function | Runs both searches and merges the results (Reciprocal Rank Fusion) |
+
+**Scale** (read-only query, 18 November):
+
+| Measure | Value |
+| --- | --- |
+| Headlines stored | 2,199 |
+| Added in the last 7 days | 309, about 44 a day |
+| Database size | 14 MB |
+| Embedding storage per headline | About 3 KB including the index |
+| Growth from embeddings | About 50 MB a year at today's rate |
+| Supabase free plan database limit | 500 MB per third-party listings (Unverified) |
+
+`pgvector` is commonly run with up to a few million rows before memory becomes the constraint. On the free GNews plan, Watchtower would take decades to get there. A paid GNews plan pulling thousands of headlines a day could reach millions within a year or two; that would need a larger Supabase plan or a dedicated search service. Nothing built for MVP3 blocks that move.
