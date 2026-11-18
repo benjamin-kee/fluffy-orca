@@ -55,3 +55,43 @@ test("error text always says the HTTP status, even with no message", () => {
   assert.equal(dbErrorText({ message: "" }, 401), "no message (HTTP 401)");
   assert.equal(dbErrorText({ message: "JWT issued at future", code: "PGRST303" }, 401), "JWT issued at future (HTTP 401, PGRST303)");
 });
+
+// A promise that settles within `ms`, or rejects so a hang fails the test instead of stalling it.
+const within = <T>(ms: number, p: Promise<T>) =>
+  Promise.race([p, new Promise<never>((_, reject) => setTimeout(() => reject(new Error(`still waiting after ${ms} ms`)), ms))]);
+
+test("a refused response whose body never finishes cancelling does not hold up the retry", async () => {
+  // Like a response body Next.js has copied: cancelling it waits until the copy is read, which never happens.
+  const stuckBody = () => new ReadableStream({ cancel: () => new Promise<void>(() => {}) });
+  let calls = 0;
+  const impl = (async () => {
+    calls++;
+    return calls === 1
+      ? new Response(stuckBody(), { status: 401, headers: { "www-authenticate": "JWT issued at future" } })
+      : new Response("[]", { status: 200 });
+  }) as typeof fetch;
+  const res = await quiet(() => within(1000, retryRefusedRequests(impl, noWait)("https://db.example/rest/v1/articles")));
+  assert.equal(res.status, 200);
+  assert.equal(calls, 2);
+});
+
+// A fake fetch that never answers, and gives up only when its signal is aborted.
+const neverAnswers = (async (_input: unknown, init?: RequestInit) =>
+  new Promise<Response>((_, reject) => {
+    const signal = init?.signal;
+    if (signal?.aborted) return reject(signal.reason);
+    signal?.addEventListener("abort", () => reject(signal.reason));
+  })) as typeof fetch;
+
+test("a request that never answers fails after the time limit", async () => {
+  await assert.rejects(within(1000, retryRefusedRequests(neverAnswers, noWait, 50)("https://db.example/rest/v1/articles")), {
+    name: "TimeoutError",
+  });
+});
+
+test("the caller's own cancel signal still stops a request", async () => {
+  const controller = new AbortController();
+  const pending = retryRefusedRequests(neverAnswers, noWait, 10_000)("https://db.example/rest/v1/articles", { signal: controller.signal });
+  controller.abort(new Error("caller cancelled"));
+  await assert.rejects(within(1000, pending), /caller cancelled/);
+});
