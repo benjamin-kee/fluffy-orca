@@ -30,6 +30,7 @@ evals/
 | Why an id list, not a date predicate | The table is still ingesting (1,405+ rows at labelling time, some published 28-29 Oct, plus late arrivals). The runner must restrict retrieval to these ids, or gold labels drift. |
 | Relative-date conventions | "this week" = Mon-today (26-27 Oct). "last week" = Mon-Sun (19-25 Oct). "yesterday" = 26 Oct. "this month" = 1-27 Oct. "early/mid/late X" = days 1-10 / 11-20 / 21-end, with `tolerance_days: 2`. |
 | Period vs publish date | "3Q growth" or "September sales" name the period being reported on, not a publish window. Turning these into a `published_at` filter is a **spurious filter** (see NUM-02, NIH-05). |
+| Answers from the model's own knowledge | Out of scope for MVP3 (decision D-047). Any fact not stated in a retrieved headline is leakage, even when it is widely known and correct. |
 | Empty filtered window | When a date or source filter matches nothing but the topic is covered elsewhere (TIME-05, SRC-05), the preferred status is `NO_COVERAGE`. `NOT_IN_HEADLINES` is listed as acceptable until product decides. `ANSWERED` is always wrong. **This is an open spec decision.** |
 
 ---

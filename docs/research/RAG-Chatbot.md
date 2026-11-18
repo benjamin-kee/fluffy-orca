@@ -1,6 +1,6 @@
 # Research: AI question answering over Watchtower news (RAG chatbot)
 
-> Research snapshot dated 2026-11-08, updated 2026-11-18 (prices, Ben's first answers, and Appendix A with follow-up questions). For MVP3 planning. It proposes; Ben decides.
+> Research snapshot dated 2026-11-08, updated 2026-11-18 (prices, Ben's decisions D-043 to D-049, placement, sub-sprint plan, and Appendix A with follow-up questions). For MVP3 planning. It proposes; Ben decides.
 
 ## 1. Question
 
@@ -191,18 +191,39 @@ Build effort for option A, in days of Claude Code work (estimate):
 
 **Stays out of scope for MVP3:** article text (options B and C), web search, saved chat history across visits, alerts, company profiles, login, and answers in languages other than English.
 
+**Out of scope (explicit decision, Ben, 18 November 2026, D-047): answers from the AI's own knowledge.** MVP3 answers only from stored headlines. When the headlines don't answer a question, even one with a widely known answer such as "Who founded AirAsia?", Watchtower replies "The headlines don't say, check this article" and links the closest relevant headlines. It never fills the gap from the model's memory.
+
+- *Why:* every answer must have a source the reader can check. Memory answers can be stale or wrong, users can't tell them apart from sourced answers, and allowing them would undermine the eval suite's faithfulness and leakage checks.
+- *How it will be revisited:* Watchtower logs how often users ask background questions like this. If demand is shown, options will be assessed in a later milestone and decided by Ben. The candidates are a clearly labelled "Background" section, limited to stable facts, or answers from a trusted reference source such as company profiles (LATER-F4).
+
+**Proposed placement.** A page of its own, "Ask Watchtower", at `/ask` in the same web app (`watchtower01.vercel.app/ask`), opened from a link beside the Watchtower title on the feed. On a desktop: one conversation column, each answer followed by its source cards. On a phone: full width, with the question box fixed at the bottom. Its server part runs on Vercel and its data sits in the same Supabase database. Later option: a panel that slides in beside the feed, so readers can ask while browsing. Merging it into the existing keyword search box is not proposed, because a keyword filter and a question have different results.
+
+**Proposed delivery in sub-sprints**, each approved by Ben before it starts, as MVP1 is (D-039). Each one is usable on its own and ends live behind the kill switch.
+
+| Sub-sprint | What readers get | Gate before release | Effort (Claude Code days) |
+| --- | --- | --- | --- |
+| MVP3.0 First answers | The `/ask` page: one question at a time, answers with up to 5 cited sources, the three reply types with fixed wording, the AI note, thumbs up or down. Uses the existing keyword search. Prompt caching, citation check, kill switch, spend limit, a basic trace record | A first eval run on the single-question cases with code checks only: no made-up answers on the trick and attack cases, every citation valid, no links on no-coverage replies | 3 |
+| MVP3.1 Better search | Search by meaning as well as keywords (`pgvector`, embeddings, hybrid search) | Search quality targets (Appendix A.3) | 2 |
+| MVP3.2 Conversation | Follow-up questions, date and publisher wording ("last week"), publishers stored under several names | Rewrite and filter targets | 2 |
+| MVP3.3 Confidence | Number check, advice guardrail, rate limit, feedback reasons and comments, full stage-by-stage traces and review queries | Guardrail cases pass; traces show every stage | 2 |
+| MVP3.4 Full release gate | Nothing new on screen. AI judges, their calibration, the useful-link suite and the regression protocol | All targets in `evals/README.md` and `evals/useful-links.md` | 2.5 |
+| Then: B-009 | The model comparison across providers | | 1 |
+
 ## 8. Open questions for Ben
 
-1. Approve MVP3 as "Ask Watchtower", pulling LATER-F6 forward ahead of company extraction and profiles? **Ben, 14 November: yes.** Not yet recorded in the decision log.
-2. Corpus for MVP3: headlines only (option A, recommended), or also store the GNews description (option B)? **Ben, 14 November: headlines only.** Not yet recorded in the decision log.
-3. Is "the headlines don't say; here is the article" acceptable for questions like the AirAsia salary one in MVP3? **Ben, 18 November: yes, worded "The headlines don't say, check this article".** Not yet recorded in the decision log.
-4. Approve the new dependencies: an AI provider's SDK and API key, the `pgvector` extension, and embeddings on ingestion? **Ben, 18 November: approved.** Not yet recorded in the decision log. Build still waits for the approved PRD and spec.
+1. Approve MVP3 as "Ask Watchtower", pulling LATER-F6 forward ahead of company extraction and profiles? **Ben, 14 November: yes.** Recorded as D-043.
+2. Corpus for MVP3: headlines only (option A, recommended), or also store the GNews description (option B)? **Ben, 14 November: headlines only.** Recorded as D-044.
+3. Is "the headlines don't say; here is the article" acceptable for questions like the AirAsia salary one in MVP3? **Ben, 18 November: yes, worded "The headlines don't say, check this article".** Recorded as D-045, with the link rules.
+4. Approve the new dependencies: an AI provider's SDK and API key, the `pgvector` extension, and embeddings on ingestion? **Ben, 18 November: approved.** Recorded as D-046. Build still waits for the approved PRD and spec.
 5. Model: launch on Claude Sonnet 5.5 (answers) and Haiku 5.5 (rewriting) for speed to market, then choose with backlog B-009? Is there a monthly spend ceiling for the demo?
 6. Does MVP3 stay a private demo with no login?
 7. Fix the hyphen truncation in ingestion before MVP3 starts?
 8. The open spec decision in `evals/README.md`: when a date or source filter matches nothing but the topic is covered elsewhere, is the answer "no coverage" or "not in the headlines"?
 9. Chat history: kept only for the current visit (proposed), or saved?
 10. Where MVP3 sits relative to the MVP1 sub-sprints and MVP2, which are still drafts?
+11. Placement: its own `/ask` page, linked from the feed (proposed)?
+12. Delivery: approve the sub-sprint plan in section 7, starting with MVP3.0?
+13. Launch model: Claude Sonnet 5.5 for answers (proposed for fewer eval failures) or Claude Haiku 5.5 (fastest and cheapest)?
 
 ## 9. Sources
 
