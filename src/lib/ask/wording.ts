@@ -17,6 +17,11 @@ export const WORDING = {
   commentReminder: "Please don't include personal details.",
 };
 
+// R2, D-070: plain text, no logo, no wording that suggests a partnership or endorsement.
+export function poweredBy(modelName: string): string {
+  return `Answers are written by ${modelName}, an AI model from Anthropic.`;
+}
+
 export function fallbackWording(linkCount: number): string {
   return linkCount === 1 ? "The headlines don't say, check this article:" : "The headlines don't say, check these articles:";
 }

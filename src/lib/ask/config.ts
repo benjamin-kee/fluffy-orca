@@ -2,6 +2,8 @@
 // price table live here, so changing model (backlog B-009) is a change to this file only.
 
 export const ASK_MODEL = "claude-haiku-5-5";
+// Shown to readers under the intro line (R2, D-070). Change together with ASK_MODEL.
+export const ASK_MODEL_NAME = "Claude Haiku 5.5";
 export const ASK_EFFORT = "low" as const; // MVP3.0-R7: start at low, confirmed on the eval run
 export const ASK_MAX_TOKENS = 4000;
 export const INSTRUCTIONS_VERSION = "mvp3.0-v1";

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { AskClient } from "@/components/ask/AskClient";
-import { askEnabled } from "@/lib/ask/config";
+import { ASK_MODEL_NAME, askEnabled } from "@/lib/ask/config";
 import { WORDING } from "@/lib/ask/wording";
 
 export const dynamic = "force-dynamic";
@@ -19,7 +19,7 @@ export default function AskPage() {
         <a href="/">All headlines</a>
       </header>
       {askEnabled() ? (
-        <AskClient />
+        <AskClient modelName={ASK_MODEL_NAME} />
       ) : (
         <p className="ask-notice ask-notice-off" role="status">
           {WORDING.switchedOff} <a href="/">Browse all headlines</a>

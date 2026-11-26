@@ -3,7 +3,7 @@ id: SPEC-MVP3
 prd: PRD-MVP3
 prd_version: 1.0
 status: MVP3.0 and approvals A1 to A4 approved by Ben, 26 November 2026; MVP3.1 to MVP3.4 are outlines
-version: 1.0.1
+version: 1.0.2
 ---
 
 # MVP3 Specification: Ask Watchtower
@@ -88,6 +88,8 @@ The AI note is not repeated under each answer. It appears in two places: directl
 **MVP3.0-R1. The `/ask` page.** Watchtower gets a new page at `/ask`, titled "Ask Watchtower". The headline feed shows an "Ask Watchtower" link beside its title in every state of the feed page, including when the feed is empty or shows an error.
 
 **MVP3.0-R2. Explanatory lines.** Under the page title, one line reads: "Ask about business news in Watchtower's headlines. Answers come only from the headlines, with links to the articles." Before the first question, the line under the question box reads: "Watchtower can't answer follow-up questions yet. Ask each question in full, including the company or topic." After the first reply, the box is labelled "Ask a new question" and its placeholder text reads "Follow-up questions aren't supported yet"; the line under the box is not shown again (Ben, 26 November, D-066).
+
+**MVP3.0-R2a. Model note.** Directly under the intro line, in small grey text, the page says which AI model writes the answers: "Answers are written by Claude Haiku 5.5, an AI model from Anthropic." It is plain text, with no Anthropic or Claude logo and no wording that suggests a partnership or endorsement. The model name comes from the configuration file (S4), so the note changes when the model does (Ben, 26 November, D-070).
 
 **MVP3.0-R3. The question box.** The page has a labelled question box and an "Ask" button. Pressing Enter sends the question, and Shift+Enter starts a new line. Spaces at the start and end are removed. A question can be at most 500 characters: the box accepts no more, and if a longer question reaches the server directly, the server rejects it with "Questions are limited to 500 characters." Sending an empty question does nothing.
 
@@ -420,6 +422,7 @@ These ideas came up while specifying MVP3. They are not part of it and are not a
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.0.2 | 2026-11-26 | Model note under the intro line (R2a, D-070) |
 | 1.0.1 | 2026-11-26 | R21: "Show 5 more" works once per reply, so readers see at most 10 headlines; acceptance test corrected (Ben, D-069) |
 | 1.0 | 2026-11-26 | Ben approved MVP3.0 and approvals A1 to A4 |
 | 0.4.2 | 2026-11-26 | Admin alerts go to Discord and are also sent automatically (D-068, open question 4 answered). PRD-MVP3 approved by Ben (v1.0) |
