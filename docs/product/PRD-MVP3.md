@@ -2,7 +2,7 @@
 id: PRD-MVP3
 milestone: MVP3, Ask Watchtower
 status: Draft for Ben's review
-version: 0.1, 18 November 2026
+version: 0.1.1, 26 November 2026
 owner: Ben (product manager and approver)
 spec: SPEC-MVP3 v0.1 (draft)
 decisions: D-043 to D-055 in the decision log
@@ -77,7 +77,7 @@ Measured by the eval suite in `evals/` (fixed test questions) and, after launch,
 
 ### Spend rhythm
 
-AI spend is capped at US$10 per calendar month, Malaysia time (D-053). Watchtower pauses Ask Watchtower before the cap is reached and resumes on the 1st. The provider's own monthly limit is set at US$10 as a backstop.
+AI spend is capped at US$10 per calendar month, Malaysia time (D-053). Watchtower pauses Ask Watchtower when the month's estimated spend reaches US$5 (Ben, 26 November 2026) and resumes on the 1st. The provider's own monthly limit is set at US$10 as a backstop.
 
 ## 6. Release stages
 
@@ -153,7 +153,7 @@ Reply by number, for example "2 yes".
 3. **Hyphen truncation.** Fix headline ingestion before MVP3.0 (proposed: a small separate fix, about half a day), or after MVP3?
 4. **No-coverage wording.** "Watchtower has no headlines on this yet." (proposed)?
 5. **AI note wording.** "AI summary of Watchtower headlines. Check the articles for details." (proposed)?
-6. **Trace retention.** Keep questions and traces for 90 days (proposed)?
+6. ~~**Trace retention.**~~ Answered 26 November 2026: 90 days.
 7. **Answer key spot-check.** Cases 1 to 8 and 10 in `evals/answer-key-spot-check.md`, needed before MVP3.0's release gate.
 
 ## 12. Agent guardrails
@@ -169,4 +169,5 @@ Reply by number, for example "2 yes".
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 0.1.1 | 2026-11-26 | Pause at US$5 of monthly spend; 90-day retention |
 | 0.1 | 2026-11-18 | First draft, from the RAG-Chatbot research and Ben's decisions D-043 to D-055 |

@@ -3,7 +3,7 @@ id: SPEC-MVP3
 prd: PRD-MVP3
 prd_version: 0.1
 status: Draft. MVP3.0 waits for Ben's approval; MVP3.1 to MVP3.4 are outlines
-version: 0.1
+version: 0.1.1
 ---
 
 # MVP3 Specification: Ask Watchtower
@@ -69,8 +69,8 @@ Backlog B-009, the model comparison, starts as soon as the first MVP3 pull reque
 | MVP3.0-R12 | Fallback and no-coverage replies use the S6 wording exactly. Fallback links are shown as the same source cards. |
 | MVP3.0-R13 | Thumbs up and thumbs down under every reply. One rating per reply, which the reader can change. After a rating: "Thanks for the feedback." Stored with the reply's trace id (approval A3). |
 | MVP3.0-R14 | Trace record (approval A2), one per question: trace id, time, a random session id kept per browser tab, the question, the headlines returned with their rank, model id, instructions version, the AI's raw text, cited ids, withdrawn citations, reply type, links shown, tokens (input, output, cache write, cache read), estimated cost in US dollars, search time, time to first word, total time, and any error. No IP address, browser details or personal data. |
-| MVP3.0-R15 | Retention (approval A4): a daily job deletes trace records and ratings older than 90 days (PRD open question 6). |
-| MVP3.0-R16 | Spend cap (D-053): each trace stores an estimated cost from its token counts and the S4 price table. Before calling the AI, the server adds up this calendar month's estimated cost, Malaysia time. At US$9.50 or more it skips the AI call and shows the S6 paused wording. Ben also sets a US$10 monthly limit in the Anthropic Console as a backstop. |
+| MVP3.0-R15 | Retention (approval A4): a daily job deletes trace records and ratings older than 90 days (Ben, 26 November 2026). |
+| MVP3.0-R16 | Spend cap (D-053): each trace stores an estimated cost from its token counts and the S4 price table. Before calling the AI, the server adds up this calendar month's estimated cost, Malaysia time. At US$5.00 or more it skips the AI call and shows the S6 paused wording (Ben, 26 November 2026). Ben also sets a US$10 monthly limit in the Anthropic Console as a backstop. |
 | MVP3.0-R17 | Kill switch: unless the setting `ASK_ENABLED` is `true`, `/ask` shows the S6 switched-off wording, the feed hides the link, and `/api/ask` makes no AI call. |
 | MVP3.0-R18 | `.env.example` and the README document `ANTHROPIC_API_KEY`, `ASK_ENABLED`, the Console spend limit, and running the A1 to A4 migrations in the Supabase SQL editor. |
 | MVP3.0-R19 | Eval runner, first version: `npm run eval` runs the single-question cases in `evals/dataset.jsonl` (all except the time, source and follow-up categories and INJ-04: 48 cases) against `/api/ask` in eval mode (S9), with the 1,357 snapshot ids and "today" 27 October 2026. Injected test headlines (negative ids) are added in memory only, never stored. Results go to `results/<run_id>/`, which git ignores; the summary goes into the pull request. Not run automatically, because it costs money (about US$0.60 a run). |
@@ -104,7 +104,7 @@ Reported but not gated in MVP3.0: recall at 10 (keyword search only), wrongly re
 | R3 | A 501-character question | Reader tries to send it | The box stops at 500; a direct request gets "Questions are limited to 500 characters." |
 | R5 | Three questions asked | Reader reloads the page | The page is empty again |
 | R13 | A reply on screen | Reader clicks thumbs down, then thumbs up | One rating stored, now "up", linked to the trace |
-| R16 | This month's estimated spend is US$9.52 | Reader asks a question | Paused wording, no AI call |
+| R16 | This month's estimated spend is US$5.02 | Reader asks a question | Paused wording, no AI call |
 | R17 | `ASK_ENABLED` not set | Reader opens the feed and `/ask` | No link on the feed; switched-off wording on `/ask` |
 | R4 | Phone at 375px | Reader opens `/ask` | No sideways scroll; box fixed at the bottom; sources readable |
 | S10 | The AI provider is unreachable | Reader asks a question | Error wording; the feed still works |
@@ -162,9 +162,9 @@ Reported but not gated in MVP3.0: recall at 10 (keyword search only), wrongly re
 
 PRD-MVP3 section 11 holds the product questions. Spec-level:
 
-1. Pause threshold: US$9.50 of the US$10 cap (proposed), leaving room for questions already in progress?
+1. ~~Pause threshold.~~ Answered 26 November 2026: pause at US$5.00 of estimated spend a month (R16).
 2. Up to 20 headlines given to the AI per question (proposed)?
-3. Answer length: about 120 words (proposed)?
+3. ~~Answer length.~~ Answered 26 November 2026: about 120 words (R8).
 
 ## 8. Future Roadmap Considerations
 
@@ -186,4 +186,5 @@ Ideas raised while specifying MVP3 that are not part of it and not approved for 
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 0.1.1 | 2026-11-26 | Ben: pause at US$5 of monthly spend (R16), 90-day retention (R15), answers of about 120 words (R8) |
 | 0.1 | 2026-11-18 | First draft. MVP3.0 fully specified; MVP3.1 to MVP3.4 as outlines |
