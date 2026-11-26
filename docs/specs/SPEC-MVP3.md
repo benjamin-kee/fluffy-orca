@@ -1,7 +1,7 @@
 ---
 id: SPEC-MVP3
 prd: PRD-MVP3
-prd_version: 0.4
+prd_version: 0.4.1
 status: Draft. MVP3.0 waits for Ben's approval; MVP3.1 to MVP3.4 are outlines
 version: 0.4
 ---
@@ -36,7 +36,7 @@ MVP3 ships in five small sub-sprints. Each one goes live on its own, behind the 
 | MVP3.0 | First answers | The `/ask` page. The reader asks one question at a time and gets one of three reply types, with cited sources. Readers can rate a reply with thumbs up or down and add a written comment. Search is by keyword only. The AI call uses prompt caching. A citation check, a spend cap, a kill switch and basic trace records protect the feature. A first eval runner checks replies with code. | The MVP1.6 search index, which already exists | Ben approves MVP3.0 and the database changes A1 to A4 | 3.5 |
 | MVP3.1 | Better search | Search finds headlines by meaning as well as by keyword. | MVP3.0 | Ben approves MVP3.1 and the database changes A5 and A6 | 2 |
 | MVP3.2 | Conversation | Readers can ask follow-up questions, and can limit a question by date or publisher in their own words. | MVP3.1 | Ben approves MVP3.2 | 2 |
-| MVP3.3 | Confidence | A number check, a note on investment-advice questions, a daily question limit per visitor, one-tap reasons on thumbs down, and full trace records. | MVP3.0 | Ben approves MVP3.3 | 2 |
+| MVP3.3 | Confidence | A number check, a note on investment-advice questions, a daily question limit per visitor, one-tap reasons on thumbs down, full trace records, and admin alerts from the paused and error messages. | MVP3.0 | Ben approves MVP3.3 | 2 |
 | MVP3.4 | Full release gate | No new screens. AI judges score answer quality, the useful-link suite checks fallback links, and regression checks compare releases. | MVP3.2 and MVP3.3 | Ben approves MVP3.4 | 2.5 |
 
 Backlog item B-009, a comparison of AI models from different providers, starts as soon as the first MVP3 pull request is merged and live (D-048).
@@ -97,7 +97,7 @@ The AI note is not repeated under each answer. It appears in two places: directl
 
 #### Finding headlines and writing the reply
 
-**MVP3.0-R6. Search.** When a question arrives, the server calls a new read-only database function (approval A1). The function finds stored headlines that contain any of the question's words, using Postgres's English full-text rules and the title index that already exists from MVP1.6. It ranks them by relevance, with newer headlines first when relevance is equal, and returns at most 20. For each headline it returns the article id, the title, the publisher, the `article_url` and the publication time. If the question has no searchable words, because it contains only very common words such as "the" or "what", the AI is not called and the reader gets the no-coverage reply. Section 5, A1, explains why the feed's existing search cannot be reused.
+**MVP3.0-R6. Search.** When a question arrives, the server calls a new read-only database function (approval A1). The function finds stored headlines that contain any of the question's words, using Postgres's English full-text rules and the title index that already exists from MVP1.6. It ranks them by relevance, with newer headlines first when relevance is equal, and returns at most 20 (Ben, 26 November, D-069). The AI sees all 20, but readers see at most 10: up to 5 cited source cards, and up to 5 more through R21. For each headline it returns the article id, the title, the publisher, the `article_url` and the publication time. If the question has no searchable words, because it contains only very common words such as "the" or "what", the AI is not called and the reader gets the no-coverage reply. Section 5, A1, explains why the feed's existing search cannot be reused.
 
 **MVP3.0-R7. The AI call.** The server sends the question and the headlines to Claude Haiku 5.5 (model id `claude-haiku-5-5`, D-051 as amended on 26 November), through `@anthropic-ai/sdk`. The reply is streamed, so the reader sees it as it is written. Each headline is passed as a "search result" block with citations turned on, so the AI's reply can point to the exact headline behind each fact. In each block, the title is the headline, the source is the Watchtower article id, and the content is the headline, the publisher and the publication date. The fixed instructions are cached with prompt caching (D-048); today's date and the question come after the cached part. The AI's effort level is set in the configuration file, starting at `low`, and is confirmed on the eval run. Claude Haiku 5.5 has no server-side fallback when it refuses, so a refusal gets the S10 error wording.
 
@@ -231,6 +231,7 @@ The MVP3.0 eval report includes an assessment of Claude Haiku 5.5. It shows the 
 - Each visitor can ask a limited number of questions per day.
 - Thumbs down offers one-tap reasons: wrong or not what the article says; missed something; sources not relevant; didn't answer my question; too slow; other. The written comment box already ships in MVP3.0 (R13).
 - Full stage-by-stage traces, and saved database queries that let Ben review traces and ratings.
+- Admin alerts (Ben, 26 November, D-068). The "monthly limit" message and the "can't answer right now" message get a "Let the team know" button. When a reader clicks it, the banner "Thanks, we've let the team know." shows for 3 seconds, the button changes to "Team notified", and the server posts a message to a private Slack or Discord channel through a secret webhook link, with no new library. The switched-off message has no button, because only an admin can switch Ask Watchtower off. Whether the server also alerts the admin automatically, without a click, is open question 4.
 
 ### MVP3.4 Full release gate (outline)
 
@@ -393,7 +394,8 @@ The following are not part of MVP3:
 PRD-MVP3 section 11 holds the product questions. The spec-level questions are:
 
 1. ~~Pause threshold.~~ Answered on 26 November 2026: pause at US$5.00 of estimated spend a month (R16).
-2. Should search pass up to 20 headlines to the AI for each question? This is proposed. The same 20 also supply the extra headlines for the R21 "Show 5 more" button. More headlines give the AI more to work with but cost more per question.
+2. ~~Headlines given to the AI.~~ Answered on 26 November 2026: up to 20 per question (R6, D-069). Readers see at most 10 of them.
+4. Admin alerts (MVP3.3): should the server alert the admin automatically when Ask Watchtower pauses or the AI fails, as well as when a reader clicks "Let the team know"? And should the alerts go to Slack or to Discord? To be answered before MVP3.3 starts.
 3. ~~Answer length.~~ Answered on 26 November 2026: about 120 words (R8).
 
 ## 8. Future Roadmap Considerations
@@ -418,6 +420,7 @@ These ideas came up while specifying MVP3. They are not part of it and are not a
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 0.4.1 | 2026-11-26 | Up to 20 headlines to the AI approved, of which readers see at most 10 (R6, D-069). Admin alerts added to the MVP3.3 outline (D-068), with open question 4 |
 | 0.4 | 2026-11-26 | Rewritten in full sentences (D-067). Section 5 now explains each approval A1 to A6: what it is, why it is needed, what it stores, who can access it and how to undo it. Added a reading guide and a glossary (section 10). The trace field list in A2 now includes the R22 experiment fields. A4 states that ratings are deleted with their trace and proposes a run time. No requirement changed |
 | 0.3.1 | 2026-11-26 | Follow-up notice reworded and placed: full line on the empty page, box label and placeholder after an answer (R2, D-066) |
 | 0.3 | 2026-11-26 | AI note wording (D-063). Hard rule: never combine headlines; multi-headline answers name each article's publisher (R8, D-064). Optional written feedback and a timed thank-you banner move into MVP3.0 (R13, D-065); MVP3.0 effort 3.5 days |
