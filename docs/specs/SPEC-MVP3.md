@@ -1,9 +1,9 @@
 ---
 id: SPEC-MVP3
 prd: PRD-MVP3
-prd_version: 0.4.1
+prd_version: 1.0
 status: Draft. MVP3.0 waits for Ben's approval; MVP3.1 to MVP3.4 are outlines
-version: 0.4
+version: 0.4.2
 ---
 
 # MVP3 Specification: Ask Watchtower
@@ -231,7 +231,7 @@ The MVP3.0 eval report includes an assessment of Claude Haiku 5.5. It shows the 
 - Each visitor can ask a limited number of questions per day.
 - Thumbs down offers one-tap reasons: wrong or not what the article says; missed something; sources not relevant; didn't answer my question; too slow; other. The written comment box already ships in MVP3.0 (R13).
 - Full stage-by-stage traces, and saved database queries that let Ben review traces and ratings.
-- Admin alerts (Ben, 26 November, D-068). The "monthly limit" message and the "can't answer right now" message get a "Let the team know" button. When a reader clicks it, the banner "Thanks, we've let the team know." shows for 3 seconds, the button changes to "Team notified", and the server posts a message to a private Slack or Discord channel through a secret webhook link, with no new library. The switched-off message has no button, because only an admin can switch Ask Watchtower off. Whether the server also alerts the admin automatically, without a click, is open question 4.
+- Admin alerts (Ben, 26 November, D-068). The "monthly limit" message and the "can't answer right now" message get a "Let the team know" button. When a reader clicks it, the banner "Thanks, we've let the team know." shows for 3 seconds, the button changes to "Team notified", and the server posts a message to a private Discord channel through a secret webhook link, with no new library. The switched-off message has no button, because only an admin can switch Ask Watchtower off. The server also alerts the same channel automatically, without waiting for a click: once a month when Ask Watchtower pauses at US$5, and at most once an hour when the AI or the database fails (Ben, 26 November). The button count then shows how many readers wanted to use Ask Watchtower while it was paused or failing.
 
 ### MVP3.4 Full release gate (outline)
 
@@ -395,7 +395,7 @@ PRD-MVP3 section 11 holds the product questions. The spec-level questions are:
 
 1. ~~Pause threshold.~~ Answered on 26 November 2026: pause at US$5.00 of estimated spend a month (R16).
 2. ~~Headlines given to the AI.~~ Answered on 26 November 2026: up to 20 per question (R6, D-069). Readers see at most 10 of them.
-4. Admin alerts (MVP3.3): should the server alert the admin automatically when Ask Watchtower pauses or the AI fails, as well as when a reader clicks "Let the team know"? And should the alerts go to Slack or to Discord? To be answered before MVP3.3 starts.
+4. ~~Admin alerts.~~ Answered on 26 November 2026: alerts go to Discord, and the server also sends them automatically (MVP3.3 outline, D-068).
 3. ~~Answer length.~~ Answered on 26 November 2026: about 120 words (R8).
 
 ## 8. Future Roadmap Considerations
@@ -420,6 +420,7 @@ These ideas came up while specifying MVP3. They are not part of it and are not a
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 0.4.2 | 2026-11-26 | Admin alerts go to Discord and are also sent automatically (D-068, open question 4 answered). PRD-MVP3 approved by Ben (v1.0) |
 | 0.4.1 | 2026-11-26 | Up to 20 headlines to the AI approved, of which readers see at most 10 (R6, D-069). Admin alerts added to the MVP3.3 outline (D-068), with open question 4 |
 | 0.4 | 2026-11-26 | Rewritten in full sentences (D-067). Section 5 now explains each approval A1 to A6: what it is, why it is needed, what it stores, who can access it and how to undo it. Added a reading guide and a glossary (section 10). The trace field list in A2 now includes the R22 experiment fields. A4 states that ratings are deleted with their trace and proposes a run time. No requirement changed |
 | 0.3.1 | 2026-11-26 | Follow-up notice reworded and placed: full line on the empty page, box label and placeholder after an answer (R2, D-066) |

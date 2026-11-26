@@ -1,10 +1,10 @@
 ---
 id: PRD-MVP3
 milestone: MVP3, Ask Watchtower
-status: Draft for Ben's review
-version: 0.4.1, 26 November 2026
+status: Approved by Ben, 26 November 2026
+version: 1.0, 26 November 2026
 owner: Ben (product manager and approver)
-spec: SPEC-MVP3 v0.4.1 (draft)
+spec: SPEC-MVP3 v0.4.2 (draft, waiting for Ben's approval)
 decisions: D-043 to D-069 in the decision log
 news_input: GNews API only, through headlines already stored
 principles: Product-Principles P-1 (web first, mobile friendly) and P-2 (sorting names A to Z)
@@ -33,7 +33,7 @@ principles: Product-Principles P-1 (web first, mobile friendly) and P-2 (sorting
 - Written feedback in MVP3.0 (D-065).
 - The follow-up notice (D-066).
 
-Everything else is a proposal until Ben approves it. The research behind this PRD is in [RAG-Chatbot](../research/RAG-Chatbot.md). The detailed behaviour is in [SPEC-MVP3](../specs/SPEC-MVP3.md), which also has a glossary of technical terms in section 10.
+Ben approved this PRD on 26 November 2026. The spec, SPEC-MVP3, and its database changes A1 to A4 still need Ben's approval before building starts. The research behind this PRD is in [RAG-Chatbot](../research/RAG-Chatbot.md). The detailed behaviour is in [SPEC-MVP3](../specs/SPEC-MVP3.md), which also has a glossary of technical terms in section 10.
 
 ## 1. Summary
 
@@ -108,7 +108,7 @@ Ben approves each sub-sprint before it starts. Each one ships on its own and goe
 | MVP3.0 First answers | Readers get the `/ask` page. They ask one question at a time and get a cited answer, a fallback reply or a no-coverage reply. They can rate each reply with thumbs up or down and add a written comment. Behind the scenes, search is by keyword, the AI's instructions are cached to save cost, a citation check blocks citations to headlines the AI was not given, a spend cap pauses the feature at US$5, a kill switch can turn it off, and every question leaves a basic trace record. | An eval run on single questions, checked by code only, as set out in SPEC-MVP3. |
 | MVP3.1 Better search | Search finds headlines by meaning as well as by keyword, so a question about "job cuts" can find a headline about "layoffs". | Search quality targets. |
 | MVP3.2 Conversation | Readers can ask follow-up questions, and can narrow a question with words such as "last week" or "from" a named publisher. | Targets for rewriting follow-ups and for picking out date and publisher limits. |
-| MVP3.3 Confidence | Every number in an answer is checked against its headline. Investment-advice questions get a fixed note. Each visitor has a daily question limit. A thumbs down offers one-tap reasons. Trace records become complete, stage by stage. Readers who see the paused or error message can alert the admin with one click. | All guardrail test cases pass. |
+| MVP3.3 Confidence | Every number in an answer is checked against its headline. Investment-advice questions get a fixed note. Each visitor has a daily question limit. A thumbs down offers one-tap reasons. Trace records become complete, stage by stage. The admin gets a Discord alert when Ask Watchtower pauses or fails, and readers who see those messages can also alert the admin with one click. | All guardrail test cases pass. |
 | MVP3.4 Full release gate | There are no new screens. AI judges grade answer quality, the useful-link suite checks fallback links, and regression checks compare each release with the last. | Every target in `evals/`. |
 | Then B-009 | Watchtower compares AI models from several providers on the same tests. This must be done after launch (D-048). | |
 
@@ -151,7 +151,7 @@ Neither table stores names, emails, IP addresses or logins. The page creates a r
 | MVP3-F17 | Requests for investment advice get the news plus a fixed note that Watchtower doesn't give investment advice. | 3.3 |
 | MVP3-F18 | Each visitor can ask a limited number of questions per day. | 3.3 |
 | MVP3-F19 | A thumbs down offers one-tap reasons for the rating. | 3.3 |
-| MVP3-F24 | When Ask Watchtower is paused or can't answer, readers can click "Let the team know", which sends an alert to the admin's Slack or Discord channel (D-068). | 3.3 |
+| MVP3-F24 | When Ask Watchtower is paused or can't answer, readers can click "Let the team know", which sends an alert to the admin's Discord channel. The server also alerts that channel automatically when Ask Watchtower pauses or fails (D-068). | 3.3 |
 | MVP3-F20 | A release goes live only after it passes the eval targets for its sub-sprint. | All |
 | MVP3-F21 | Readers can reveal up to 5 more related headlines under the first 5, as an experiment (D-058). | 3.0 |
 
@@ -200,6 +200,7 @@ Reply by number, for example "7 yes".
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.0 | 2026-11-26 | Approved by Ben. Admin alerts go to Discord and are also sent automatically (F24, D-068) |
 | 0.4.1 | 2026-11-26 | Admin alerts in MVP3.3 (F24, D-068). Up to 20 headlines to the AI approved (D-069) |
 | 0.4 | 2026-11-26 | Rewritten in full sentences (D-067). The data contract now explains the trace and ratings tables. Brought in line with decisions already made: the readers' Anthropic limit is US$5 and the tests workspace is US$10, retention is 90 days, the cut-off headlines come from GNews (B-013), and the AI note wording is D-063. F11 now names the US$5 pause point instead of "when the cap is near". No other requirement changed |
 | 0.3 | 2026-11-26 | AI note wording (D-063); never combine headlines (F23, D-064); written feedback in MVP3.0 (F9, D-065) |
