@@ -10,6 +10,7 @@
 - Keep implementation changes small and logically grouped.
 - Do not implement future MVP functionality simply to "future-proof" the application.
 - Suggestions outside scope may be listed as future considerations, but must not be implemented without approval.
+- Write PRDs and specs in full sentences, so anyone can understand them without asking for clarification: say what each item is, why it is needed and what it does, and explain technical terms (D-067).
 - Follow `docs/product/Product-Principles.md` in all product and UI work, starting with P-1: web first, mobile friendly (design for desktop browsers first; every page must also work well on a phone).
 
 ## Naming
