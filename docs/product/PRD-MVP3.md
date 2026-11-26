@@ -5,7 +5,7 @@ status: Draft for Ben's review
 version: 0.2, 26 November 2026
 owner: Ben (product manager and approver)
 spec: SPEC-MVP3 v0.2 (draft)
-decisions: D-043 to D-061 in the decision log
+decisions: D-043 to D-062 in the decision log
 news_input: GNews API only, through headlines already stored
 principles: Product-Principles P-1 (web first, mobile friendly) and P-2 (sorting names A to Z)
 ---
@@ -110,7 +110,7 @@ Each sub-sprint is approved by Ben before it starts, ships on its own and goes l
 | MVP3-F4 | Every answer shows numbered sources: headline, publisher and date, each opening the original article in a new tab | 3.0 |
 | MVP3-F5 | When headlines cover the topic but don't answer, the reply is "The headlines don't say, check this article" ("these articles" for more than one), with at most 5 links | 3.0 |
 | MVP3-F6 | When nothing covers the topic, the reply says so, with no links | 3.0 |
-| MVP3-F7 | Every answer carries a short note that it is an AI summary of headlines | 3.0 |
+| MVP3-F7 | A short note that answers are AI summaries of headlines sits below the question box and at the bottom of the page, as a subtle light-orange notice (D-062) | 3.0 |
 | MVP3-F8 | The page shows the visit's questions and replies. Reloading or leaving clears them | 3.0 |
 | MVP3-F9 | Readers rate each reply with thumbs up or down | 3.0 |
 | MVP3-F10 | Every question leaves a trace record, stage by stage | 3.0 basic, 3.3 full |
