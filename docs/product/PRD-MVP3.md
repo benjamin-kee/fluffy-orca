@@ -4,7 +4,7 @@ milestone: MVP3, Ask Watchtower
 status: Approved by Ben, 26 November 2026
 version: 1.0, 26 November 2026
 owner: Ben (product manager and approver)
-spec: SPEC-MVP3 v0.4.2 (draft, waiting for Ben's approval)
+spec: SPEC-MVP3 v1.0 (MVP3.0 approved)
 decisions: D-043 to D-069 in the decision log
 news_input: GNews API only, through headlines already stored
 principles: Product-Principles P-1 (web first, mobile friendly) and P-2 (sorting names A to Z)
@@ -33,7 +33,7 @@ principles: Product-Principles P-1 (web first, mobile friendly) and P-2 (sorting
 - Written feedback in MVP3.0 (D-065).
 - The follow-up notice (D-066).
 
-Ben approved this PRD on 26 November 2026. The spec, SPEC-MVP3, and its database changes A1 to A4 still need Ben's approval before building starts. The research behind this PRD is in [RAG-Chatbot](../research/RAG-Chatbot.md). The detailed behaviour is in [SPEC-MVP3](../specs/SPEC-MVP3.md), which also has a glossary of technical terms in section 10.
+Ben approved this PRD on 26 November 2026. Ben approved the MVP3.0 spec and its database changes A1 to A4 on the same day. The research behind this PRD is in [RAG-Chatbot](../research/RAG-Chatbot.md). The detailed behaviour is in [SPEC-MVP3](../specs/SPEC-MVP3.md), which also has a glossary of technical terms in section 10.
 
 ## 1. Summary
 

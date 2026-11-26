@@ -2,13 +2,13 @@
 id: SPEC-MVP3
 prd: PRD-MVP3
 prd_version: 1.0
-status: Draft. MVP3.0 waits for Ben's approval; MVP3.1 to MVP3.4 are outlines
-version: 0.4.2
+status: MVP3.0 and approvals A1 to A4 approved by Ben, 26 November 2026; MVP3.1 to MVP3.4 are outlines
+version: 1.0
 ---
 
 # MVP3 Specification: Ask Watchtower
 
-**Status:** This is a draft, first written on 18 November 2026. Nothing is built until Ben approves a sub-sprint.
+**Status:** Ben approved MVP3.0 and the database changes A1 to A4 on 26 November 2026. MVP3.1 to MVP3.4 are outlines, and each needs Ben's approval before it is built.
 **Platform:** Ask Watchtower is designed for desktop browsers first and must also work well on a phone ([Product-Principles](../product/Product-Principles.md) P-1, D-041).
 **Branch:** The planning documents live on the branch `mvp3-rag`. Each sub-sprint is built on its own branch and goes into `main` through its own pull request.
 **Sources:** [PRD-MVP3](../product/PRD-MVP3.md), the [RAG-Chatbot research report](../research/RAG-Chatbot.md), the eval suite in `evals/`, and decisions D-043 to D-067 in the decision log.
@@ -420,6 +420,7 @@ These ideas came up while specifying MVP3. They are not part of it and are not a
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.0 | 2026-11-26 | Ben approved MVP3.0 and approvals A1 to A4 |
 | 0.4.2 | 2026-11-26 | Admin alerts go to Discord and are also sent automatically (D-068, open question 4 answered). PRD-MVP3 approved by Ben (v1.0) |
 | 0.4.1 | 2026-11-26 | Up to 20 headlines to the AI approved, of which readers see at most 10 (R6, D-069). Admin alerts added to the MVP3.3 outline (D-068), with open question 4 |
 | 0.4 | 2026-11-26 | Rewritten in full sentences (D-067). Section 5 now explains each approval A1 to A6: what it is, why it is needed, what it stores, who can access it and how to undo it. Added a reading guide and a glossary (section 10). The trace field list in A2 now includes the R22 experiment fields. A4 states that ratings are deleted with their trace and proposes a run time. No requirement changed |
