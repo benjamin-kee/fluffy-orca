@@ -3,7 +3,7 @@ id: SPEC-MVP3
 prd: PRD-MVP3
 prd_version: 1.0
 status: MVP3.0 and approvals A1 to A4 approved by Ben, 26 November 2026; MVP3.1 to MVP3.4 are outlines
-version: 1.0
+version: 1.0.1
 ---
 
 # MVP3 Specification: Ask Watchtower
@@ -134,7 +134,7 @@ Markers are never shown. The server starts streaming the answer text only once t
 
 **MVP3.0-R12. Fallback and no-coverage replies.** Fallback and no-coverage replies use the S6 wording exactly. Fallback links are shown as the same source cards as answers, with at most 5 at first (R21). No-coverage replies show no links and no "Show 5 more headlines" button.
 
-**MVP3.0-R21. Experiment: "Show 5 more".** Under the first 5 links of any answer or fallback reply, a "Show 5 more headlines" button reveals up to 5 more headlines from the same search, in search-rank order, under the label "More headlines on this topic (not used in this answer)" (D-058). When fewer than 5 remain, the button shows the real number, for example "Show 3 more headlines". When none remain, the button is hidden. The extra headlines never include injected test headlines or anything that search did not return. This is an experiment: R22 records how readers use it, and Ben decides afterwards whether to keep it.
+**MVP3.0-R21. Experiment: "Show 5 more".** Under the first 5 links of any answer or fallback reply, a "Show 5 more headlines" button reveals up to 5 more headlines from the same search, in search-rank order, under the label "More headlines on this topic (not used in this answer)" (D-058). When fewer than 5 remain, the button shows the real number, for example "Show 3 more headlines". When none remain, the button is hidden. The button can be used once per reply, so a reader sees at most 10 headlines: up to 5 cited and up to 5 more (Ben, 26 November, D-069). After it is used, it disappears. The extra headlines never include injected test headlines or anything that search did not return. This is an experiment: R22 records how readers use it, and Ben decides afterwards whether to keep it.
 
 #### Feedback
 
@@ -206,7 +206,7 @@ The MVP3.0 eval report includes an assessment of Claude Haiku 5.5. It shows the 
 | R13 | A reply is on screen. | The reader clicks thumbs down and then thumbs up. | One rating is stored, now "up", linked to the trace. The thank-you banner shows and disappears after 3 seconds. |
 | R13 | A reply has been rated. | The reader types a comment and clicks "Send feedback". | The comment is stored on the rating, the banner "Thanks, we have your comment." shows, and the box closes. |
 | R8 | An answer cites two headlines from different publishers. | The server processes the reply. | Each sentence names its publisher and cites one headline, the second is introduced as a separate article, and no sentence combines the two. |
-| R21 | An answer cites 3 headlines and search returned 12. | The reader clicks "Show 5 more headlines". | 5 more source cards appear under "More headlines on this topic (not used in this answer)", and the button now reads "Show 4 more headlines". |
+| R21 | An answer cites 3 headlines and search returned 12. | The reader clicks "Show 5 more headlines". | 5 more source cards appear under "More headlines on this topic (not used in this answer)", and the button disappears. The reader sees at most 10 headlines for one reply (D-069). |
 | R16 | This month's estimated spend is US$5.02. | A reader asks a question. | The paused wording is shown and no AI call is made. |
 | R17 | `ASK_ENABLED` is not set. | A reader opens the feed and then `/ask`. | The feed shows no "Ask Watchtower" link, and `/ask` shows the switched-off wording. |
 | R4 | A reader uses a phone 375 pixels wide. | The reader opens `/ask`. | The page does not scroll sideways, the question box is fixed at the bottom, and the sources are readable. |
@@ -420,6 +420,7 @@ These ideas came up while specifying MVP3. They are not part of it and are not a
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.0.1 | 2026-11-26 | R21: "Show 5 more" works once per reply, so readers see at most 10 headlines; acceptance test corrected (Ben, D-069) |
 | 1.0 | 2026-11-26 | Ben approved MVP3.0 and approvals A1 to A4 |
 | 0.4.2 | 2026-11-26 | Admin alerts go to Discord and are also sent automatically (D-068, open question 4 answered). PRD-MVP3 approved by Ben (v1.0) |
 | 0.4.1 | 2026-11-26 | Up to 20 headlines to the AI approved, of which readers see at most 10 (R6, D-069). Admin alerts added to the MVP3.3 outline (D-068), with open question 4 |
