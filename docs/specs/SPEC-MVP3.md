@@ -3,7 +3,7 @@ id: SPEC-MVP3
 prd: PRD-MVP3
 prd_version: 0.1
 status: Draft. MVP3.0 waits for Ben's approval; MVP3.1 to MVP3.4 are outlines
-version: 0.2.3
+version: 0.2.4
 ---
 
 # MVP3 Specification: Ask Watchtower
@@ -42,7 +42,7 @@ Backlog B-009, the model comparison, starts as soon as the first MVP3 pull reque
 | MVP3-S3 | The question and the headlines are given to the AI as data, inside clearly marked blocks. Nothing in them is followed as an instruction. |
 | MVP3-S4 | The model id, the instructions version and the price table live in one configuration file, so changing model (B-009) is a configuration change. |
 | MVP3-S5 | All AI calls and database writes happen in one server route, `/api/ask`. |
-| MVP3-S6 | Fixed wording, never written by the AI. Fallback: "The headlines don't say, check this article:" for one link, "The headlines don't say, check these articles:" for more (D-045). No coverage: "No Watchtower headlines cover this yet. Try asking about a company, market or event in the news." (Ben, 26 November, D-061). AI note: "AI summary of Watchtower headlines. Check the articles for details." (approved by Ben, 26 November). The AI note is shown once per page, not under each answer: directly below the question box, and again at the very bottom of the page. It is styled as a subtle, light-orange notice: visible, not alarming (Ben, 26 November, D-062). Error: "Ask Watchtower can't answer right now. Please try again later." Switched off: "Ask Watchtower is switched off for now." Paused: "Ask Watchtower has reached its monthly limit and will be back on 1 <Month>." |
+| MVP3-S6 | Fixed wording, never written by the AI. Fallback: "The headlines don't say, check this article:" for one link, "The headlines don't say, check these articles:" for more (D-045). No coverage: "No Watchtower headlines cover this yet. Try asking about a company, market or event in the news." (Ben, 26 November, D-061). AI note: "AI summary of Watchtower headlines. Check the articles for details." (approved by Ben, 26 November). The AI note is not repeated under each answer. It sits directly below the question box, and below the "Show 5 more headlines" button of each answer or fallback reply. There is no page-footer note. It is styled as a subtle, light-orange notice: visible, not alarming (Ben, 26 November, D-062). Error: "Ask Watchtower can't answer right now. Please try again later." Switched off: "Ask Watchtower is switched off for now." Paused: "Ask Watchtower has reached its monthly limit and will be back on 1 <Month>." |
 | MVP3-S7 | Every link opens `article_url` in a new tab with `rel="noopener noreferrer"` (D-025). |
 | MVP3-S8 | Dates on sources use the feed's rules (D-024). The AI is told today's date in Malaysia time, placed after the cached part of the instructions so caching keeps working. |
 | MVP3-S9 | Eval mode: the server can restrict search to a list of article ids and fix "today" to a given date. Only the eval runner uses it, with the `CRON_SECRET` header; the page never can. |
@@ -65,7 +65,7 @@ Backlog B-009, the model comparison, starts as soon as the first MVP3 pull reque
 | MVP3.0-R8 | The instructions tell the AI to: answer only from the supplied headlines; cite a headline for every fact; never use its own knowledge, even for widely known facts (D-047); never fill in words cut off a headline; keep "reportedly" and "sources say" where headlines use them; mention dates when timing matters; give no investment advice; keep answers under about 120 words in plain English; cite at most 5 headlines; when several headlines support the same fact, cite the one search ranked highest (D-059). If headlines on the topic exist but don't answer, reply with the marker `NOT_IN_HEADLINES` and cite up to 5 of the most relevant. If no headline covers the topic, reply with the marker `NO_COVERAGE`. |
 | MVP3.0-R9 | Reply type is decided in code. `NO_COVERAGE`: no-coverage reply, no links. `NOT_IN_HEADLINES`: fallback reply with the cited headlines as links, at most 5, in citation order; if none are valid, the no-coverage reply. Otherwise an answer. Markers are never shown; answer text is streamed only once the start rules out a marker. |
 | MVP3.0-R10 | Citation check: every citation must point to a headline returned by search for this question. If any does not, the answer is withdrawn and replaced by the fallback reply, with the valid cited headlines as links (or the no-coverage reply if none). The withdrawal is recorded in the trace. |
-| MVP3.0-R11 | An answer shows numbered markers ([1], [2]) in the text, linked to numbered source cards below it: headline, publisher, date, opening the article (S7, S8). Each cited headline appears once. At most 5 source cards show at first; more follow R21. The AI note is not repeated under answers; it sits below the question box and at the bottom of the page (S6). |
+| MVP3.0-R11 | An answer shows numbered markers ([1], [2]) in the text, linked to numbered source cards below it: headline, publisher, date, opening the article (S7, S8). Each cited headline appears once. At most 5 source cards show at first; more follow R21. The AI note is not repeated under the answer text; it sits below the "Show 5 more headlines" button and below the question box (S6). |
 | MVP3.0-R12 | Fallback and no-coverage replies use the S6 wording exactly. Fallback links are shown as the same source cards, at most 5 at first (R21). No-coverage replies show no links and no R21 button. |
 | MVP3.0-R13 | Thumbs up and thumbs down under every reply. One rating per reply, which the reader can change. After a rating: "Thanks for the feedback." Stored with the reply's trace id (approval A3). |
 | MVP3.0-R14 | Trace record (approval A2), one per question: trace id, time, a random session id kept per browser tab, the question, the headlines returned with their rank, model id, instructions version, the AI's raw text, cited ids, withdrawn citations, reply type, links shown, tokens (input, output, cache write, cache read), estimated cost in US dollars, search time, time to first word, total time, and any error. No IP address, browser details or personal data. |
@@ -99,7 +99,7 @@ Reported but not gated in MVP3.0: recall at 5, 10 and 20 (keyword search only), 
 | Req | Given | When | Then |
 | --- | --- | --- | --- |
 | R6, R9, R12 | Stored headline "AirAsia CEO Salary in 2026", which has no figure | Reader asks "What is the salary of the AirAsia CEO?" | "The headlines don't say, check this article:" with that headline as a source card |
-| R7, R11 | Headlines "Malaysia's economy grows 5.3% in 3Q26, beats expectations" and a second on the 5.3% figure | Reader asks "How much did Malaysia's economy grow in the third quarter?" | An answer stating 5.3%, with numbered markers and source cards for the cited headlines; the AI note shows below the question box and at the bottom of the page, not under the answer |
+| R7, R11 | Headlines "Malaysia's economy grows 5.3% in 3Q26, beats expectations" and a second on the 5.3% figure | Reader asks "How much did Malaysia's economy grow in the third quarter?" | An answer stating 5.3%, with numbered markers and source cards for the cited headlines; the AI note shows below the "Show 5 more headlines" button and below the question box, not under the answer text |
 | R8, S11 | No headline says who founded AirAsia | Reader asks "Who founded AirAsia?" | Fallback reply with up to 5 relevant AirAsia headlines; no founder named |
 | R9, R12 | No headline mentions the singer Taylor Swift; several mention other people and products named Swift | Reader asks "What did Taylor Swift announce recently?" | "No Watchtower headlines cover this yet. Try asking about a company, market or event in the news." with no links |
 | R10 | The AI cites a headline search did not return | Reply is processed | The answer is withdrawn; fallback or no-coverage reply shown; trace records the withdrawal |
@@ -193,6 +193,7 @@ Ideas raised while specifying MVP3 that are not part of it and not approved for 
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 0.2.4 | 2026-11-26 | AI note moved: below the question box and below the "Show 5 more headlines" button; no page-footer note (D-062 amended) |
 | 0.2.3 | 2026-11-26 | AI note shown once below the question box and once at the bottom of the page, as a light-orange notice, not under each answer (D-062) |
 | 0.2.2 | 2026-11-26 | No-coverage wording approved (D-061) |
 | 0.2.1 | 2026-11-26 | Eval set extended with 26 v2 cases (snapshot to 24 Nov 2026, Toronto); the MVP3.0 test now runs 67 cases. Citation tie-break: highest search rank (D-059). Tests workspace limit US$10 approved |
