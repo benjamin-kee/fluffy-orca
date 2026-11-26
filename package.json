@@ -8,9 +8,11 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test": "node --import ./tests/resolve.mjs --test tests/*.test.ts",
-    "backfill": "node --import ./tests/resolve.mjs scripts/backfill.ts"
+    "backfill": "node --import ./tests/resolve.mjs scripts/backfill.ts",
+    "eval": "node --env-file-if-exists=.env.local --import ./tests/resolve.mjs scripts/eval.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.14.0",
     "@supabase/supabase-js": "^2.117.1",
     "next": "^16.3.6",
     "react": "^19.3.0",

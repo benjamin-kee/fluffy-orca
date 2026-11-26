@@ -46,6 +46,8 @@ cp .env.example .env.local
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase dashboard → Project Settings → API Keys → the **secret** key (`sb_secret_…`), or the legacy `service_role` key. Not the publishable key. |
 | `CRON_SECRET` | Any long random value, e.g. `openssl rand -hex 32`. Required to call `/api/ingest` |
 | `GNEWS_API_KEY` | GNews dashboard |
+| `ANTHROPIC_API_KEY` | Ask Watchtower only. Claude Console → Keys → API keys → Create key → "Somewhere else". Scope it to the **Watchtower chatbot** workspace, which has a **US$5 monthly spend limit** (Spending & usage), set Expires to Never. For eval runs on your own computer, use the separate key scoped to the **Watchtower tests** workspace (US$10 limit) instead, so tests never use readers' budget |
+| `ASK_ENABLED` | Ask Watchtower's kill switch. Only the exact value `true` turns it on. Unset or anything else: `/ask` says it is switched off, the feed hides its link, and no AI call is made |
 
 The secret key gives full database access. It is used only on the server. Never commit it, and never give it a `NEXT_PUBLIC_` prefix.
 
@@ -60,6 +62,8 @@ For the source filter, also run [`supabase/migrations/0004_source_counts.sql`](s
 For keyword search, also run [`supabase/migrations/0005_title_search_index.sql`](supabase/migrations/0005_title_search_index.sql) once. It adds a search index on headline titles and changes no data. Search works without it, but slows down as headlines grow.
 
 Then run [`supabase/migrations/0006_source_counts_with_search.sql`](supabase/migrations/0006_source_counts_with_search.sql), so the publisher counts also follow the search. It replaces the 0004 function and changes no data.
+
+For Ask Watchtower (MVP3.0), run [`supabase/migrations/0007_ask_watchtower.sql`](supabase/migrations/0007_ask_watchtower.sql) once. It adds the question search function, the trace and ratings tables (both blocked to the public key, like `articles`), and a daily job that deletes traces and ratings older than 90 days (SPEC-MVP3 section 5, A1 to A4). It does not change the `articles` table. The file ends with the statements that undo it.
 
 ## Running locally
 
@@ -123,12 +127,22 @@ To check recent runs, query `cron.job_run_details` (did the job run) and `net._h
 npm test
 ```
 
-The tests cover source normalization and article deduplication. They use Node's built-in test runner, with no extra test dependencies. They do not call GNews or the database.
+The tests cover source normalization and article deduplication. They use Node's built-in test runner, with no extra test dependencies. They do not call GNews, Claude or the database.
+
+### Ask Watchtower evals
+
+`npm run eval` sends the 67 single-question test cases in `evals/` to a running copy of the app in eval mode and checks the replies (SPEC-MVP3 MVP3.0-R19). Each run costs money, so it never runs automatically. Run the app locally first (`npm run dev`) with the **tests** Anthropic key, `ASK_ENABLED=true` and `CRON_SECRET` in `.env.local`. Eval runs save no traces and skip the spend cap.
+
+```bash
+npm run eval -- --runs 3
+```
+
+Results go to `results/<run_id>/` (ignored by git). Add `--model claude-sonnet-5-5` for the Haiku assessment's reference run, or `--only WK-03,NUM-02` for single cases.
 
 ## Deploying to Vercel
 
 1. In Vercel, choose **Add New → Project** and import this GitHub repository. Vercel detects Next.js; keep the default build settings. Production deploys come from `main`. Skip the optional Supabase integration Vercel offers; the app uses the variables below.
-2. Under **Environment Variables** (in the project's sidebar once it exists), add `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GNEWS_API_KEY` and `CRON_SECRET` (a new long random value, e.g. `openssl rand -hex 32`). Keep a copy of `CRON_SECRET` for the next step.
+2. Under **Environment Variables** (in the project's sidebar once it exists), add `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GNEWS_API_KEY`, `CRON_SECRET` and, for Ask Watchtower, `ANTHROPIC_API_KEY` (Production and Preview, marked Sensitive). Add `ASK_ENABLED=true` only once MVP3.0 has passed its eval gate (a new long random value, e.g. `openssl rand -hex 32`). Keep a copy of `CRON_SECRET` for the next step.
 3. Select **Deploy**. When it finishes, open the production address shown under **Domains** on the project's Overview page (e.g. `https://watchtower01.vercel.app`); the feed should show the stored headlines. Use this permanent address, not a deployment address containing random characters.
 4. Turn on scheduled ingestion as described in [How scheduled ingestion works](#how-scheduled-ingestion-works), using the production URL and the same `CRON_SECRET`.
 

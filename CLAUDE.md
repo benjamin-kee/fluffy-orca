@@ -17,3 +17,13 @@
 
 - The product is called **Watchtower**. "Phoenix" is its retired former name: never use it in code, docs, commit messages, pull requests or replies. If you find it anywhere in this project, flag it so it can be renamed.
 - This does not apply to third-party names that happen to contain the word, such as the `@supabase/phoenix` package in `package-lock.json`.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
