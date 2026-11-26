@@ -5,7 +5,7 @@ status: Draft for Ben's review
 version: 0.2, 26 November 2026
 owner: Ben (product manager and approver)
 spec: SPEC-MVP3 v0.2 (draft)
-decisions: D-043 to D-060 in the decision log
+decisions: D-043 to D-061 in the decision log
 news_input: GNews API only, through headlines already stored
 principles: Product-Principles P-1 (web first, mobile friendly) and P-2 (sorting names A to Z)
 ---
@@ -153,7 +153,7 @@ Reply by number, for example "2 yes".
 1. ~~**Test-run budget.**~~ Answered 26 November: Claude Haiku 5.5 at launch, on an Anthropic key limited to US$5 a month; a separate tests workspace is proposed (SPEC-MVP3 R16). Original question: Eval runs during the build and for B-009 cost money (about US$0.60 per MVP3.0 run, US$40 to US$60 for B-009). Run them on a separate API key with its own limit (proposed: US$20 for the MVP3 build and B-009), outside the US$10 reader cap?
 2. ~~**Login timing.**~~ Answered 26 November: no login in MVP3; MVP4 adds login and a paywall (D-056). Original question: MVP3.0 goes live on the demo link without login, protected by the spend cap and kill switch, with login required before Ask Watchtower is shared more widely (proposed)? Or must login ship first?
 3. ~~**Hyphen truncation.**~~ Answered 26 November: fix. On checking, GNews sends these headlines already cut, so Watchtower's code can't restore them; options are in backlog B-013. Original question: Fix headline ingestion before MVP3.0 (proposed: a small separate fix, about half a day), or after MVP3?
-4. **No-coverage wording.** Ben asked for a suggestion on 26 November. Proposed: "No Watchtower headlines cover this yet. Try asking about a company, market or event in the news."
+4. ~~**No-coverage wording.**~~ Answered 26 November (D-061): "No Watchtower headlines cover this yet. Try asking about a company, market or event in the news."
 5. ~~**AI note wording.**~~ Approved 26 November (D-057). Original question: "AI summary of Watchtower headlines. Check the articles for details." (proposed)?
 6. ~~**Trace retention.**~~ Answered 26 November 2026: 90 days.
 7. **Answer key spot-check.** Cases 1 to 8 and 10 in `evals/answer-key-spot-check.md`, needed before MVP3.0's release gate.

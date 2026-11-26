@@ -1,6 +1,6 @@
 # Product Decisions Log
 
-Chronological log of approved decisions only. Sources: D-001 to D-016 from review_2026-09-24_version_1. D-017 to D-030 from Ben's replies on 2026-10-02. D-038 to D-040 from Ben's instructions on 2026-10-27. D-041 and D-042 from Ben's instructions on 2026-11-08. D-043 to D-060 from Ben's answers on MVP3 research ([RAG-Chatbot](../research/RAG-Chatbot.md)), 14 to 18 November 2026.
+Chronological log of approved decisions only. Sources: D-001 to D-016 from review_2026-09-24_version_1. D-017 to D-030 from Ben's replies on 2026-10-02. D-038 to D-040 from Ben's instructions on 2026-10-27. D-041 and D-042 from Ben's instructions on 2026-11-08. D-043 to D-061 from Ben's answers on MVP3 research ([RAG-Chatbot](../research/RAG-Chatbot.md)), 14 to 18 November 2026.
 
 Imported into the repo on 27 October 2026 from the Google Doc of the same name, unchanged. Where a decision mentions SPEC-MVP0 or its requirement numbers (R20, R22 and so on), it means the v2.1 draft, which is now retired in `docs/specs/Retired/`. The built spec is `docs/specs/MVP0.md`.
 
@@ -63,6 +63,7 @@ Several decisions below no longer match what was built. Proposed amendments and 
 | D-058 | 2026-11-26 | Experiment: replies show 5 links, with a "Show 5 more headlines" button that reveals up to 5 more related headlines, labelled as not used in the answer. Amends the 5-link limit in D-045 | Test whether readers want more headlines than the AI used | SPEC-MVP3 MVP3.0-R21 and R22; the trace records opens and clicks to judge the experiment | A fixed limit of 5 |
 | D-059 | 2026-11-26 | Ask Watchtower ranks and chooses headlines by relevance to the question (search rank), not by veracity. When several headlines support the same fact, the AI cites the highest-ranked one | Relevance is the signal Watchtower has; it holds no measure of accuracy | SPEC-MVP3 MVP3.0-R8. Ranking by veracity stays in backlog B-012 | Ranking by veracity or accuracy |
 | D-060 | 2026-11-26 | Eval runs use their own Anthropic Console workspace, "Watchtower tests", limited to US$10 a month | Tests never use the readers' US$5 | SPEC-MVP3 MVP3.0-R16 | Tests sharing the readers' limit |
+| D-061 | 2026-11-26 | When no headline covers a topic, Ask Watchtower replies "No Watchtower headlines cover this yet. Try asking about a company, market or event in the news." with no links | Says what happened and what to try next | SPEC-MVP3 MVP3-S6 | "Watchtower has no headlines on this yet." |
 
 ## Awaiting sign-off
 
