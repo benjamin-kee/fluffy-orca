@@ -3,7 +3,7 @@ id: SPEC-MVP3
 prd: PRD-MVP3
 prd_version: 0.1
 status: Draft. MVP3.0 waits for Ben's approval; MVP3.1 to MVP3.4 are outlines
-version: 0.1.1
+version: 0.2
 ---
 
 # MVP3 Specification: Ask Watchtower
@@ -42,7 +42,7 @@ Backlog B-009, the model comparison, starts as soon as the first MVP3 pull reque
 | MVP3-S3 | The question and the headlines are given to the AI as data, inside clearly marked blocks. Nothing in them is followed as an instruction. |
 | MVP3-S4 | The model id, the instructions version and the price table live in one configuration file, so changing model (B-009) is a configuration change. |
 | MVP3-S5 | All AI calls and database writes happen in one server route, `/api/ask`. |
-| MVP3-S6 | Fixed wording, never written by the AI. Fallback: "The headlines don't say, check this article:" for one link, "The headlines don't say, check these articles:" for more (D-045). No coverage: "Watchtower has no headlines on this yet." AI note: "AI summary of Watchtower headlines. Check the articles for details." Error: "Ask Watchtower can't answer right now. Please try again later." Switched off: "Ask Watchtower is switched off for now." Paused: "Ask Watchtower has reached its monthly limit and will be back on 1 <Month>." (Wordings for no coverage and the AI note are open questions 4 and 5 in the PRD.) |
+| MVP3-S6 | Fixed wording, never written by the AI. Fallback: "The headlines don't say, check this article:" for one link, "The headlines don't say, check these articles:" for more (D-045). No coverage: "No Watchtower headlines cover this yet. Try asking about a company, market or event in the news." (proposed by Claude on 26 November, waiting for Ben). AI note: "AI summary of Watchtower headlines. Check the articles for details." (approved by Ben, 26 November). Error: "Ask Watchtower can't answer right now. Please try again later." Switched off: "Ask Watchtower is switched off for now." Paused: "Ask Watchtower has reached its monthly limit and will be back on 1 <Month>." (The no-coverage wording is PRD open question 4.) |
 | MVP3-S7 | Every link opens `article_url` in a new tab with `rel="noopener noreferrer"` (D-025). |
 | MVP3-S8 | Dates on sources use the feed's rules (D-024). The AI is told today's date in Malaysia time, placed after the cached part of the instructions so caching keeps working. |
 | MVP3-S9 | Eval mode: the server can restrict search to a list of article ids and fix "today" to a given date. Only the eval runner uses it, with the `CRON_SECRET` header; the page never can. |
@@ -61,20 +61,22 @@ Backlog B-009, the model comparison, starts as soon as the first MVP3 pull reque
 | MVP3.0-R4 | Layout. Desktop: one centred column, about 760px wide. Phone: full width, with the question box fixed at the bottom. Checked at 1280px and 375px, and working from 320px (P-1). |
 | MVP3.0-R5 | One question at a time: the button is disabled while a reply is being written. Earlier questions and replies of the visit stay on the page, newest at the bottom. They are held in the browser only and are gone on reload (D-055). |
 | MVP3.0-R6 | Search: a read-only Postgres function (approval A1) takes the question and returns up to 20 headlines that contain any of its words, using the English full-text rules and the existing title index, ranked by relevance then newest. Returned per headline: id, title, publisher, `article_url`, publication time. A question with no searchable words (only common words such as "the") skips the AI and gets the no-coverage reply. |
-| MVP3.0-R7 | AI call: Claude Sonnet 5.5 (`claude-sonnet-5-5`, D-051) through `@anthropic-ai/sdk`, streamed. Each headline is passed as a search result block with citations turned on: title is the headline, source is the Watchtower article id, content is the headline, publisher and publication date. The fixed instructions are cached (prompt caching, D-048); today's date and the question come after the cached part. Effort level is set in the configuration file (start: `low`) and confirmed on the eval run. Anthropic's server-side refusal fallback is on; a final refusal gets the S10 error. |
+| MVP3.0-R7 | AI call: Claude Haiku 5.5 (`claude-haiku-5-5`, D-051 as amended on 26 November) through `@anthropic-ai/sdk`, streamed. Each headline is passed as a search result block with citations turned on: title is the headline, source is the Watchtower article id, content is the headline, publisher and publication date. The fixed instructions are cached (prompt caching, D-048); today's date and the question come after the cached part. Effort level is set in the configuration file (start: `low`) and confirmed on the eval run. Haiku 5.5 has no server-side refusal fallback, so a refusal gets the S10 error. |
 | MVP3.0-R8 | The instructions tell the AI to: answer only from the supplied headlines; cite a headline for every fact; never use its own knowledge, even for widely known facts (D-047); never fill in words cut off a headline; keep "reportedly" and "sources say" where headlines use them; mention dates when timing matters; give no investment advice; keep answers under about 120 words in plain English; cite at most 5 headlines. If headlines on the topic exist but don't answer, reply with the marker `NOT_IN_HEADLINES` and cite up to 5 of the most relevant. If no headline covers the topic, reply with the marker `NO_COVERAGE`. |
 | MVP3.0-R9 | Reply type is decided in code. `NO_COVERAGE`: no-coverage reply, no links. `NOT_IN_HEADLINES`: fallback reply with the cited headlines as links, at most 5, in citation order; if none are valid, the no-coverage reply. Otherwise an answer. Markers are never shown; answer text is streamed only once the start rules out a marker. |
 | MVP3.0-R10 | Citation check: every citation must point to a headline returned by search for this question. If any does not, the answer is withdrawn and replaced by the fallback reply, with the valid cited headlines as links (or the no-coverage reply if none). The withdrawal is recorded in the trace. |
-| MVP3.0-R11 | An answer shows numbered markers ([1], [2]) in the text, linked to numbered source cards below it: headline, publisher, date, opening the article (S7, S8). Each cited headline appears once. The S6 AI note sits under every answer. |
-| MVP3.0-R12 | Fallback and no-coverage replies use the S6 wording exactly. Fallback links are shown as the same source cards. |
+| MVP3.0-R11 | An answer shows numbered markers ([1], [2]) in the text, linked to numbered source cards below it: headline, publisher, date, opening the article (S7, S8). Each cited headline appears once. At most 5 source cards show at first; more follow R21. The S6 AI note sits under every answer. |
+| MVP3.0-R12 | Fallback and no-coverage replies use the S6 wording exactly. Fallback links are shown as the same source cards, at most 5 at first (R21). No-coverage replies show no links and no R21 button. |
 | MVP3.0-R13 | Thumbs up and thumbs down under every reply. One rating per reply, which the reader can change. After a rating: "Thanks for the feedback." Stored with the reply's trace id (approval A3). |
 | MVP3.0-R14 | Trace record (approval A2), one per question: trace id, time, a random session id kept per browser tab, the question, the headlines returned with their rank, model id, instructions version, the AI's raw text, cited ids, withdrawn citations, reply type, links shown, tokens (input, output, cache write, cache read), estimated cost in US dollars, search time, time to first word, total time, and any error. No IP address, browser details or personal data. |
 | MVP3.0-R15 | Retention (approval A4): a daily job deletes trace records and ratings older than 90 days (Ben, 26 November 2026). |
-| MVP3.0-R16 | Spend cap (D-053): each trace stores an estimated cost from its token counts and the S4 price table. Before calling the AI, the server adds up this calendar month's estimated cost, Malaysia time. At US$5.00 or more it skips the AI call and shows the S6 paused wording (Ben, 26 November 2026). Ben also sets a US$10 monthly limit in the Anthropic Console as a backstop. |
+| MVP3.0-R16 | Spend cap (D-053): each trace stores an estimated cost from its token counts and the S4 price table. Before calling the AI, the server adds up this calendar month's estimated cost, Malaysia time. At US$5.00 or more it skips the AI call and shows the S6 paused wording (Ben, 26 November 2026). The API key lives in its own Anthropic Console workspace, "Watchtower chatbot", with a US$5 monthly spend limit, so Anthropic also stops all spend at US$5 across all readers; if that limit is hit first, readers get the S10 error. Eval runs use a separate workspace, "Watchtower tests", with its own limit (proposed: US$10), so tests never use readers' budget. |
 | MVP3.0-R17 | Kill switch: unless the setting `ASK_ENABLED` is `true`, `/ask` shows the S6 switched-off wording, the feed hides the link, and `/api/ask` makes no AI call. |
 | MVP3.0-R18 | `.env.example` and the README document `ANTHROPIC_API_KEY`, `ASK_ENABLED`, the Console spend limit, and running the A1 to A4 migrations in the Supabase SQL editor. |
 | MVP3.0-R19 | Eval runner, first version: `npm run eval` runs the single-question cases in `evals/dataset.jsonl` (all except the time, source and follow-up categories and INJ-04: 48 cases) against `/api/ask` in eval mode (S9), with the 1,357 snapshot ids and "today" 27 October 2026. Injected test headlines (negative ids) are added in memory only, never stored. Results go to `results/<run_id>/`, which git ignores; the summary goes into the pull request. Not run automatically, because it costs money (about US$0.60 a run). |
-| MVP3.0-R20 | Unit tests cover: reply-type decisions and marker handling, the citation check (including an id the user asked for and a negative id), singular and plural fallback wording, the 5-link limit, the 500-character limit, the spend-cap check and month boundary, and the kill switch. |
+| MVP3.0-R21 | Experiment, "Show 5 more" (D-058). Under the first 5 links of any answer or fallback reply, a "Show 5 more headlines" button reveals up to 5 more headlines from the same search, in search rank order, under the label "More headlines on this topic (not used in this answer)". The button shows the real number when fewer than 5 remain ("Show 3 more headlines") and is hidden when none remain. Extra headlines never include injected test headlines or anything search did not return. |
+| MVP3.0-R22 | For the experiment, the trace records whether "Show 5 more" was opened and which source links were clicked (position and article id). No personal data. |
+| MVP3.0-R20 | Unit tests cover: reply-type decisions and marker handling, the citation check (including an id the user asked for and a negative id), singular and plural fallback wording, the 5-link limit and the "Show 5 more" rules, the 500-character limit, the spend-cap check and month boundary, and the kill switch. |
 
 **Release gate (MVP3.0).** Three eval runs on the 48 cases, code checks only:
 
@@ -88,7 +90,9 @@ Backlog B-009, the model comparison, starts as soon as the first MVP3 pull reque
 | Fallback replies with more than 5 links, or wording not matching the link count | 0 |
 | The instructions' hidden marker appearing in any reply (INJ-02) | 0 |
 
-Reported but not gated in MVP3.0: recall at 10 (keyword search only), wrongly refused answers, reply-type accuracy, times and cost. They are gated from MVP3.1 and MVP3.4.
+Reported but not gated in MVP3.0: recall at 5, 10 and 20 (keyword search only), wrongly refused answers, reply-type accuracy, times and cost. They are gated from MVP3.1 and MVP3.4.
+
+**Haiku assessment (Ben, 26 November).** The MVP3.0 eval report includes an assessment of Claude Haiku 5.5: the gate checks and reported measures above, plus one reference run of the same 48 cases on Claude Sonnet 5.5, side by side, so the quality difference is visible (about US$0.70, from the tests workspace). If Haiku fails any gate check, Claude Code stops and asks Ben before release. Backlog B-009 repeats the comparison more widely after launch.
 
 **Acceptance criteria**
 
@@ -104,6 +108,7 @@ Reported but not gated in MVP3.0: recall at 10 (keyword search only), wrongly re
 | R3 | A 501-character question | Reader tries to send it | The box stops at 500; a direct request gets "Questions are limited to 500 characters." |
 | R5 | Three questions asked | Reader reloads the page | The page is empty again |
 | R13 | A reply on screen | Reader clicks thumbs down, then thumbs up | One rating stored, now "up", linked to the trace |
+| R21 | An answer citing 3 headlines, with 12 headlines returned by search | Reader clicks "Show 5 more headlines" | 5 more source cards appear under "More headlines on this topic (not used in this answer)"; the button now reads "Show 4 more headlines" |
 | R16 | This month's estimated spend is US$5.02 | Reader asks a question | Paused wording, no AI call |
 | R17 | `ASK_ENABLED` not set | Reader opens the feed and `/ask` | No link on the feed; switched-off wording on `/ask` |
 | R4 | Phone at 375px | Reader opens `/ask` | No sideways scroll; box fixed at the bottom; sources readable |
@@ -163,7 +168,7 @@ Reported but not gated in MVP3.0: recall at 10 (keyword search only), wrongly re
 PRD-MVP3 section 11 holds the product questions. Spec-level:
 
 1. ~~Pause threshold.~~ Answered 26 November 2026: pause at US$5.00 of estimated spend a month (R16).
-2. Up to 20 headlines given to the AI per question (proposed)?
+2. Up to 20 headlines given to the AI per question (proposed; also feeds the R21 "Show 5 more" button)?
 3. ~~Answer length.~~ Answered 26 November 2026: about 120 words (R8).
 
 ## 8. Future Roadmap Considerations
@@ -181,10 +186,13 @@ Ideas raised while specifying MVP3 that are not part of it and not approved for 
 | FRC-SPEC-MVP3-05 | A review page for traces and ratings | MVP3 uses saved queries only | Section 6 | 2026-11-18 | |
 | FRC-SPEC-MVP3-06 | Reuse answers to identical questions, cleared when new headlines arrive | Speed; only worth it if logs show many repeats | Research report, Appendix A.5 | 2026-11-18 | |
 | FRC-SPEC-MVP3-07 | Questions and answers in Malay | Readers may ask in Malay; headlines are English | Section 6, related to B-005 | 2026-11-18 | |
+| FRC-SPEC-MVP3-08 | Rank shown headlines by veracity or accuracy | Ben's preference; Watchtower has no accuracy signal today, and rating publishers conflicts with D-026 | Ben, 26 November | 2026-11-26 | B-012 |
+| FRC-SPEC-MVP3-09 | Headlines arrive from GNews cut at a hyphen (about 5%) | Found while checking the ingestion fix; Watchtower's code does not cut them | Ben, 26 November | 2026-11-26 | B-013 |
 
 ## 9. Change log
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 0.2 | 2026-11-26 | Launch model changed to Claude Haiku 5.5, with a Haiku assessment in the MVP3.0 eval report. Key in its own Console workspace limited to US$5. "Show 5 more" experiment (R21, R22). AI note approved; no-coverage wording proposed. No login in MVP3 (MVP4 adds login and a paywall) |
 | 0.1.1 | 2026-11-26 | Ben: pause at US$5 of monthly spend (R16), 90-day retention (R15), answers of about 120 words (R8) |
 | 0.1 | 2026-11-18 | First draft. MVP3.0 fully specified; MVP3.1 to MVP3.4 as outlines |

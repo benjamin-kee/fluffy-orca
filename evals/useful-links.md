@@ -64,7 +64,7 @@ The suite already measures whether search **retrieves** at least one useful head
 | UL-13 | Nothing covers the topic | "No coverage" with no links, even when keyword matches exist | Existing: NC-01 to NC-06 |
 | UL-14 | Follow-up with a pronoun or abbreviation ("TH", "it") | Links are about the resolved subject | Existing: FU-04 |
 | UL-15 | Period named in the question is the reporting period, not the publish date ("3Q growth") | Do not filter links by publish date | Existing: NUM-02 |
-| UL-16 | Many useful links | Show at most 5 (Ben, 18 November), most relevant first, then newest | New: SYN-01 (8 useful headlines) |
+| UL-16 | Many useful links | Show at most 5 (Ben, 18 November), most relevant first, then newest. Experiment from 26 November (D-058): a "Show 5 more headlines" button reveals up to 5 more search results, labelled as not used in the answer. Shown-link precision is measured on the first 5; the forbidden-link check covers all 10 | New: SYN-01 (8 useful headlines) |
 | UL-17 | Several links, one reply | Wording becomes "check these articles" (Ben, 18 November) | New: NIH-02 |
 | UL-18 | Missing or malformed `article_url` | Do not show that link. Log it | New: unit test with a fixture row |
 | UL-19 | Link no longer opens (removed by publisher) | Not detectable at answer time. Caught by the link health check below | Manual and scheduled check |

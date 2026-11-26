@@ -2,10 +2,10 @@
 id: PRD-MVP3
 milestone: MVP3, Ask Watchtower
 status: Draft for Ben's review
-version: 0.1.1, 26 November 2026
+version: 0.2, 26 November 2026
 owner: Ben (product manager and approver)
-spec: SPEC-MVP3 v0.1 (draft)
-decisions: D-043 to D-055 in the decision log
+spec: SPEC-MVP3 v0.2 (draft)
+decisions: D-043 to D-058 in the decision log
 news_input: GNews API only, through headlines already stored
 principles: Product-Principles P-1 (web first, mobile friendly) and P-2 (sorting names A to Z)
 ---
@@ -14,7 +14,7 @@ principles: Product-Principles P-1 (web first, mobile friendly) and P-2 (sorting
 
 **Platform:** web first, mobile friendly. Every requirement here follows [Product-Principles](Product-Principles.md) P-1 (D-041).
 
-Approved: Ask Watchtower as MVP3 (D-043), headlines only (D-044), fallback wording and link rules (D-045), new dependencies (D-046), no answers from the AI's own knowledge (D-047), speed to market with a model evaluation after launch (D-048), traceability and reader feedback (D-049), the `/ask` page (D-050), Claude Sonnet 5.5 at launch (D-051), MVP3 before MVP2 (D-052), a US$10 monthly AI spend cap (D-053), login on the roadmap (D-054) and chat history for the current visit only (D-055). Everything else is a proposal until Ben approves it. Research behind this PRD: [RAG-Chatbot](../research/RAG-Chatbot.md).
+Approved: Ask Watchtower as MVP3 (D-043), headlines only (D-044), fallback wording and link rules (D-045), new dependencies (D-046), no answers from the AI's own knowledge (D-047), speed to market with a model evaluation after launch (D-048), traceability and reader feedback (D-049), the `/ask` page (D-050), Claude Haiku 5.5 at launch (D-051, amended 26 November), MVP3 before MVP2 (D-052), a US$10 monthly AI spend cap (D-053), login on the roadmap (D-054) chat history for the current visit only (D-055), no login in MVP3 with login and a paywall in MVP4 (D-056), the AI note (D-057) and the "Show 5 more" experiment (D-058). Everything else is a proposal until Ben approves it. Research behind this PRD: [RAG-Chatbot](../research/RAG-Chatbot.md).
 
 ## 1. Summary
 
@@ -46,6 +46,7 @@ Measured by the eval suite in `evals/` (fixed test questions) and, after launch,
 | Answerable questions wrongly refused | 15% or less | Eval suite |
 | Reply complete | 95% within 6 seconds | Trace records |
 | Answers rated helpful by readers | Set after two weeks of use | Reader ratings |
+| "Show 5 more" experiment: replies where readers open more headlines, and clicks on them | Measured, no target; decides whether to keep the button | Trace records |
 | AI spend | US$10 a month or less, never exceeded | Trace records and the provider's limit |
 
 ## 5. Scope
@@ -67,7 +68,7 @@ Measured by the eval suite in `evals/` (fixed test questions) and, after launch,
   - *Why:* every answer must have a source the reader can check. Memory answers can be stale or wrong, users can't tell them apart from sourced answers, and allowing them would undermine the eval suite's faithfulness and leakage checks.
   - *How it will be revisited:* Watchtower logs how often users ask background questions like this. If demand is shown, options will be assessed in a later milestone and decided by Ben. The candidates are a clearly labelled "Background" section, limited to stable facts, or answers from a trusted reference source such as company profiles (LATER-F4).
 - Saved chat history across visits. Planned as a paid add-on later, after login (D-055).
-- Login. On the roadmap and required to use this feature beyond the demo (D-054). Timing is open question 2.
+- Login. Not in MVP3 (D-056). MVP4 adds login and a paywall for Ask Watchtower.
 - Article descriptions or text, web search, and any news input other than GNews (D-017, D-044).
 - Investment advice.
 - Questions and answers in languages other than English.
@@ -96,7 +97,7 @@ Each sub-sprint is approved by Ben before it starts, ships on its own and goes l
 
 - **Reads** `public.articles`: title, source, article link, publication time. No new article fields in MVP3.0. MVP3.1 adds an embedding per headline (D-046).
 - **Writes** two new tables: a trace record per question and reader ratings. No names, emails, IP addresses or logins. A random id per browser tab links one visit's questions. Kept 90 days (proposed).
-- **AI provider:** Anthropic, Claude Sonnet 5.5 at launch (D-051), through Anthropic's official SDK. Each question sends the question and up to 20 headlines (title, publisher, date). The API key stays on the server. Prompt caching is on (D-048).
+- **AI provider:** Anthropic, Claude Haiku 5.5 at launch (D-051, amended), through Anthropic's official SDK. The key sits in its own Console workspace limited to US$5 a month. Each question sends the question and up to 20 headlines (title, publisher, date). The API key stays on the server. Prompt caching is on (D-048).
 - **GNews:** no calls. Ask Watchtower uses only what ingestion has already stored.
 
 ## 8. Functional requirements
@@ -123,6 +124,7 @@ Each sub-sprint is approved by Ben before it starts, ships on its own and goes l
 | MVP3-F18 | Each visitor has a question limit per day | 3.3 |
 | MVP3-F19 | A thumbs down offers reasons and a comment box | 3.3 |
 | MVP3-F20 | A release passes the eval targets for its sub-sprint | All |
+| MVP3-F21 | Readers can reveal up to 5 more related headlines under the first 5 (experiment, D-058) | 3.0 |
 
 ## 9. Non-functional requirements
 
@@ -148,11 +150,11 @@ Each sub-sprint is approved by Ben before it starts, ships on its own and goes l
 
 Reply by number, for example "2 yes".
 
-1. **Test-run budget.** Eval runs during the build and for B-009 cost money (about US$0.60 per MVP3.0 run, US$40 to US$60 for B-009). Run them on a separate API key with its own limit (proposed: US$20 for the MVP3 build and B-009), outside the US$10 reader cap?
-2. **Login timing.** MVP3.0 goes live on the demo link without login, protected by the spend cap and kill switch, with login required before Ask Watchtower is shared more widely (proposed)? Or must login ship first?
-3. **Hyphen truncation.** Fix headline ingestion before MVP3.0 (proposed: a small separate fix, about half a day), or after MVP3?
-4. **No-coverage wording.** "Watchtower has no headlines on this yet." (proposed)?
-5. **AI note wording.** "AI summary of Watchtower headlines. Check the articles for details." (proposed)?
+1. ~~**Test-run budget.**~~ Answered 26 November: Claude Haiku 5.5 at launch, on an Anthropic key limited to US$5 a month; a separate tests workspace is proposed (SPEC-MVP3 R16). Original question: Eval runs during the build and for B-009 cost money (about US$0.60 per MVP3.0 run, US$40 to US$60 for B-009). Run them on a separate API key with its own limit (proposed: US$20 for the MVP3 build and B-009), outside the US$10 reader cap?
+2. ~~**Login timing.**~~ Answered 26 November: no login in MVP3; MVP4 adds login and a paywall (D-056). Original question: MVP3.0 goes live on the demo link without login, protected by the spend cap and kill switch, with login required before Ask Watchtower is shared more widely (proposed)? Or must login ship first?
+3. ~~**Hyphen truncation.**~~ Answered 26 November: fix. On checking, GNews sends these headlines already cut, so Watchtower's code can't restore them; options are in backlog B-013. Original question: Fix headline ingestion before MVP3.0 (proposed: a small separate fix, about half a day), or after MVP3?
+4. **No-coverage wording.** Ben asked for a suggestion on 26 November. Proposed: "No Watchtower headlines cover this yet. Try asking about a company, market or event in the news."
+5. ~~**AI note wording.**~~ Approved 26 November (D-057). Original question: "AI summary of Watchtower headlines. Check the articles for details." (proposed)?
 6. ~~**Trace retention.**~~ Answered 26 November 2026: 90 days.
 7. **Answer key spot-check.** Cases 1 to 8 and 10 in `evals/answer-key-spot-check.md`, needed before MVP3.0's release gate.
 
@@ -169,5 +171,6 @@ Reply by number, for example "2 yes".
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 0.2 | 2026-11-26 | Claude Haiku 5.5 at launch; key limited to US$5; no login in MVP3, MVP4 for login and paywall; AI note approved; "Show 5 more" experiment (F21) |
 | 0.1.1 | 2026-11-26 | Pause at US$5 of monthly spend; 90-day retention |
 | 0.1 | 2026-11-18 | First draft, from the RAG-Chatbot research and Ben's decisions D-043 to D-055 |
