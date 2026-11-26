@@ -3,7 +3,7 @@ id: SPEC-MVP3
 prd: PRD-MVP3
 prd_version: 0.1
 status: Draft. MVP3.0 waits for Ben's approval; MVP3.1 to MVP3.4 are outlines
-version: 0.3
+version: 0.3.1
 ---
 
 # MVP3 Specification: Ask Watchtower
@@ -56,7 +56,7 @@ Backlog B-009, the model comparison, starts as soon as the first MVP3 pull reque
 | ID | Requirement |
 | --- | --- |
 | MVP3.0-R1 | A page at `/ask` titled "Ask Watchtower". The feed shows an "Ask Watchtower" link beside its title, in every state of the feed page. |
-| MVP3.0-R2 | Under the title, one line: "Ask about business news in Watchtower's headlines. Answers come only from the headlines, with links to the articles." Under the box: "Each question is answered on its own for now." |
+| MVP3.0-R2 | Under the title, one line: "Ask about business news in Watchtower's headlines. Answers come only from the headlines, with links to the articles." Before the first question, under the box: "Watchtower can't answer follow-up questions yet. Ask each question in full, including the company or topic." After an answer, the box is labelled "Ask a new question" and its placeholder reads "Follow-up questions aren't supported yet"; the line under the box is not repeated (Ben, 26 November, D-066). |
 | MVP3.0-R3 | A labelled question box and an "Ask" button. Enter sends; Shift+Enter starts a new line. Questions are trimmed and limited to 500 characters: the box accepts no more, and the server rejects longer ones with "Questions are limited to 500 characters." An empty question does nothing. |
 | MVP3.0-R4 | Layout. Desktop: one centred column, about 760px wide. Phone: full width, with the question box fixed at the bottom. Checked at 1280px and 375px, and working from 320px (P-1). |
 | MVP3.0-R5 | One question at a time: the button is disabled while a reply is being written. Earlier questions and replies of the visit stay on the page, newest at the bottom. They are held in the browser only and are gone on reload (D-055). |
@@ -125,7 +125,7 @@ Reported but not gated in MVP3.0: recall at 5, 10 and 20 (keyword search only), 
 ### MVP3.2 Conversation (outline)
 
 - Follow-up questions: Claude Haiku 5.5 rewrites a follow-up into a standalone question using the visit's earlier turns, and extracts date and publisher limits ("last week", "from" a named publisher), with publishers stored under several names treated as one (`evals/source_aliases.json`).
-- Removes the "answered on its own" line (R2).
+- Removes the follow-up notice and the "Follow-up questions aren't supported yet" placeholder (R2), and the box label goes back to "Ask another question".
 - Gate: rewrite judge pass rate of 90% or more; date and publisher extraction 90% or more; spurious filters 5% or less. The open question on empty filtered windows (`evals/README.md`) is answered before this sprint starts.
 
 ### MVP3.3 Confidence (outline)
@@ -195,6 +195,7 @@ Ideas raised while specifying MVP3 that are not part of it and not approved for 
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 0.3.1 | 2026-11-26 | Follow-up notice reworded and placed: full line on the empty page, box label and placeholder after an answer (R2, D-066) |
 | 0.3 | 2026-11-26 | AI note wording (D-063). Hard rule: never combine headlines; multi-headline answers name each article's publisher (R8, D-064). Optional written feedback and a timed thank-you banner move into MVP3.0 (R13, D-065); MVP3.0 effort 3.5 days |
 | 0.2.4 | 2026-11-26 | AI note moved: below the question box and below the "Show 5 more headlines" button; no page-footer note (D-062 amended) |
 | 0.2.3 | 2026-11-26 | AI note shown once below the question box and once at the bottom of the page, as a light-orange notice, not under each answer (D-062) |
