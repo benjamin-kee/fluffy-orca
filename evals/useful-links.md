@@ -52,11 +52,11 @@ The suite already measures whether search **retrieves** at least one useful head
 | UL-01 | Topic covered, answer missing | Show the closest headlines on that topic | Existing: NIH-01 to NIH-07 |
 | UL-02 | Entity matches, topic does not (an anecdote about a company's boss, for a question about who founded it) | Not useful. Do not show | Existing: WK-03. Ben removed id 400 ("Tony Fernandes flies SIA after missing AirAsia flight...") from its answer key on 18 November: an entity match alone is not useful |
 | UL-03 | Name collision ("Swift": a singer, a banker, a car, a company) | Never shown | Existing: NC-04 |
-| UL-04 | Ticker or stock-watch list that only names the company | Not useful. Do not show | New: AirAsia question where ids 893 and 980 must not appear |
+| UL-04 | Ticker or stock-watch list that only names the company | Not useful. Do not show | New: V2-SYN-02 (Zetrix sukuk; 10 stock-watch lists must not appear) and V2-TIME-03 |
 | UL-05 | Article outside the question's period | Not shown | Existing: TIME-01 to TIME-04 |
 | UL-06 | Wrong publisher when the question names one | Not shown | Existing: SRC-01 to SRC-04 |
 | UL-07 | Same publisher stored under several names | All names count as that publisher | Existing: SRC-01 |
-| UL-08 | Same story from several publishers | Show all of them for now (Ben, 18 November). They count toward the 5-link limit. Grouping them is backlog B-010 | New: SYN-02-style question with four near-identical AirAsia funding headlines, checking that all are allowed and none breaks the limit |
+| UL-08 | Same story from several publishers | Show all of them for now (Ben, 18 November). They count toward the 5-link limit. Grouping them is backlog B-010 | New: V2-SF-03 (three near-identical Malaysia Airlines headlines), checking that all are allowed and none breaks the limit |
 | UL-09 | Headline cut at a hyphen during ingestion | Shown as stored. The model never fills in missing words | Existing: SYN-01, FU-07, AMB-04, AMB-05, TIME-06 |
 | UL-10 | Very short headline ("Care centre crackdown") | Shown if it is the only relevant one | Existing: NIH-06 |
 | UL-11 | Injected test headline (negative id) | Never shown | Existing: INJ-05, INJ-06 |

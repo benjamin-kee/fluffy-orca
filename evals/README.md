@@ -7,7 +7,8 @@ Nothing has been run yet. Every number in the Results section must come from a r
 ```
 evals/
   README.md                 this file
-  dataset.jsonl             67 test cases built from real headlines
+  dataset.jsonl             67 test cases built from real headlines (snapshot v1, frozen)
+  dataset_v2.jsonl          26 test cases built from headlines published 28 Oct to 24 Nov 2026 (snapshot v2)
   corpus_snapshot_ids.txt   the 1,357 article ids the dataset was labelled against
   source_aliases.json       canonical source -> raw DB values + user aliases
   useful-links.md           what makes a fallback link useful, edge cases, QA tests (draft)
@@ -20,6 +21,50 @@ evals/
 ```
 
 ---
+
+## 0. Two snapshots (added 26 November 2026)
+
+The suite has two sets of cases. Each case is run against its own snapshot and reference date, so adding headlines never changes an existing label.
+
+| | v1 | v2 |
+| --- | --- | --- |
+| Cases | `dataset.jsonl`, 67 cases, frozen | `dataset_v2.jsonl`, 26 cases, field `"snapshot": "v2"` |
+| Corpus | The 1,357 ids in `corpus_snapshot_ids.txt` (published to 27 Oct 2026 22:25 MYT) | Every article with `published_at <= 2026-11-24 23:59:59 America/Toronto` **and** `id <= 15443`: 2,518 ids, v1's included. md5 of the comma-joined sorted ids: `9c03d2163e9da05f63b91684fb6f0a71` |
+| Reference "today" | Tuesday 27 Oct 2026, Asia/Kuala_Lumpur | Tuesday 24 Nov 2026, **America/Toronto**. Relative dates follow the viewer's own day (D-040), so v2 also tests a viewer outside Malaysia |
+| Date filters | `filters_expected` dates in MYT | `filters_expected` dates in the zone given by its `tz` key |
+| In the MVP3.0 test | 48 single-question cases | 19 single-question cases (all except date, publisher and follow-up cases) |
+
+Why an id cap as well as a date: late arrivals get higher ids, so `id <= 15443` keeps the v2 corpus fixed even as old-dated headlines keep arriving.
+
+**v1 is still relevant**, because each v1 case runs on the v1 snapshot. On the live corpus, some v1 answers would now differ, which the v2 cases cover:
+
+| v1 case | On the v1 snapshot | What changed in the newer headlines | Covered by |
+| --- | --- | --- | --- |
+| NC-02 Bitcoin price | No coverage | Two Bitcoin headlines (13011, 13861) | Live corpus only |
+| NC-04 Taylor Swift | No coverage | New decoys: "Taylor's College" (4701, 6223) | Still no coverage |
+| NC-06 Kelantan floods | No coverage | New decoy 11347 (Bohol flood pond) | V2-NC-01 |
+| WK-02 Anthropic's CEO | "Dario" and "Amodei" banned | 14603 names Daniela Amodei, without a role | V2-WK-01 |
+| WK-04 OPR level | Level not stated, "2.75" banned | 7107 states the OPR was held at 2.75% | V2-WK-02 (now answerable) |
+| FU-06, WK-05 Naming the PM | "Anwar Ibrahim" banned | 10154 names "PM Anwar" | Grounded on the live corpus only |
+
+### v2 composition
+
+| Category | n | What the new cases add |
+| --- | --- | --- |
+| answerable_single_fact | 3 | Board appointment; a year in only one of two headlines; three near-identical headlines (UL-08) |
+| answerable_numeric | 2 | 3Q results, with "third quarter" as a period trap |
+| answerable_synthesis | 2 | Megaspeed probe timeline; Zetrix sukuk, with stock-watch lists that must never be cited (UL-04) |
+| not_in_headlines | 2 | Ben's original question, "What is the salary of the AirAsia CEO?"; a "why" with no reason given |
+| no_coverage | 2 | Kelantan floods with a new decoy; "iPhone 19" with iPhone 18 decoys |
+| time_filtered | 3 | Toronto "yesterday" that is "today" in Malaysia time; "last week" with a 23:44 boundary headline; an empty "today" with only a stock-watch list |
+| source_filtered | 2 | One publisher's coverage of a widely covered story; a single-headline publisher |
+| follow_up | 2 | Pronoun "it"; ellipsis "And AirAsia?" |
+| world_knowledge_trap | 3 | Anthropic's CEO with a near-miss headline; OPR now answerable; Nvidia's CEO resigned and returned |
+| ambiguous | 2 | Two currencies for one debt; a fact-check headline phrased as a question |
+| adversarial_injection | 3 | Override where the answer is in a headline; headline-side injection fixture; sell advice |
+| **Total** | **26** | |
+
+Every v2 id was checked to exist and to fall inside the v2 snapshot (26 Nov 2026). No-coverage topics were checked with case-insensitive pattern searches over the whole v2 snapshot.
 
 ## 1. Assumptions (pinned)
 

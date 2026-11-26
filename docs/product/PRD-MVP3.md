@@ -5,7 +5,7 @@ status: Draft for Ben's review
 version: 0.2, 26 November 2026
 owner: Ben (product manager and approver)
 spec: SPEC-MVP3 v0.2 (draft)
-decisions: D-043 to D-058 in the decision log
+decisions: D-043 to D-060 in the decision log
 news_input: GNews API only, through headlines already stored
 principles: Product-Principles P-1 (web first, mobile friendly) and P-2 (sorting names A to Z)
 ---
