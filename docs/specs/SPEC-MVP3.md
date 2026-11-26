@@ -3,7 +3,7 @@ id: SPEC-MVP3
 prd: PRD-MVP3
 prd_version: 0.1
 status: Draft. MVP3.0 waits for Ben's approval; MVP3.1 to MVP3.4 are outlines
-version: 0.2.4
+version: 0.3
 ---
 
 # MVP3 Specification: Ask Watchtower
@@ -25,7 +25,7 @@ version: 0.2.4
 
 | Sprint | Name | What ships | Depends on | Gate to start | Effort (Claude Code days) |
 | --- | --- | --- | --- | --- | --- |
-| MVP3.0 | First answers | `/ask` page, single questions, cited answers, three reply types, thumbs up or down, keyword search, prompt caching, citation check, spend cap, kill switch, basic traces, eval runner with code checks | MVP1.6 search index | Ben approves MVP3.0 and A1 to A4 | 3 |
+| MVP3.0 | First answers | `/ask` page, single questions, cited answers, three reply types, thumbs up or down with optional written feedback, keyword search, prompt caching, citation check, spend cap, kill switch, basic traces, eval runner with code checks | MVP1.6 search index | Ben approves MVP3.0 and A1 to A4 | 3.5 |
 | MVP3.1 | Better search | Search by meaning plus keywords | MVP3.0 | Ben approves MVP3.1 and A5, A6 | 2 |
 | MVP3.2 | Conversation | Follow-ups, date and publisher wording | MVP3.1 | Ben approves MVP3.2 | 2 |
 | MVP3.3 | Confidence | Number check, advice note, rate limit, feedback reasons, full traces | MVP3.0 | Ben approves MVP3.3 | 2 |
@@ -42,7 +42,7 @@ Backlog B-009, the model comparison, starts as soon as the first MVP3 pull reque
 | MVP3-S3 | The question and the headlines are given to the AI as data, inside clearly marked blocks. Nothing in them is followed as an instruction. |
 | MVP3-S4 | The model id, the instructions version and the price table live in one configuration file, so changing model (B-009) is a configuration change. |
 | MVP3-S5 | All AI calls and database writes happen in one server route, `/api/ask`. |
-| MVP3-S6 | Fixed wording, never written by the AI. Fallback: "The headlines don't say, check this article:" for one link, "The headlines don't say, check these articles:" for more (D-045). No coverage: "No Watchtower headlines cover this yet. Try asking about a company, market or event in the news." (Ben, 26 November, D-061). AI note: "AI summary of Watchtower headlines. Check the articles for details." (approved by Ben, 26 November). The AI note is not repeated under each answer. It sits directly below the question box, and below the "Show 5 more headlines" button of each answer or fallback reply. There is no page-footer note. It is styled as a subtle, light-orange notice: visible, not alarming (Ben, 26 November, D-062). Error: "Ask Watchtower can't answer right now. Please try again later." Switched off: "Ask Watchtower is switched off for now." Paused: "Ask Watchtower has reached its monthly limit and will be back on 1 <Month>." |
+| MVP3-S6 | Fixed wording, never written by the AI. Fallback: "The headlines don't say, check this article:" for one link, "The headlines don't say, check these articles:" for more (D-045). No coverage: "No Watchtower headlines cover this yet. Try asking about a company, market or event in the news." (Ben, 26 November, D-061). AI note: "This answer is an AI summary and may contain mistakes. Check the articles before relying on it." (Ben, 26 November, D-063). The AI note is not repeated under each answer. It sits directly below the question box, and below the "Show 5 more headlines" button of each answer or fallback reply. There is no page-footer note. It is styled as a subtle, light-orange notice: visible, not alarming (Ben, 26 November, D-062). Error: "Ask Watchtower can't answer right now. Please try again later." Switched off: "Ask Watchtower is switched off for now." Paused: "Ask Watchtower has reached its monthly limit and will be back on 1 <Month>." |
 | MVP3-S7 | Every link opens `article_url` in a new tab with `rel="noopener noreferrer"` (D-025). |
 | MVP3-S8 | Dates on sources use the feed's rules (D-024). The AI is told today's date in Malaysia time, placed after the cached part of the instructions so caching keeps working. |
 | MVP3-S9 | Eval mode: the server can restrict search to a list of article ids and fix "today" to a given date. Only the eval runner uses it, with the `CRON_SECRET` header; the page never can. |
@@ -62,12 +62,12 @@ Backlog B-009, the model comparison, starts as soon as the first MVP3 pull reque
 | MVP3.0-R5 | One question at a time: the button is disabled while a reply is being written. Earlier questions and replies of the visit stay on the page, newest at the bottom. They are held in the browser only and are gone on reload (D-055). |
 | MVP3.0-R6 | Search: a read-only Postgres function (approval A1) takes the question and returns up to 20 headlines that contain any of its words, using the English full-text rules and the existing title index, ranked by relevance then newest. Returned per headline: id, title, publisher, `article_url`, publication time. A question with no searchable words (only common words such as "the") skips the AI and gets the no-coverage reply. |
 | MVP3.0-R7 | AI call: Claude Haiku 5.5 (`claude-haiku-5-5`, D-051 as amended on 26 November) through `@anthropic-ai/sdk`, streamed. Each headline is passed as a search result block with citations turned on: title is the headline, source is the Watchtower article id, content is the headline, publisher and publication date. The fixed instructions are cached (prompt caching, D-048); today's date and the question come after the cached part. Effort level is set in the configuration file (start: `low`) and confirmed on the eval run. Haiku 5.5 has no server-side refusal fallback, so a refusal gets the S10 error. |
-| MVP3.0-R8 | The instructions tell the AI to: answer only from the supplied headlines; cite a headline for every fact; never use its own knowledge, even for widely known facts (D-047); never fill in words cut off a headline; keep "reportedly" and "sources say" where headlines use them; mention dates when timing matters; give no investment advice; keep answers under about 120 words in plain English; cite at most 5 headlines; when several headlines support the same fact, cite the one search ranked highest (D-059). If headlines on the topic exist but don't answer, reply with the marker `NOT_IN_HEADLINES` and cite up to 5 of the most relevant. If no headline covers the topic, reply with the marker `NO_COVERAGE`. |
+| MVP3.0-R8 | The instructions tell the AI to: answer only from the supplied headlines; cite a headline for every fact; never use its own knowledge, even for widely known facts (D-047); never fill in words cut off a headline; keep "reportedly" and "sources say" where headlines use them; mention dates when timing matters; give no investment advice; keep answers under about 120 words in plain English; cite at most 5 headlines; when several headlines support the same fact, cite the one search ranked highest (D-059). **Hard rule (D-064): never combine headlines.** Each sentence states facts from one headline only, and no sentence draws a fact or conclusion from two headlines together. When an answer uses more than one headline, it says explicitly that the points come from different articles, naming each publisher, for example: "<Publisher> reports that … [1]. In a separate article, <Publisher> reports that … [2]." If headlines on the topic exist but don't answer, reply with the marker `NOT_IN_HEADLINES` and cite up to 5 of the most relevant. If no headline covers the topic, reply with the marker `NO_COVERAGE`. |
 | MVP3.0-R9 | Reply type is decided in code. `NO_COVERAGE`: no-coverage reply, no links. `NOT_IN_HEADLINES`: fallback reply with the cited headlines as links, at most 5, in citation order; if none are valid, the no-coverage reply. Otherwise an answer. Markers are never shown; answer text is streamed only once the start rules out a marker. |
 | MVP3.0-R10 | Citation check: every citation must point to a headline returned by search for this question. If any does not, the answer is withdrawn and replaced by the fallback reply, with the valid cited headlines as links (or the no-coverage reply if none). The withdrawal is recorded in the trace. |
 | MVP3.0-R11 | An answer shows numbered markers ([1], [2]) in the text, linked to numbered source cards below it: headline, publisher, date, opening the article (S7, S8). Each cited headline appears once. At most 5 source cards show at first; more follow R21. The AI note is not repeated under the answer text; it sits below the "Show 5 more headlines" button and below the question box (S6). |
 | MVP3.0-R12 | Fallback and no-coverage replies use the S6 wording exactly. Fallback links are shown as the same source cards, at most 5 at first (R21). No-coverage replies show no links and no R21 button. |
-| MVP3.0-R13 | Thumbs up and thumbs down under every reply. One rating per reply, which the reader can change. After a rating: "Thanks for the feedback." Stored with the reply's trace id (approval A3). |
+| MVP3.0-R13 | Thumbs up and thumbs down under every reply. One rating per reply, which the reader can change. A rating shows the banner "Thanks for the feedback." at the bottom of the screen for 3 seconds, then it disappears; it is not a button. After a rating, an optional box "Tell us more (optional)" with a "Send feedback" button takes open-ended written feedback, up to 1,000 characters, with the reminder "Please don't include personal details."; sending shows the banner "Thanks, we have your comment." and closes the box. Rating and comment are stored with the reply's trace id (approval A3) (Ben, 26 November, D-065). |
 | MVP3.0-R14 | Trace record (approval A2), one per question: trace id, time, a random session id kept per browser tab, the question, the headlines returned with their rank, model id, instructions version, the AI's raw text, cited ids, withdrawn citations, reply type, links shown, tokens (input, output, cache write, cache read), estimated cost in US dollars, search time, time to first word, total time, and any error. No IP address, browser details or personal data. |
 | MVP3.0-R15 | Retention (approval A4): a daily job deletes trace records and ratings older than 90 days (Ben, 26 November 2026). |
 | MVP3.0-R16 | Spend cap (D-053): each trace stores an estimated cost from its token counts and the S4 price table. Before calling the AI, the server adds up this calendar month's estimated cost, Malaysia time. At US$5.00 or more it skips the AI call and shows the S6 paused wording (Ben, 26 November 2026). The API key lives in its own Anthropic Console workspace, "Watchtower chatbot", with a US$5 monthly spend limit, so Anthropic also stops all spend at US$5 across all readers; if that limit is hit first, readers get the S10 error. Eval runs use a separate workspace, "Watchtower tests", with its own US$10 monthly limit (Ben, 26 November), so tests never use readers' budget. |
@@ -107,7 +107,9 @@ Reported but not gated in MVP3.0: recall at 5, 10 and 20 (keyword search only), 
 | R12 | A fallback reply with 3 links | Reply shown | Wording reads "check these articles:" |
 | R3 | A 501-character question | Reader tries to send it | The box stops at 500; a direct request gets "Questions are limited to 500 characters." |
 | R5 | Three questions asked | Reader reloads the page | The page is empty again |
-| R13 | A reply on screen | Reader clicks thumbs down, then thumbs up | One rating stored, now "up", linked to the trace |
+| R13 | A reply on screen | Reader clicks thumbs down, then thumbs up | One rating stored, now "up", linked to the trace; the thank-you banner shows, then disappears after 3 seconds |
+| R13 | A rated reply | Reader types a comment and clicks Send feedback | Comment stored on the rating, banner "Thanks, we have your comment.", box closes |
+| R8 | An answer citing two headlines from different publishers | Reply is processed | Each sentence names its publisher and cites one headline; the second is introduced as a separate article; no sentence combines the two |
 | R21 | An answer citing 3 headlines, with 12 headlines returned by search | Reader clicks "Show 5 more headlines" | 5 more source cards appear under "More headlines on this topic (not used in this answer)"; the button now reads "Show 4 more headlines" |
 | R16 | This month's estimated spend is US$5.02 | Reader asks a question | Paused wording, no AI call |
 | R17 | `ASK_ENABLED` not set | Reader opens the feed and `/ask` | No link on the feed; switched-off wording on `/ask` |
@@ -131,7 +133,7 @@ Reported but not gated in MVP3.0: recall at 5, 10 and 20 (keyword search only), 
 - Number check: every number in an answer must appear in a cited headline, or the fallback reply is shown.
 - Advice note: questions asking what to buy or sell get the news plus "Watchtower doesn't give investment advice."
 - Per-visitor daily question limit.
-- Thumbs down offers reasons (wrong or not what the article says; missed something; sources not relevant; didn't answer my question; too slow; other) and a comment box.
+- Thumbs down offers one-tap reasons (wrong or not what the article says; missed something; sources not relevant; didn't answer my question; too slow; other). The written comment box ships in MVP3.0 (R13).
 - Full stage-by-stage traces and saved review queries for Ben.
 
 ### MVP3.4 Full release gate (outline)
@@ -147,7 +149,7 @@ Reported but not gated in MVP3.0: recall at 5, 10 and 20 (keyword search only), 
 | --- | --- | --- | --- |
 | A1 | Question search function | MVP3.0 | Migration adding a read-only Postgres function: any-word English full-text match on titles, ranked, top 20, with an optional id list for eval mode. Uses the existing MVP1.6 index. No table change |
 | A2 | Trace table | MVP3.0 | Migration adding `ask_traces` with the R14 fields. Row-level security on and no policies, like `articles`: only the server can read or write |
-| A3 | Ratings table | MVP3.0 | Migration adding `ask_feedback`: id, trace id, time, rating (up or down), reason and comment (empty until MVP3.3). Same security as A2 |
+| A3 | Ratings table | MVP3.0 | Migration adding `ask_feedback`: id, trace id, time, rating (up or down), comment (from MVP3.0) and reason (empty until MVP3.3). Same security as A2 |
 | A4 | Retention job | MVP3.0 | A daily `pg_cron` job deleting A2 and A3 rows older than 90 days |
 | A5 | Embeddings | MVP3.1 | Turn on `pgvector`; add an embedding column and index to `articles`; replace the A1 function with hybrid search. Dependency approved by D-046; the migration itself needs approval |
 | A6 | Embedding at ingestion | MVP3.1 | Ingestion computes the embedding for each new headline. Changes ingestion, which section 1 otherwise rules out |
@@ -193,6 +195,7 @@ Ideas raised while specifying MVP3 that are not part of it and not approved for 
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 0.3 | 2026-11-26 | AI note wording (D-063). Hard rule: never combine headlines; multi-headline answers name each article's publisher (R8, D-064). Optional written feedback and a timed thank-you banner move into MVP3.0 (R13, D-065); MVP3.0 effort 3.5 days |
 | 0.2.4 | 2026-11-26 | AI note moved: below the question box and below the "Show 5 more headlines" button; no page-footer note (D-062 amended) |
 | 0.2.3 | 2026-11-26 | AI note shown once below the question box and once at the bottom of the page, as a light-orange notice, not under each answer (D-062) |
 | 0.2.2 | 2026-11-26 | No-coverage wording approved (D-061) |

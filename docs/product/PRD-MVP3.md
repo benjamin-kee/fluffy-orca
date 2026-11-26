@@ -2,10 +2,10 @@
 id: PRD-MVP3
 milestone: MVP3, Ask Watchtower
 status: Draft for Ben's review
-version: 0.2, 26 November 2026
+version: 0.3, 26 November 2026
 owner: Ben (product manager and approver)
 spec: SPEC-MVP3 v0.2 (draft)
-decisions: D-043 to D-062 in the decision log
+decisions: D-043 to D-065 in the decision log
 news_input: GNews API only, through headlines already stored
 principles: Product-Principles P-1 (web first, mobile friendly) and P-2 (sorting names A to Z)
 ---
@@ -86,10 +86,10 @@ Each sub-sprint is approved by Ben before it starts, ships on its own and goes l
 
 | Sub-sprint | What readers get | Gate before release |
 | --- | --- | --- |
-| MVP3.0 First answers | The `/ask` page: one question at a time, cited answers, the three reply types, thumbs up or down. Keyword search. Prompt caching, citation check, spend cap, kill switch, basic traces | Eval run on single questions, code checks only (SPEC-MVP3) |
+| MVP3.0 First answers | The `/ask` page: one question at a time, cited answers, the three reply types, thumbs up or down with optional written feedback. Keyword search. Prompt caching, citation check, spend cap, kill switch, basic traces | Eval run on single questions, code checks only (SPEC-MVP3) |
 | MVP3.1 Better search | Search by meaning as well as keywords | Search quality targets |
 | MVP3.2 Conversation | Follow-up questions; "last week", "from" a named publisher | Rewrite and filter targets |
-| MVP3.3 Confidence | Number check, advice note, rate limit, feedback reasons and comments, full traces | Guardrail cases pass |
+| MVP3.3 Confidence | Number check, advice note, rate limit, one-tap feedback reasons, full traces | Guardrail cases pass |
 | MVP3.4 Full release gate | No new screens. AI judges, the useful-link suite, regression checks | Every target in `evals/` |
 | Then B-009 | Model comparison across providers (must do, D-048) | |
 
@@ -107,12 +107,13 @@ Each sub-sprint is approved by Ben before it starts, ships on its own and goes l
 | MVP3-F1 | A page at `/ask`, opened from an "Ask Watchtower" link beside the Watchtower title on the feed | 3.0 |
 | MVP3-F2 | A reader types a question and gets a reply, with the answer appearing as it is written | 3.0 |
 | MVP3-F3 | Answers use only stored headlines, never the AI's own knowledge, even for widely known facts | 3.0 |
+| MVP3-F23 | Answers never combine headlines. When an answer uses more than one, it says the points come from separate articles and names each publisher (D-064) | 3.0 |
 | MVP3-F4 | Every answer shows numbered sources: headline, publisher and date, each opening the original article in a new tab | 3.0 |
 | MVP3-F5 | When headlines cover the topic but don't answer, the reply is "The headlines don't say, check this article" ("these articles" for more than one), with at most 5 links | 3.0 |
 | MVP3-F6 | When nothing covers the topic, the reply says so, with no links | 3.0 |
 | MVP3-F7 | A short note that answers are AI summaries of headlines sits below the question box and below the "Show 5 more headlines" button, as a subtle light-orange notice (D-062) | 3.0 |
 | MVP3-F8 | The page shows the visit's questions and replies. Reloading or leaving clears them | 3.0 |
-| MVP3-F9 | Readers rate each reply with thumbs up or down | 3.0 |
+| MVP3-F9 | Readers rate each reply with thumbs up or down, and can add an optional written comment (D-065) | 3.0 |
 | MVP3-F10 | Every question leaves a trace record, stage by stage | 3.0 basic, 3.3 full |
 | MVP3-F11 | Ask Watchtower pauses with a clear message when the monthly spend cap is near | 3.0 |
 | MVP3-F12 | One setting switches Ask Watchtower off without affecting the feed | 3.0 |
@@ -122,7 +123,7 @@ Each sub-sprint is approved by Ben before it starts, ships on its own and goes l
 | MVP3-F16 | Every number in an answer must appear in a cited headline, or the fallback reply is shown | 3.3 |
 | MVP3-F17 | Requests for investment advice get the news plus a fixed note that Watchtower doesn't give advice | 3.3 |
 | MVP3-F18 | Each visitor has a question limit per day | 3.3 |
-| MVP3-F19 | A thumbs down offers reasons and a comment box | 3.3 |
+| MVP3-F19 | A thumbs down offers one-tap reasons | 3.3 |
 | MVP3-F20 | A release passes the eval targets for its sub-sprint | All |
 | MVP3-F21 | Readers can reveal up to 5 more related headlines under the first 5 (experiment, D-058) | 3.0 |
 
@@ -171,6 +172,7 @@ Reply by number, for example "2 yes".
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 0.3 | 2026-11-26 | AI note wording (D-063); never combine headlines (F23, D-064); written feedback in MVP3.0 (F9, D-065) |
 | 0.2 | 2026-11-26 | Claude Haiku 5.5 at launch; key limited to US$5; no login in MVP3, MVP4 for login and paywall; AI note approved; "Show 5 more" experiment (F21) |
 | 0.1.1 | 2026-11-26 | Pause at US$5 of monthly spend; 90-day retention |
 | 0.1 | 2026-11-18 | First draft, from the RAG-Chatbot research and Ben's decisions D-043 to D-055 |
