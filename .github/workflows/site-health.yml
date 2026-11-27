@@ -1,0 +1,36 @@
+# Checks every 3 hours that watchtower01.vercel.app loads and that new headlines are still arriving.
+# A failed run makes GitHub email the person who last enabled this workflow (see README, "Site health check").
+# Uses no secrets and calls nothing but the public site.
+name: Site health check
+
+on:
+  schedule:
+    - cron: "17 */3 * * *"
+  workflow_dispatch:
+    inputs:
+      test_failure:
+        description: "Fail on purpose, to check the alert email arrives"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: site-health
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check the live site
+        env:
+          SITE_URL: https://watchtower01.vercel.app/
+          MAX_SECONDS: "20"
+          # GNews releases headlines 12 hours after publication and the longest quiet gap seen is about 8 hours,
+          # so a newest headline older than this means news collection has stopped.
+          MAX_NEWEST_AGE_HOURS: "36"
+          TEST_FAILURE: ${{ inputs.test_failure || 'false' }}
+        run: bash scripts/site-health.sh
