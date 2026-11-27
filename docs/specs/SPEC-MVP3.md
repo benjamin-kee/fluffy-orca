@@ -3,7 +3,7 @@ id: SPEC-MVP3
 prd: PRD-MVP3
 prd_version: 1.0
 status: MVP3.0 and approvals A1 to A4 approved by Ben, 26 November 2026; MVP3.1 to MVP3.4 are outlines
-version: 1.0.3
+version: 1.0.4
 ---
 
 # MVP3 Specification: Ask Watchtower
@@ -107,7 +107,7 @@ The AI note is not repeated under each answer. It appears in two places: directl
 **MVP3.0-R8. The AI's instructions.** The instructions tell the AI to:
 
 - answer only from the headlines supplied;
-- cite a headline for every fact;
+- cite a headline for every sentence that states a fact, and not write a sentence it cannot cite, because an answer with no citations is discarded (MVP3-F4, R10; Ben, 27 November);
 - never use its own knowledge, even for widely known facts (D-047);
 - never fill in words that have been cut off a headline;
 - keep words such as "reportedly" and "sources say" where the headline uses them;
@@ -121,8 +121,8 @@ The AI note is not repeated under each answer. It appears in two places: directl
 
 When the AI cannot answer, it replies with one of three markers. A marker is a fixed word that tells the server which reply type and wording to show; readers never see it. The AI must never quote, paraphrase or describe a headline that does not state the answer, and must never name a person or company from it (Ben, 27 November). The three markers are used as follows:
 
-- `NO_COVERAGE`: no headline is about what the question asks. A headline that shares only a word with the question does not count, for example a flood in a different place, an earlier model of the same product, or a different person with the same first name. The AI writes only the marker.
-- `NO_DIRECT_HEADLINES`: the headlines mention the company, person or topic in the question, but they are about other matters, and none of them directly addresses what the question asks. An example is a question about who founded a company when its headlines only report on its finances. The AI writes only the marker.
+- `NO_COVERAGE`: no headline is about what the question asks. A headline that shares only a word with the question does not count, for example a flood in a different place, an earlier model of the same product, or a different person with the same first name. When the company, person or product the question names appears in any headline, the AI does not choose this marker, unless the question asks about a specific event, announcement, price or result that no headline reports. The AI writes only the marker.
+- `NO_DIRECT_HEADLINES`: the headlines mention the company, person or topic in the question, but they are about other matters, and none of them directly addresses what the question asks. An example is a question about who founded a company when its headlines only report on its finances. The AI also uses this marker, and never answers, when the question asks for advice, a prediction or an opinion, such as whether to buy or sell a share or what will happen next (Ben, 27 November). The AI writes only the marker.
 - `NOT_IN_HEADLINES`: at least one headline is about the very event or subject the question asks about, but it does not state the answer, such as the number, the reason or the name asked for, and the full article might. The AI writes the marker, then for each of up to 5 headlines that might help it writes only the words "Might help." and cites that headline. The cited headlines become the links the reader sees.
 
 **MVP3.0-R9. Choosing the reply type.** The server's code, not the AI, decides which of the three reply types the reader sees:
@@ -428,6 +428,7 @@ These ideas came up while specifying MVP3. They are not part of it and are not a
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 1.0.4 | 2026-11-27 | Tightened rules (R8, Ben): every fact sentence needs a citation; questions asking for advice, a prediction or an opinion get "No direct headlines found."; no coverage is not allowed when the company, person or product in the question appears in a headline, unless the question is about an event, announcement, price or result no headline reports. Measured on three Haiku runs: gate passed in all three, against failures in all three runs before |
 | 1.0.3 | 2026-11-27 | Fallback wording is now "…but this/these article(s) might have an answer:". New marker `NO_DIRECT_HEADLINES` with the reply "No direct headlines found." and no links (shown as a no-coverage reply, so no database change). The instructions define the three markers precisely, and the AI may not quote or describe headlines that do not state the answer (R8, R9, R12, S6, Ben) |
 | 1.0.2 | 2026-11-26 | Model note under the intro line (R2a, D-070) |
 | 1.0.1 | 2026-11-26 | R21: "Show 5 more" works once per reply, so readers see at most 10 headlines; acceptance test corrected (Ben, D-069) |
