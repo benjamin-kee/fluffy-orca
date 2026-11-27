@@ -6,7 +6,7 @@ export const ASK_MODEL = "claude-haiku-5-5";
 export const ASK_MODEL_NAME = "Claude Haiku 5.5";
 export const ASK_EFFORT = "low" as const; // MVP3.0-R7: start at low, confirmed on the eval run
 export const ASK_MAX_TOKENS = 4000;
-export const INSTRUCTIONS_VERSION = "mvp3.0-v2";
+export const INSTRUCTIONS_VERSION = "mvp3.0-v3";
 
 export const MAX_QUESTION_CHARS = 500; // R3
 export const MAX_COMMENT_CHARS = 1000; // R13
