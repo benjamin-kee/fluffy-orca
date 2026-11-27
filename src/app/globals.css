@@ -214,8 +214,14 @@ main.ask {
 }
 
 .ask-intro {
-  margin: 0 0 1.5rem;
+  margin: 0 0 0.25rem;
   color: #333;
+}
+
+.ask-model {
+  margin: 0 0 1.5rem;
+  font-size: 0.875rem;
+  color: #555;
 }
 
 .ask-turns {

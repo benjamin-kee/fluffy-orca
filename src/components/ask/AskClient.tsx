@@ -3,7 +3,7 @@
 import { Fragment, useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import type { AskEvent } from "@/app/api/ask/route";
 import type { Headline, ReplyType } from "@/lib/ask/reply";
-import { WORDING, showMoreLabel } from "@/lib/ask/wording";
+import { WORDING, poweredBy, showMoreLabel } from "@/lib/ask/wording";
 import { PublishedTime } from "@/components/PublishedTime";
 
 const MAX_QUESTION_CHARS = 500;
@@ -43,7 +43,7 @@ function post(body: Record<string, unknown>) {
 
 // R2 to R5, R11 to R13, R21, R22. The visit's questions and replies live only in this component's
 // state, so reloading or leaving the page clears them (R5, D-055).
-export function AskClient() {
+export function AskClient({ modelName }: { modelName: string }) {
   const [turns, setTurns] = useState<Turn[]>([]);
   const [question, setQuestion] = useState("");
   const [busy, setBusy] = useState(false);
@@ -169,6 +169,7 @@ export function AskClient() {
   return (
     <div className="ask-body">
       <p className="ask-intro">{WORDING.intro}</p>
+      <p className="ask-model">{poweredBy(modelName)}</p>
 
       <section aria-label="Your questions and Watchtower's replies" aria-live="polite" className="ask-turns">
         {turns.map((turn) => (
