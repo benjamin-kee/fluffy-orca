@@ -28,7 +28,7 @@ The long-term direction (D-008) is a platform for investment due diligence: dire
 | LATER-F3 | Company extraction and entity resolution | Names in headlines resolve to one company | LATER-F2 | Headline text. Spelling variants are the hard part |
 | LATER-F4 | Company profiles | A page per company with its headline timeline | LATER-F3 | Uses stored history |
 | LATER-F5 | Alerts | Notify on a company or keyword | LATER-F3 | Needs accounts, see LATER-F9 |
-| LATER-F6 | AI-assisted research | Ask a question, get a sourced answer from stored coverage | LATER-F3, LATER-F4 | Full content would improve answers. Rights decide |
+| LATER-F6 | AI-assisted research | Ask a question, get a sourced answer from stored coverage. **Brought forward as MVP3, Ask Watchtower, headlines only (D-043, D-044); see [PRD-MVP3](PRD-MVP3.md)** | LATER-F3, LATER-F4 | Full content would improve answers. Rights decide |
 | LATER-F7 | Watchtower article page with licensed content | Read inside Watchtower | Written publisher permission or licensed provider | Paid plans expose full content, but GNews terms leave copyright with publishers |
 | LATER-F8 | Wider coverage | Wider Asia (B-004) and non-English (B-005) | MVP1 | GNews supports many countries and 40 or more languages, so cheap to test |
 | LATER-F9 | Login and access control | Accounts so only permitted people see Watchtower. Required before any public release (D-027). Proposal: its own milestone, MVP0.2 | MVP0 shipped | None. Placement is review item 68 |

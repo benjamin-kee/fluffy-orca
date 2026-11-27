@@ -37,3 +37,4 @@ A header table (PRD ID, milestone, status, version, owner, spec, decisions, news
 - Requirement IDs are never reused.
 - If PRD and spec disagree, the spec waits for Ben's approval of a change.
 - No publisher is named in any PRD. Publishers are whatever GNews returns (D-026).
+- PRDs and specs are written in full sentences, so that anyone who reads them can understand them without asking for clarification (D-067). Say what each item is, why it is needed and what it does. Explain every technical term the first time it is used, or define it in a glossary. Tables may hold short labels and values, but any explanation is written as sentences.

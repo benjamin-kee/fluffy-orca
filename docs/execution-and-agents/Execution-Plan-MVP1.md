@@ -49,7 +49,7 @@ Estimates are rough and unverified.
 | MVP1.1 | Count line, "Clear all", sort control, one shared reader and writer for all filter values in the URL | None | 2–3 hours |
 | MVP1.2 | From and To inputs replacing the single-day picker; From-after-To message; old `?date=` links still work | None | 2 hours |
 | MVP1.3 | Source checkboxes with counts; read-only count function | A2 (migration `0004`) | 3 hours |
-| MVP1.4 | Moved to the Backlog as B-009 (8 November 2026) | — | — |
+| MVP1.4 | Moved to the Backlog as B-014 (8 November 2026) | — | — |
 | MVP1.5 | Moved into MVP2 as MVP2-R13 (8 November 2026) | — | — |
 | MVP1.6 | Search box, full-text match combined with filters, `q` in the URL | A3 (migration) | 3–4 hours |
 

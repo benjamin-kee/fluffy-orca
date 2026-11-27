@@ -1,6 +1,7 @@
 import { ArticleItem } from "@/components/ArticleItem";
 import { DateFilter } from "@/components/DateFilter";
 import { EmptyDay } from "@/components/EmptyDay";
+import { FeedTitle } from "@/components/FeedTitle";
 import { NoSearchMatch } from "@/components/NoSearchMatch";
 import { PageSizeSelect } from "@/components/PageSizeSelect";
 import { Pagination } from "@/components/Pagination";
@@ -56,7 +57,7 @@ export default async function HomePage({ searchParams }: Props) {
     console.error(`[feed] failed to load headlines: ${err instanceof Error ? err.message : String(err)}`);
     return (
       <main>
-        <h1>Watchtower</h1>
+        <FeedTitle />
         <p>Headlines could not be loaded. Please try again later.</p>
       </main>
     );
@@ -73,7 +74,7 @@ export default async function HomePage({ searchParams }: Props) {
 
   return (
     <main>
-      <h1>Watchtower</h1>
+      <FeedTitle />
       <SearchBox query={query} size={size} />
       <div className="controls">
         <DateFilter query={query} size={size} oldest={oldest && oldest.toISOString()} />

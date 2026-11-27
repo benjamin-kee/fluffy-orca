@@ -50,7 +50,7 @@ The MVP0 feed answers "what is new" and nothing else. Readers also ask "what hap
 - Live GNews search calls
 - Ingesting countries other than Malaysia
 - The UI/UX redesign, which is MVP2
-- MVP1.4 Country filter: moved to the Backlog as B-009 (8 November 2026)
+- MVP1.4 Country filter: moved to the Backlog as B-014 (8 November 2026)
 - MVP1.5 Phone filter sheet: moved into MVP2 as MVP2-R13 (8 November 2026)
 
 ## 6. Release stages
@@ -71,7 +71,7 @@ One sub-sprint at a time on the `mvp1` branch, each through its own pull request
 | MVP1-F4 | Every filter, the sort and the search are kept in the link, so a view can be reloaded and shared. | MVP1.0, MVP1.1 |
 | MVP1-F5 | The reader picks a From and To date. | MVP1.2 |
 | MVP1-F6 | The reader picks one or more publishers, each shown with its headline count. | MVP1.3 |
-| MVP1-F7 | The reader picks a country. Malaysia is available; Singapore shows "Coming soon". | Moved to the Backlog (B-009) |
+| MVP1-F7 | The reader picks a country. Malaysia is available; Singapore shows "Coming soon". | Moved to the Backlog (B-014) |
 | MVP1-F8 | On a phone, the filters sit behind one button that opens a bottom sheet. | Moved to MVP2 (MVP2-R13) |
 | MVP1-F9 | The reader searches headline text by keyword, together with any active filters. All words must match, quoted text matches as a phrase, and English word forms match. | MVP1.6 |
 
@@ -83,7 +83,7 @@ Filters and search use parameterized queries only and make no outbound calls. Se
 |---|---|---|
 | R1 | Stored history reaches back only about 30 days | From MVP1.2 the date picker starts at the oldest stored headline's day, so empty earlier days cannot be picked; history before late September needs a paid GNews plan (A-13) |
 | R2 | A shared link carries the sender's time zone, so the recipient sees the sender's day | Accepted: the link shows the same list for everyone |
-| R3 | The country filter changes nothing while Malaysia is the only country ingested | The country filter moved to the Backlog as B-009 (8 November 2026) |
+| R3 | The country filter changes nothing while Malaysia is the only country ingested | The country filter moved to the Backlog as B-014 (8 November 2026) |
 | R4 | Headline-only search has lower recall than body search | Accepted by D-005. Body search is backlog B-002 |
 | R5 | English stemming misses Malay terms and some names | English-only scope (D-014) |
 
@@ -96,7 +96,7 @@ Same as PRD-MVP0. Claude Code builds only sub-sprints Ben has approved, adds no 
 ## 13. Change log
 | Version | Date | Change |
 |---|---|---|
-| 0.4.2 | 8 November 2026 | MVP1 complete: MVP1.4 moved to the Backlog (B-009) and MVP1.5 moved into MVP2 (MVP2-R13), both by Ben. |
+| 0.4.2 | 8 November 2026 | MVP1 complete: MVP1.4 moved to the Backlog (B-014) and MVP1.5 moved into MVP2 (MVP2-R13), both by Ben. |
 | 0.4.1 | 8 November 2026 | Follows Product-Principles P-1, web first and mobile friendly (D-041). MVP1.5's phone filter sheet is the mobile-friendly layout; the desktop layout stays primary. |
 | 0.4 | 28 October 2026 | MVP1.2 approved and built: From and To dates replace the single-day picker, the earliest date is the oldest stored headline's day, and days stay the viewer's own (D-040). |
 | 0.3 | 27 October 2026 | MVP1 widened from keyword search to filtering and keyword search, in sub-sprints MVP1.0 to MVP1.6. MVP1.0 approved and built. Days follow the viewer's time zone. Now second on the roadmap, before MVP2 (formerly MVP0.1) |
