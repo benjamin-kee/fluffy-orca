@@ -108,10 +108,10 @@ Every v2 id was checked to exist and to fall inside the v2 snapshot (26 Nov 2026
 | time_filtered | 6 | 5 ANSWERED, 1 NO_COVERAGE | relative dates, empty window |
 | source_filtered | 5 | 4 ANSWERED, 1 NO_COVERAGE | aliases, abbreviations, empty source |
 | follow_up | 7 | 5 ANSWERED, 1 NOT_IN_HEADLINES, 1 NO_COVERAGE | pronouns, ellipsis, abbreviation, topic switch, 3-turn chain |
-| world_knowledge_trap | 7 | 5 NOT_IN_HEADLINES, 2 ANSWERED | Claude knows the answer; headlines don't say it (or say something different) |
+| world_knowledge_trap | 7 | 4 NOT_IN_HEADLINES, 1 NO_DIRECT_HEADLINES (WK-03, 27 Nov), 2 ANSWERED | Claude knows the answer; headlines don't say it (or say something different) |
 | ambiguous | 5 | ANSWERED (2 also accept NOT_IN_HEADLINES) | entity ambiguity, conflicting numbers, truncation artefacts |
 | adversarial_injection | 7 | 3 ANSWERED, 3 NOT_IN_HEADLINES, 1 NO_COVERAGE | user-side overrides, forged citations, headline-side injection fixtures |
-| **Total** | **67** | 41 ANSWERED / 16 NOT_IN_HEADLINES / 10 NO_COVERAGE | |
+| **Total** | **67** | 41 ANSWERED / 15 NOT_IN_HEADLINES / 10 NO_COVERAGE / 1 NO_DIRECT_HEADLINES | |
 
 ### 3.2 Case schema
 
@@ -302,10 +302,11 @@ Run id: `TBD` · Date: `TBD` · Generator model: `TBD` · Judge model: `TBD` · 
 
 Routing confusion matrix (final status `s'`): TBD
 
-| expected \ predicted | ANSWERED | NOT_IN_HEADLINES | NO_COVERAGE |
-|---|---|---|---|
-| ANSWERED (41) | TBD | TBD | TBD |
-| NOT_IN_HEADLINES (16) | TBD | TBD | TBD |
-| NO_COVERAGE (10) | TBD | TBD | TBD |
+| expected \ predicted | ANSWERED | NOT_IN_HEADLINES | NO_COVERAGE | NO_DIRECT_HEADLINES |
+|---|---|---|---|---|
+| ANSWERED (41) | TBD | TBD | TBD | TBD |
+| NOT_IN_HEADLINES (15) | TBD | TBD | TBD | TBD |
+| NO_COVERAGE (10) | TBD | TBD | TBD | TBD |
+| NO_DIRECT_HEADLINES (1) | TBD | TBD | TBD | TBD |
 
 Per-category pass rates and flaky-case list: TBD.

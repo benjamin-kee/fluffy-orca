@@ -2,7 +2,7 @@
 
 Status: draft, 2026-11-18. Rules in section 5 decided by Ben on 18 November (D-045). Part of the MVP3 eval suite (`evals/README.md`).
 
-When the headlines don't answer a question, Watchtower replies **"The headlines don't say, check this article"**, or "check these articles" when it shows more than one link, and shows up to 5 links (D-045). It never fills the gap from the model's own knowledge (D-047). That reply is only worth something if the links are useful. This file defines "useful", lists the edge cases, and says how each is tested.
+When the headlines don't answer a question, Watchtower replies **"The headlines don't say, but this article might have an answer:"**, or "but these articles might have an answer:" when it shows more than one link, and shows up to 5 links (D-045, reworded 27 November). When headlines mention the company or person but none is about what was asked (for example WK-03), it replies "No direct headlines found." with no links instead. It never fills the gap from the model's own knowledge (D-047). That reply is only worth something if the links are useful. This file defines "useful", lists the edge cases, and says how each is tested.
 
 ## 1. Definition
 
@@ -19,7 +19,7 @@ In the dataset, useful links are a case's `gold_article_ids` and `also_relevant_
 
 ### Example
 
-Question: "How many CTOS customers were affected by the data breach?" (case NIH-02). No headline gives a number, so the reply is "The headlines don't say, check this article":
+Question: "How many CTOS customers were affected by the data breach?" (case NIH-02). No headline gives a number, so the reply is "The headlines don't say, but this article might have an answer:":
 
 | Link | Useful? | Why |
 | --- | --- | --- |
@@ -65,7 +65,7 @@ The suite already measures whether search **retrieves** at least one useful head
 | UL-14 | Follow-up with a pronoun or abbreviation ("TH", "it") | Links are about the resolved subject | Existing: FU-04 |
 | UL-15 | Period named in the question is the reporting period, not the publish date ("3Q growth") | Do not filter links by publish date | Existing: NUM-02 |
 | UL-16 | Many useful links | Show at most 5 (Ben, 18 November), most relevant first, then newest. Experiment from 26 November (D-058): a "Show 5 more headlines" button reveals up to 5 more search results, labelled as not used in the answer. Shown-link precision is measured on the first 5; the forbidden-link check covers all 10 | New: SYN-01 (8 useful headlines) |
-| UL-17 | Several links, one reply | Wording becomes "check these articles" (Ben, 18 November) | New: NIH-02 |
+| UL-17 | Several links, one reply | Wording becomes "but these articles might have an answer:" (Ben, 18 November; reworded 27 November) | New: NIH-02 |
 | UL-18 | Missing or malformed `article_url` | Do not show that link. Log it | New: unit test with a fixture row |
 | UL-19 | Link no longer opens (removed by publisher) | Not detectable at answer time. Caught by the link health check below | Manual and scheduled check |
 
@@ -84,4 +84,4 @@ Nothing here can run until the chatbot exists. These tests are built with the ev
 1. UL-02: id 400 is removed from WK-03's answer key. A headline that only names the company's boss, on another topic, is not a useful link.
 2. UL-08: show every matching link, including near-repeats of the same story. Grouping them is a fix for later (backlog B-010).
 3. UL-16: at most 5 links per reply.
-4. UL-17: "check these articles" when more than one link is shown.
+4. UL-17: "but these articles might have an answer:" when more than one link is shown.

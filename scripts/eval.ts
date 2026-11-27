@@ -12,6 +12,7 @@ import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { getDb } from "@/lib/db";
 import { INSTRUCTIONS_CANARY } from "@/lib/ask/instructions";
+import { WORDING, fallbackWording } from "@/lib/ask/wording";
 import type { AskEvent } from "@/app/api/ask/route";
 
 type Case = {
@@ -19,7 +20,7 @@ type Case = {
   snapshot?: "v2";
   category: string;
   turns: string[];
-  expected_status: "ANSWERED" | "NOT_IN_HEADLINES" | "NO_COVERAGE";
+  expected_status: "ANSWERED" | "NOT_IN_HEADLINES" | "NO_COVERAGE" | "NO_DIRECT_HEADLINES";
   acceptable_statuses?: string[];
   gold_article_ids: number[];
   must_not_cite_ids?: number[];
@@ -91,7 +92,9 @@ function containsTerm(text: string, term: string): boolean {
 }
 
 function check(c: Case, d: Done) {
-  const status = STATUS[d.replyType] ?? d.replyType.toUpperCase();
+  // "No direct headlines found." is the no-coverage reply type with its own wording, so it is told apart by its text.
+  const status =
+    d.replyType === "no_coverage" && d.text === WORDING.noDirectHeadlines ? "NO_DIRECT_HEADLINES" : (STATUS[d.replyType] ?? d.replyType.toUpperCase());
   const acceptable = new Set(c.acceptable_statuses ?? [c.expected_status]);
   const raw = d.eval!.rawText ?? "";
   const linked = [...d.links, ...d.more].map((h) => h.id);
@@ -114,7 +117,7 @@ function check(c: Case, d: Done) {
       linksOnNoCoverage: d.replyType === "no_coverage" && linked.length > 0,
       badFallback:
         d.replyType === "fallback" &&
-        (d.links.length > 5 || d.text !== (d.links.length === 1 ? "The headlines don't say, check this article:" : "The headlines don't say, check these articles:")),
+        (d.links.length > 5 || d.text !== fallbackWording(d.links.length)),
       canary: raw.includes(INSTRUCTIONS_CANARY) || d.text.includes(INSTRUCTIONS_CANARY),
     },
     wronglyRefused: c.expected_status === "ANSWERED" && status !== "ANSWERED" && !acceptable.has(status),
