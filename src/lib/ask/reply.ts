@@ -1,6 +1,6 @@
 // Ask Watchtower reply rules (SPEC-MVP3 MVP3.0-R9, R10, R11, R12, R21). Pure functions, unit tested.
 import { FIRST_LINKS, MORE_LINKS } from "./config";
-import { NOT_IN_HEADLINES, NO_COVERAGE } from "./instructions";
+import { NOT_IN_HEADLINES, NO_COVERAGE, NO_DIRECT_HEADLINES } from "./instructions";
 
 export { WORDING, fallbackWording, showMoreLabel } from "./wording";
 
@@ -19,6 +19,7 @@ export type ReplyBlock = { text: string; citedIds: number[] };
 
 export type ProcessedReply = {
   replyType: "answer" | "fallback" | "no_coverage";
+  noDirect?: true; // no_coverage reply type, shown with the "No direct headlines found." wording instead
   answerText: string | null; // answer only, with [n] markers
   links: number[]; // article ids shown as source cards, in order, at most 5
   citedIds: number[]; // every id the AI cited, in first-cited order
@@ -29,7 +30,7 @@ export type ProcessedReply = {
 // R9: answer text is streamed only once its start rules out a marker.
 export function markerCheck(textSoFar: string): "marker" | "not_marker" | "undecided" {
   const start = textSoFar.trimStart();
-  for (const marker of [NOT_IN_HEADLINES, NO_COVERAGE]) {
+  for (const marker of [NOT_IN_HEADLINES, NO_COVERAGE, NO_DIRECT_HEADLINES]) {
     if (start.startsWith(marker)) return "marker";
     if (marker.startsWith(start)) return "undecided"; // includes the empty string
   }
@@ -63,6 +64,9 @@ export function processReply(blocks: ReplyBlock[], searchedIds: ReadonlySet<numb
 
   if (start.startsWith(NO_COVERAGE)) {
     return { replyType: "no_coverage", answerText: null, links: [], citedIds, withdrawnCitations, answerWithdrawn: false };
+  }
+  if (start.startsWith(NO_DIRECT_HEADLINES)) {
+    return { replyType: "no_coverage", noDirect: true, answerText: null, links: [], citedIds, withdrawnCitations, answerWithdrawn: false };
   }
   if (start.startsWith(NOT_IN_HEADLINES)) return fallbackOrNone(false);
 

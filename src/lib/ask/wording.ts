@@ -6,6 +6,7 @@ export const WORDING = {
   followUpNotice: "Watchtower can't answer follow-up questions yet. Ask each question in full, including the company or topic.",
   followUpPlaceholder: "Follow-up questions aren't supported yet",
   noCoverage: "No Watchtower headlines cover this yet. Try asking about a company, market or event in the news.",
+  noDirectHeadlines: "No direct headlines found.",
   aiNote: "This answer is an AI summary and may contain mistakes. Check the articles before relying on it.",
   error: "Ask Watchtower can't answer right now. Please try again later.",
   switchedOff: "Ask Watchtower is switched off for now.",
@@ -18,7 +19,9 @@ export const WORDING = {
 };
 
 export function fallbackWording(linkCount: number): string {
-  return linkCount === 1 ? "The headlines don't say, check this article:" : "The headlines don't say, check these articles:";
+  return linkCount === 1
+    ? "The headlines don't say, but this article might have an answer:"
+    : "The headlines don't say, but these articles might have an answer:";
 }
 
 export function showMoreLabel(count: number): string | null {

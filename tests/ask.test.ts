@@ -15,6 +15,18 @@ test("NO_COVERAGE gives the no-coverage reply with no links", () => {
   assert.deepEqual(r.links, []);
 });
 
+test("NO_DIRECT_HEADLINES gives the no-coverage reply type with the 'No direct headlines found.' wording and no links", () => {
+  const r = processReply([{ text: "NO_DIRECT_HEADLINES", citedIds: [] }], searched);
+  assert.equal(r.replyType, "no_coverage");
+  assert.equal(r.noDirect, true);
+  assert.deepEqual(r.links, []);
+  assert.equal(WORDING.noDirectHeadlines, "No direct headlines found.");
+});
+
+test("NO_COVERAGE does not use the no-direct wording", () => {
+  assert.equal(processReply([{ text: "NO_COVERAGE", citedIds: [] }], searched).noDirect, undefined);
+});
+
 test("NOT_IN_HEADLINES gives the fallback with its valid cited headlines, at most 5, in citation order", () => {
   const blocks = [
     { text: "NOT_IN_HEADLINES\n", citedIds: [] },
@@ -76,14 +88,16 @@ test("markers are held back until the start of the text rules them out", () => {
   assert.equal(markerCheck("  NOT_IN"), "undecided");
   assert.equal(markerCheck("NO_"), "undecided");
   assert.equal(markerCheck("NO_COVERAGE"), "marker");
+  assert.equal(markerCheck("NO_D"), "undecided");
+  assert.equal(markerCheck("NO_DIRECT_HEADLINES"), "marker");
   assert.equal(markerCheck("NOT_IN_HEADLINES\nx"), "marker");
   assert.equal(markerCheck("No"), "not_marker");
   assert.equal(markerCheck("Malaysia"), "not_marker");
 });
 
 test("fallback wording is singular for one link and plural for more", () => {
-  assert.equal(fallbackWording(1), "The headlines don't say, check this article:");
-  assert.equal(fallbackWording(3), "The headlines don't say, check these articles:");
+  assert.equal(fallbackWording(1), "The headlines don't say, but this article might have an answer:");
+  assert.equal(fallbackWording(3), "The headlines don't say, but these articles might have an answer:");
 });
 
 test("Show more reveals the next headlines in search order, at most 5, never shown or injected ones", () => {

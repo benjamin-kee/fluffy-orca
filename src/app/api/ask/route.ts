@@ -165,7 +165,13 @@ function ask(request: Request, body: Record<string, unknown>): Response {
               const links = reply.links.map((id) => byId.get(id)!);
               const more = moreHeadlines(searchIds, reply.links).map((id) => byId.get(id)!);
               const text =
-                reply.replyType === "answer" ? reply.answerText! : reply.replyType === "fallback" ? fallbackWording(links.length) : WORDING.noCoverage;
+                reply.replyType === "answer"
+                  ? reply.answerText!
+                  : reply.replyType === "fallback"
+                    ? fallbackWording(links.length)
+                    : reply.noDirect
+                      ? WORDING.noDirectHeadlines
+                      : WORDING.noCoverage;
               done = { ...done, replyType: reply.replyType, text, links, more: reply.replyType === "no_coverage" ? [] : more };
             }
           }
